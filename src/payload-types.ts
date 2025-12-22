@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    'product-links': ProductLink;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'product-links': ProductLinksSelect<false> | ProductLinksSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -161,6 +163,64 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-links".
+ */
+export interface ProductLink {
+  id: string;
+  /**
+   * Product name
+   */
+  name: string;
+  /**
+   * Product ID from the source site (e.g., Mobile140 product ID)
+   */
+  productId?: string | null;
+  /**
+   * Product image
+   */
+  productImage?: (string | null) | Media;
+  /**
+   * Product URLs to crawl (can add multiple URLs from different sites)
+   */
+  productUrls: {
+    /**
+     * Product URL to crawl
+     */
+    url: string;
+    /**
+     * Site will be auto-detected from URL if not provided
+     */
+    site?: ('torob' | 'technolife') | null;
+    /**
+     * Latest crawled price from this URL
+     */
+    currentPrice?: number | null;
+    /**
+     * Timestamp of last successful crawl for this URL
+     */
+    lastCrawledAt?: string | null;
+    crawlStatus?: ('pending' | 'success' | 'failed') | null;
+    /**
+     * Error message if crawl failed for this URL
+     */
+    crawlError?: string | null;
+    /**
+     * Historical price data for this URL
+     */
+    priceHistory?:
+      | {
+          price: number;
+          crawledAt: string;
+          id?: string | null;
+        }[]
+      | null;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -190,6 +250,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'product-links';
+        value: string | ProductLink;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -272,6 +336,35 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-links_select".
+ */
+export interface ProductLinksSelect<T extends boolean = true> {
+  name?: T;
+  productId?: T;
+  productImage?: T;
+  productUrls?:
+    | T
+    | {
+        url?: T;
+        site?: T;
+        currentPrice?: T;
+        lastCrawledAt?: T;
+        crawlStatus?: T;
+        crawlError?: T;
+        priceHistory?:
+          | T
+          | {
+              price?: T;
+              crawledAt?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

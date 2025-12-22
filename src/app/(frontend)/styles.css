@@ -1,5 +1,44 @@
+@import "tailwindcss";
+
 :root {
-  --font-mono: 'Roboto Mono', monospace;
+  --font-mono: 'Dana', sans-serif;
+}
+
+@font-face {
+  font-family: Dana;
+  font-style: normal;
+  font-weight: 200 700;
+  src: url('/fonts/Dana-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: Dana;
+  font-style: normal;
+  font-weight: 600;
+  src: url('/fonts/Dana-DemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: Dana;
+  font-style: normal;
+  font-weight: 500;
+  src: url('/fonts/Dana-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: Dana;
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/Dana-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: Dana;
+  font-style: normal;
+  font-weight: 300;
+  src: url('/fonts/Dana-Light.woff2') format('woff2');
+}
+@font-face {
+  font-family: Dana;
+  font-style: normal;
+  font-weight: 200;
+  src: url('/fonts/Dana-Thin.woff2') format('woff2');
 }
 
 * {
@@ -14,6 +53,24 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
+@layer base {
+  :root {
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+  }
+
+  .dark {
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+  }
+}
+
 html,
 body,
 #app {
@@ -21,7 +78,7 @@ body,
 }
 
 body {
-  font-family: system-ui;
+  font-family: 'Dana', sans-serif;
   font-size: 18px;
   line-height: 32px;
 
