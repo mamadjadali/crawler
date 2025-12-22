@@ -123,12 +123,12 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
                 try {
                   const detectedSite = detectSite(urlEntry.url || '')
                   // If site field is missing, invalid, or doesn't match URL, use detected site
-                  if (!site || (site !== 'torob' && site !== 'technolife') || site !== detectedSite) {
+                  if (!site || (site !== 'torob' && site !== 'technolife' && site !== 'mobile140' && site !== 'gooshionline' && site !== 'kasrapars') || site !== detectedSite) {
                     site = detectedSite
                   }
                 } catch {
                   // If URL is invalid, keep original site or default to torob
-                  if (!site || (site !== 'torob' && site !== 'technolife')) {
+                  if (!site || (site !== 'torob' && site !== 'technolife' && site !== 'mobile140' && site !== 'gooshionline' && site !== 'kasrapars')) {
                     site = 'torob'
                   }
                 }

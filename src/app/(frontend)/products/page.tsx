@@ -77,12 +77,12 @@ export default async function ProductsPage() {
         try {
           const detectedSite = detectSite(urlEntry.url || '')
           // If site field is missing, invalid, or doesn't match URL, use detected site
-          if (!site || (site !== 'torob' && site !== 'technolife') || site !== detectedSite) {
+          if (!site || (site !== 'torob' && site !== 'technolife' && site !== 'mobile140' && site !== 'gooshionline' && site !== 'kasrapars') || site !== detectedSite) {
             site = detectedSite
           }
         } catch {
           // If URL is invalid, keep original site or default to torob
-          if (!site || (site !== 'torob' && site !== 'technolife')) {
+          if (!site || (site !== 'torob' && site !== 'technolife' && site !== 'mobile140' && site !== 'gooshionline' && site !== 'kasrapars')) {
             site = 'torob'
           }
         }
@@ -122,12 +122,12 @@ export default async function ProductsPage() {
             لیست محصولات
           </p>
           <p className="text-gray-600 dark:text-gray-400">
-            مدیریت و ردیابی قیمت محصولات از تربــ
+            مدیریت و ردیابی قیمت محصولاتـ
           </p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-transparent border border-gray-400 rounded-xl shadow p-6">
             <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
               کل محصولات
@@ -138,30 +138,33 @@ export default async function ProductsPage() {
           </div>
           <div className="bg-green-500/20 border border-green-400 rounded-xl shadow p-6">
             <div className="text-sm font-medium text-gray-400">
-              با قیمت
+            🇺🇸 دلار
             </div>
-            <div className="mt-2 text-3xl font-bold text-white">
-              {new Intl.NumberFormat('fa-IR').format(
-                products.filter((p: any) => {
-                  const productUrls = p.productUrls || []
-                  return productUrls.some((urlEntry: any) => urlEntry.currentPrice !== null)
-                }).length
-              )}
+            <div className="mt-2 text-left text-3xl font-bold text-white">
+              {new Intl.NumberFormat('fa-IR').format(132150)}
             </div>
           </div>
-          <div className="bg-yellow-500/20 border border-yellow-400 rounded-xl shadow p-6">
+          <div className="bg-purple-500/20 border border-purple-400 rounded-xl shadow p-6">
             <div className="text-sm font-medium text-gray-400">
-              نیاز به بروزرسانی
+            🇦🇪 درهم
             </div>
-            <div className="mt-2 text-3xl font-bold text-white">
-              {new Intl.NumberFormat('fa-IR').format(
-                products.filter((p: any) => {
-                  const productUrls = p.productUrls || []
-                  return productUrls.some((urlEntry: any) => 
-                    urlEntry.crawlStatus === 'pending' || urlEntry.crawlStatus === 'failed'
-                  )
-                }).length
-              )}
+            <div className="mt-2 text-left text-3xl font-bold text-white">
+              {new Intl.NumberFormat('fa-IR').format(359910)}
+            </div>
+          </div>
+          <div className="bg-cyan-500/20 border border-cyan-400 rounded-xl shadow p-6">
+            <div className="text-sm font-medium text-gray-400">
+              زمان فعلی
+            </div>
+            <div className="mt-2 text-lg font-bold text-white">
+              {new Intl.DateTimeFormat('fa-IR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              }).format(new Date())}
             </div>
           </div>
         </div>

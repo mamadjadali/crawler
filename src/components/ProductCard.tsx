@@ -95,11 +95,12 @@ export default function ProductCard({
   // Get overall status
   const hasSuccess = urls.some((urlEntry) => urlEntry.crawlStatus === 'success')
   const hasFailed = urls.some((urlEntry) => urlEntry.crawlStatus === 'failed')
+  const isNotAvailable = urls.some((urlEntry) => urlEntry.crawlError === 'Product not available')
   const displayStatus: 'pending' | 'success' | 'failed' = hasSuccess
     ? 'success'
     : hasFailed
-      ? 'failed'
-      : 'pending'
+    ? 'failed'
+    : 'pending'
 
   // Get unique sites
   const sites = [...new Set(urls.map((urlEntry) => urlEntry.site))]
@@ -123,9 +124,13 @@ export default function ProductCard({
                     </div>
                     {urls.length > 1 && (
                       <div className="text-xs text-gray-500 mt-1">
-                        از {urls.length} منبع
+                        از {new Intl.NumberFormat('fa-IR').format(urls.length)} منبع
                       </div>
                     )}
+                  </div>
+                ) : isNotAvailable ? (
+                  <div className="text-sm text-orange-400">
+                    موجود نیست
                   </div>
                 ) : (
                   <div className="text-sm text-gray-400">
@@ -164,10 +169,16 @@ export default function ProductCard({
                       className={`text-xs rounded-lg px-4 py-1 ${
                         siteName === 'technolife'
                           ? 'border border-blue-900 bg-[#223266]/50 text-white'
+                          : siteName === 'mobile140'
+                          ? 'border border-sky-400 bg-sky-400/20 text-white'
+                          : siteName === 'gooshionline'
+                          ? 'border border-gray-400 bg-gray-400/20 text-white'
+                          : siteName === 'kasrapars'
+                          ? 'border border-yellow-400 bg-yellow-400/20 text-white'
                           : 'border border-rose-400 bg-rose-400/20 text-white'
                       }`}
                     >
-                      {siteName === 'torob' ? 'تربـــ' : siteName === 'technolife' ? 'تکنولایفــ' : siteName}
+                      {siteName === 'torob' ? 'تربـــ' : siteName === 'technolife' ? 'تکنولایفــ' : siteName === 'mobile140' ? 'موبایل۱۴۰' : siteName === 'gooshionline' ? 'گوشی آنلاین' : siteName === 'kasrapars' ? 'کسری پلاس' : siteName}
                     </Badge>
                   ))}
                   <Badge

@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge'
 import RefreshPriceIcon from './RefreshPriceIcon'
 import { formatPrice, formatDate } from '@/lib/utils/formatPrice'
 import { ArrowBigLeftDash, ChevronsLeft, ExternalLink, PencilIcon, TrendingUp, Copy, Check } from 'lucide-react'
+import { Separator } from './ui/separator'
 
 interface PriceHistoryItem {
   price: number
@@ -115,7 +116,7 @@ export default function ProductSheet({
       .map((urlEntry) => ({
         price: urlEntry.currentPrice,
         site: urlEntry.site,
-        siteName: urlEntry.site === 'torob' ? 'تربـــ' : urlEntry.site === 'technolife' ? 'تکنولایفــ' : urlEntry.site,
+        siteName: urlEntry.site === 'torob' ? 'تربـــ' : urlEntry.site === 'technolife' ? 'تکنولایفــ' : urlEntry.site === 'mobile140' ? 'موبایل۱۴۰' : urlEntry.site,
       }))
       .filter((item) => item.price !== null && item.price !== undefined)
     
@@ -208,7 +209,7 @@ export default function ProductSheet({
                 <span className="text-sm font-medium text-white flex items-center gap-2">
                   پایین ترین قیمت 
                   <ChevronsLeft className="size-4 text-green-400" />
-                   {lowestPriceInfo.siteName === 'technolife' ? 'تکنولایفــ' : lowestPriceInfo.siteName === 'torob' ? 'تربـــ' : lowestPriceInfo.siteName}
+                   {lowestPriceInfo.siteName === 'technolife' ? 'تکنولایفــ' : lowestPriceInfo.siteName === 'torob' ? 'تربـــ' : lowestPriceInfo.siteName === 'mobile140' ? 'موبایل۱۴۰' : lowestPriceInfo.siteName}
                 </span>
                 <RefreshPriceIcon
                   productId={productId}
@@ -225,14 +226,22 @@ export default function ProductSheet({
             </h4>
             <div className="space-y-2">
               {refreshedProductUrls.map((urlEntry, index) => {
-                const siteName = urlEntry.site === 'torob' ? 'تربـــ' : urlEntry.site === 'technolife' ? 'تکنولایفــ' : urlEntry.site
+                const siteName = urlEntry.site === 'torob' ? 'تربـــ' : urlEntry.site === 'technolife' ? 'تکنولایفــ' : urlEntry.site === 'mobile140' ? 'موبایل۱۴۰' : urlEntry.site === 'gooshionline' ? 'گوشی آنلاین' : urlEntry.site === 'kasrapars' ? 'کسری پلاس' : urlEntry.site
                 const siteColorClass = urlEntry.site === 'technolife'
                   ? 'text-blue-400'
+                  : urlEntry.site === 'mobile140'
+                  ? 'text-sky-400'
+                  : urlEntry.site === 'gooshionline'
+                  ? 'text-gray-400'
+                  : urlEntry.site === 'kasrapars'
+                  ? 'text-yellow-400'
                   : 'text-rose-400'
                 return (
                   <div key={index} className="flex items-center justify-between">
                     <span className={`text-sm font-medium ${siteColorClass}`}>{siteName} :</span>
-                    {urlEntry.currentPrice !== null ? (
+                    {urlEntry.crawlError === 'Product not available' ? (
+                      <span className="text-sm text-orange-400 dark:text-orange-300">ناموجود</span>
+                    ) : urlEntry.currentPrice !== null ? (
                       <div className="flex items-center gap-2">
                         <span className="text-lg font-semibold text-white">
                           {formatPrice(urlEntry.currentPrice, true)}
@@ -254,6 +263,7 @@ export default function ProductSheet({
                     ) : (
                       <span className="text-sm text-gray-500 dark:text-gray-400">قیمت نامشخص</span>
                     )}
+              {/* <Separator className="my-2 border-gray-400 border-b" /> */}
                   </div>
                 )
               })}
@@ -262,7 +272,7 @@ export default function ProductSheet({
 
           {/* Per-Site Sections */}
           {refreshedProductUrls.map((urlEntry, index) => {
-            const siteName = urlEntry.site === 'torob' ? 'تربـــ' : urlEntry.site === 'technolife' ? 'تکنولایفــ' : urlEntry.site
+            const siteName = urlEntry.site === 'torob' ? 'تربـــ' : urlEntry.site === 'technolife' ? 'تکنولایفــ' : urlEntry.site === 'mobile140' ? 'موبایل۱۴۰' : urlEntry.site === 'gooshionline' ? 'گوشی آنلاین' : urlEntry.site === 'kasrapars' ? 'کسری پلاس' : urlEntry.site
             const priceChange = calculatePriceChange(urlEntry.priceHistory || [])
 
             return (
@@ -276,6 +286,12 @@ export default function ProductSheet({
                         className={`rounded-lg px-4 py-1 ${
                           urlEntry.site === 'technolife'
                             ? 'border border-blue-900 bg-[#223266]/50 text-white'
+                            : urlEntry.site === 'mobile140'
+                            ? 'border border-sky-600 bg-sky-600/20 text-white'
+                            : urlEntry.site === 'gooshionline'
+                            ? 'border border-gray-400 bg-gray-400/20 text-white'
+                            : urlEntry.site === 'kasrapars'
+                            ? 'border border-yellow-400 bg-yellow-400/20 text-white'
                             : 'border border-rose-400 bg-rose-400/20 text-white'
                         }`}
                       >
@@ -319,7 +335,9 @@ export default function ProductSheet({
                   {/* Error message */}
                   {urlEntry.crawlError && (
                     <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-2 mb-3">
-                      <p className="text-xs text-red-800 dark:text-red-200">{urlEntry.crawlError}</p>
+                      <p className="text-xs text-red-800 dark:text-red-200">
+                        {urlEntry.crawlError === 'Product not available' ? 'ناموجود' : urlEntry.crawlError}
+                      </p>
                     </div>
                   )}
 
@@ -360,7 +378,7 @@ export default function ProductSheet({
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                       تاریخچه قیمت ({siteName})
                     </h4>
-                    <div className="space-y-2 scrollbar-hide max-h-64 overflow-y-auto">
+                    <div className="space-y-2 max-h-64 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                       {urlEntry.priceHistory
                         .slice()
                         .sort((a, b) => {

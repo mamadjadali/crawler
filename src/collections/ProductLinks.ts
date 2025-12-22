@@ -53,6 +53,9 @@ export const ProductLinks: CollectionConfig = {
           options: [
             { label: 'Torob', value: 'torob' },
             { label: 'Technolife', value: 'technolife' },
+            { label: 'Mobile140', value: 'mobile140' },
+            { label: 'GooshiOnline', value: 'gooshionline' },
+            { label: 'KasraPars', value: 'kasrapars' },
           ],
           admin: {
             description: 'Site will be auto-detected from URL if not provided',
@@ -134,12 +137,18 @@ export const ProductLinks: CollectionConfig = {
         if (data.url && !data.productUrls) {
           const url = new URL(data.url)
           const hostname = url.hostname.toLowerCase()
-          let detectedSite: 'torob' | 'technolife' = 'torob'
+          let detectedSite: 'torob' | 'technolife' | 'mobile140' | 'gooshionline' | 'kasrapars' = 'torob'
           
           if (hostname.includes('torob.com')) {
             detectedSite = 'torob'
           } else if (hostname.includes('technolife.com')) {
             detectedSite = 'technolife'
+          } else if (hostname.includes('mobile140.com')) {
+            detectedSite = 'mobile140'
+          } else if (hostname.includes('gooshi.online')) {
+            detectedSite = 'gooshionline'
+          } else if (hostname.includes('kasrapars.ir') || hostname.includes('plus.kasrapars.ir')) {
+            detectedSite = 'kasrapars'
           }
 
           data.productUrls = [
@@ -167,6 +176,12 @@ export const ProductLinks: CollectionConfig = {
                   urlEntry.site = 'torob'
                 } else if (hostname.includes('technolife.com')) {
                   urlEntry.site = 'technolife'
+                } else if (hostname.includes('mobile140.com')) {
+                  urlEntry.site = 'mobile140'
+                } else if (hostname.includes('gooshi.online')) {
+                  urlEntry.site = 'gooshionline'
+                } else if (hostname.includes('kasrapars.ir') || hostname.includes('plus.kasrapars.ir')) {
+                  urlEntry.site = 'kasrapars'
                 } else {
                   urlEntry.site = 'torob' // Default fallback
                 }

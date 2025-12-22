@@ -15,6 +15,18 @@ export function detectSite(url: string): string {
       return 'technolife'
     }
 
+    if (hostname.includes('mobile140.com')) {
+      return 'mobile140'
+    }
+
+    if (hostname.includes('gooshi.online')) {
+      return 'gooshionline'
+    }
+
+    if (hostname.includes('kasrapars.ir') || hostname.includes('plus.kasrapars.ir')) {
+      return 'kasrapars'
+    }
+
     // Default fallback
     return 'torob'
   } catch {

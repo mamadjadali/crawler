@@ -10,11 +10,22 @@ export class TorobCrawler implements SiteCrawler {
       if (!this.browser) {
         this.browser = await puppeteer.launch({
           headless: true,
-          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--disable-gpu',
+          ],
+          timeout: 60000,
         })
       }
 
       const page = await this.browser.newPage()
+
+      // Set default navigation timeout
+      page.setDefaultNavigationTimeout(60000)
+      page.setDefaultTimeout(60000)
 
       // Set user agent to mimic a real browser
       await page.setUserAgent(
@@ -23,12 +34,12 @@ export class TorobCrawler implements SiteCrawler {
 
       // Navigate to the product page
       await page.goto(url, {
-        waitUntil: 'networkidle2',
-        timeout: 30000,
+        waitUntil: 'domcontentloaded',
+        timeout: 60000,
       })
 
       // Wait a bit for dynamic content to load
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 3000))
 
       // Wait for price element to load
       // Torob.com typically shows prices in various formats
@@ -63,7 +74,7 @@ export class TorobCrawler implements SiteCrawler {
           // Try to wait for selector, but don't fail if not found
           try {
             await page.waitForSelector(selector, {
-              timeout: 3000,
+              timeout: 5000,
             })
           } catch {
             // Selector not found, try next one

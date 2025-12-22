@@ -190,7 +190,7 @@ export interface ProductLink {
     /**
      * Site will be auto-detected from URL if not provided
      */
-    site?: ('torob' | 'technolife') | null;
+    site?: ('torob' | 'technolife' | 'mobile140' | 'gooshionline' | 'kasrapars') | null;
     /**
      * Latest crawled price from this URL
      */
