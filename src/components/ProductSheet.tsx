@@ -209,7 +209,7 @@ export default function ProductSheet({
                 <span className="text-sm font-medium text-white flex items-center gap-2">
                   پایین ترین قیمت 
                   <ChevronsLeft className="size-4 text-green-400" />
-                   {lowestPriceInfo.siteName === 'technolife' ? 'تکنولایفــ' : lowestPriceInfo.siteName === 'torob' ? 'تربـــ' : lowestPriceInfo.siteName === 'mobile140' ? 'موبایل۱۴۰' : lowestPriceInfo.siteName}
+                   {lowestPriceInfo.siteName === 'technolife' ? 'تکنولایفــ' : lowestPriceInfo.siteName === 'torob' ? 'تربـــ' : lowestPriceInfo.siteName === 'mobile140' ? 'موبایل۱۴۰' : lowestPriceInfo.siteName === 'gooshionline' ? 'گوشی آنلاین' : lowestPriceInfo.siteName === 'kasrapars' ? 'کسری پلاس' : lowestPriceInfo.siteName}
                 </span>
                 <RefreshPriceIcon
                   productId={productId}

@@ -11,5 +11,11 @@ export interface SiteCrawler {
    * @returns Promise resolving to crawl result with price
    */
   crawl(url: string): Promise<CrawlResult>
+  
+  /**
+   * Close any resources (e.g., browser instances) used by the crawler
+   * Optional - crawlers that don't use persistent resources can implement as no-op
+   */
+  close?(): Promise<void>
 }
 

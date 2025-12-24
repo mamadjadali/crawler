@@ -2,6 +2,16 @@ import type { CollectionConfig } from 'payload'
 
 export const ProductLinks: CollectionConfig = {
   slug: 'product-links',
+  labels: {
+    singular: {
+      en: 'Product',
+      fa: 'محصول',
+    },
+    plural: {
+      en: 'Product',
+      fa: 'محصولاتــ',
+    },
+  },
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'productImage', 'productUrls', 'lastCrawledAt', 'crawlStatus'],
@@ -9,81 +19,141 @@ export const ProductLinks: CollectionConfig = {
   fields: [
     {
       name: 'name',
+      label: {
+        en: 'Name',
+        fa: 'نام',
+      },
       type: 'text',
       required: true,
       admin: {
-        description: 'Product name',
+        description: {
+          en: 'Product name',
+          fa: 'نام محصول',
+        },
       },
     },
     {
       name: 'productId',
+      label: {
+        en: 'Product ID',
+        fa: 'شناسه محصول',
+      },
       type: 'text',
       admin: {
-        description: 'Product ID from the source site (e.g., Mobile140 product ID)',
+        description: {
+          en: 'Product ID from the source site (e.g., Mobile140 product ID)',
+          fa: 'شناسه محصول از سایت منبع (مثلا شناسه محصول در موبایل۱۴۰)',
+        },
       },
     },
     {
       name: 'productImage',
+      label: {
+        en: 'Product Image',
+        fa: 'تصویر محصول',
+      },
       type: 'upload',
       relationTo: 'media',
       admin: {
-        description: 'Product image',
+        description: {
+          en: 'Product image',
+          fa: 'تصویر محصول',
+        },
       },
     },
     {
       name: 'productUrls',
+      label: {
+        en: 'Product URLs',
+        fa: 'لینک‌های محصول',
+      },
       type: 'array',
       required: true,
       minRows: 1,
       admin: {
-        description: 'Product URLs to crawl (can add multiple URLs from different sites)',
+        description: {
+          en: 'Product URLs to crawl (can add multiple URLs from different sites)',
+          fa: 'لینک‌های محصول برای دریافت (می‌توانید چندین لینک برای محصولات متفاوت اضافه کنید)',
+        },
       },
       fields: [
         {
           name: 'url',
+          label: {
+            en: 'URL',
+            fa: 'آدرس',
+          },
           type: 'text',
           required: true,
           admin: {
-            description: 'Product URL to crawl',
+            description: {
+              en: 'Product URL to crawl',
+              fa: 'لینک صفحه محصول برای دریافت',
+            },
           },
         },
         {
           name: 'site',
+          label: {
+            en: 'Site',
+            fa: 'سایت',
+          },
           type: 'select',
           options: [
-            { label: 'Torob', value: 'torob' },
-            { label: 'Technolife', value: 'technolife' },
-            { label: 'Mobile140', value: 'mobile140' },
-            { label: 'GooshiOnline', value: 'gooshionline' },
-            { label: 'KasraPars', value: 'kasrapars' },
+            { label: { en: 'Torob', fa: 'ترب' }, value: 'torob' },
+            { label: { en: 'Technolife', fa: 'تکنولایف' }, value: 'technolife' },
+            { label: { en: 'Mobile140', fa: 'موبایل۱۴۰' }, value: 'mobile140' },
+            { label: { en: 'GooshiOnline', fa: 'گوشی آنلاین' }, value: 'gooshionline' },
+            { label: { en: 'KasraPars', fa: 'کسراپارس' }, value: 'kasrapars' },
           ],
           admin: {
-            description: 'Site will be auto-detected from URL if not provided',
+            description: {
+              en: 'Site will be auto-detected from URL if not provided',
+              fa: 'سایت به طور خودکار تشخیص داده می‌شود اگر نهایتا توسط کاربر انتخاب نشود',
+            },
           },
         },
         {
           name: 'currentPrice',
+          label: {
+            en: 'Current Price',
+            fa: 'قیمت فعلی',
+          },
           type: 'number',
           admin: {
-            description: 'Latest crawled price from this URL',
+            description: {
+              en: 'Latest crawled price from this URL',
+              fa: 'قیمت آخرین دریافت از این لینک',
+            },
             readOnly: true,
           },
         },
         {
           name: 'lastCrawledAt',
+          label: {
+            en: 'Last Crawled At',
+            fa: 'زمان آخرین دریافت',
+          },
           type: 'date',
           admin: {
-            description: 'Timestamp of last successful crawl for this URL',
+            description: {
+              en: 'Timestamp of last successful crawl for this URL',
+              fa: 'زمان آخرین دریافت موفق از این لینک',
+            },
             readOnly: true,
           },
         },
         {
           name: 'crawlStatus',
+          label: {
+            en: 'Crawl Status',
+            fa: 'وضعیت دریافت',
+          },
           type: 'select',
           options: [
-            { label: 'Pending', value: 'pending' },
-            { label: 'Success', value: 'success' },
-            { label: 'Failed', value: 'failed' },
+            { label: { en: 'Pending', fa: 'درحال انتظار' }, value: 'pending' },
+            { label: { en: 'Success', fa: 'موفق' }, value: 'success' },
+            { label: { en: 'Failed', fa: 'خطا' }, value: 'failed' },
           ],
           defaultValue: 'pending',
           admin: {
@@ -92,26 +162,48 @@ export const ProductLinks: CollectionConfig = {
         },
         {
           name: 'crawlError',
+          label: {
+            en: 'Crawl Error',
+            fa: 'خطا در دریافت',
+          },
           type: 'text',
           admin: {
-            description: 'Error message if crawl failed for this URL',
+            description: {
+              en: 'Error message if crawl failed for this URL',
+              fa: 'پیغام خطا اگر دریافت موفق نبود',
+            },
             readOnly: true,
           },
         },
         {
           name: 'priceHistory',
+          label: {
+            en: 'Price History',
+            fa: 'تاریخچه قیمت',
+          },
           type: 'array',
           admin: {
-            description: 'Historical price data for this URL',
+            description: {
+              en: 'Historical price data for this URL',
+              fa: 'تاریخچه قیمت برای این لینک',
+            },
           },
           fields: [
             {
               name: 'price',
+              label: {
+                en: 'Price',
+                fa: 'قیمت',
+              },
               type: 'number',
               required: true,
             },
             {
               name: 'crawledAt',
+              label: {
+                en: 'Crawled At',
+                fa: 'زمان دریافت',
+              },
               type: 'date',
               required: true,
             },
@@ -121,6 +213,10 @@ export const ProductLinks: CollectionConfig = {
     },
     {
       name: 'refreshButton',
+      label: {
+        en: 'Refresh Button',
+        fa: 'دکمه به روز رسانی',
+      },
       type: 'ui',
       admin: {
         components: {

@@ -70,7 +70,9 @@ export async function crawlProduct(
  */
 export async function closeAllCrawlers(): Promise<void> {
   for (const crawler of crawlerInstances.values()) {
-    await crawler.close()
+    if (crawler.close) {
+      await crawler.close()
+    }
   }
   crawlerInstances.clear()
 }

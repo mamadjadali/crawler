@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import ProductsPageClient from '@/components/ProductsPageClient'
@@ -170,7 +171,14 @@ export default async function ProductsPage() {
         </div>
 
         {/* Products Page Client Component with Search */}
-        <ProductsPageClient initialProducts={transformedProducts} />
+        <Suspense fallback={
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
+            <p className="mt-4 text-gray-400">در حال بارگذاری...</p>
+          </div>
+        }>
+          <ProductsPageClient initialProducts={transformedProducts} />
+        </Suspense>
       </div>
     </div>
   )

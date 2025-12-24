@@ -29,8 +29,20 @@ export default function PriceDropdown({
   const [isOpen, setIsOpen] = useState(false)
   const [refreshedPrice, setRefreshedPrice] = useState<number | null>(currentPrice)
 
-  const handleRefreshComplete = (price: number | null) => {
-    setRefreshedPrice(price)
+  const handleRefreshComplete = (data: {
+    productUrls?: Array<{
+      url: string
+      site: string
+      currentPrice: number | null
+      lastCrawledAt: string | Date | null
+      crawlStatus: 'pending' | 'success' | 'failed'
+      crawlError?: string | null
+      priceHistory?: Array<{ price: number; crawledAt: string | Date }>
+    }>
+  }) => {
+    // Extract the first available price from the refreshed URLs
+    const firstPrice = data.productUrls?.find(url => url.currentPrice !== null)?.currentPrice ?? null
+    setRefreshedPrice(firstPrice)
     // Refresh the page after a short delay to show updated data
     if (typeof window !== 'undefined') {
       setTimeout(() => {
