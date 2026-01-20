@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import Image from 'next/image'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Sheet,
   SheetContent,
@@ -9,20 +9,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { formatDate, formatPrice } from '@/lib/utils/formatPrice'
+import { Check, ChevronsLeft, Copy, ExternalLink, PencilIcon, TrendingUp } from 'lucide-react'
+import Image from 'next/image'
+import { useEffect, useMemo, useState } from 'react'
 import RefreshPriceIcon from './RefreshPriceIcon'
-import { formatPrice, formatDate } from '@/lib/utils/formatPrice'
-import {
-  ArrowBigLeftDash,
-  ChevronsLeft,
-  ExternalLink,
-  PencilIcon,
-  TrendingUp,
-  Copy,
-  Check,
-} from 'lucide-react'
-import { Separator } from './ui/separator'
 
 interface PriceHistoryItem {
   price: number
@@ -68,14 +59,43 @@ export default function ProductSheet({
     setRefreshedProductUrls(productUrls)
   }, [productUrls])
 
-  const handleCopyPrice = async (price: number, index: number) => {
-    try {
-      await navigator.clipboard.writeText(price.toString())
-      setCopiedIndex(index)
-      setTimeout(() => setCopiedIndex(null), 2000)
-    } catch (err) {
-      console.error('Failed to copy price:', err)
+  // const handleCopyPrice = async (price: number, index: number) => {
+  //   try {
+  //     await navigator.clipboard.writeText(price.toString())
+  //     setCopiedIndex(index)
+  //     setTimeout(() => setCopiedIndex(null), 2000)
+  //   } catch (err) {
+  //     console.error('Failed to copy price:', err)
+  //   }
+  // }
+  const handleCopyPrice = (price: number, index: number) => {
+    if (typeof window === 'undefined') return // ensure client
+    const text = price.toString()
+
+    const copyText = async () => {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text)
+        } else {
+          const textArea = document.createElement('textarea')
+          textArea.value = text
+          textArea.style.position = 'fixed'
+          textArea.style.top = '-1000px'
+          document.body.appendChild(textArea)
+          textArea.focus()
+          textArea.select()
+          document.execCommand('copy')
+          document.body.removeChild(textArea)
+        }
+        setCopiedIndex(index)
+        setTimeout(() => setCopiedIndex(null), 2000)
+      } catch (err) {
+        console.error('Copy failed', err)
+        alert('کپی انجام نشد. لطفاً دستی کپی کنید.')
+      }
     }
+
+    copyText()
   }
 
   const handleRefreshComplete = (data: { productUrls?: ProductUrl[] }) => {
@@ -217,14 +237,14 @@ export default function ProductSheet({
             </div>
           </div>
           <SheetDescription>
-            <div>
-              <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1">
-                آخرین بروزرسانی
-              </span>
-              <span className="text-sm text-gray-700 dark:text-gray-300">
-                {mostRecentCrawl ? formatDate(mostRecentCrawl) : 'هنوز بروزرسانی نشده'}
-              </span>
-            </div>
+            {/* <div> */}
+            <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1">
+              آخرین بروزرسانی
+            </span>
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              {mostRecentCrawl ? formatDate(mostRecentCrawl) : 'هنوز بروزرسانی نشده'}
+            </span>
+            {/* </div> */}
           </SheetDescription>
         </SheetHeader>
 

@@ -2,13 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetTrigger } from '@/components/ui/sheet'
 import ProductSheet from './ProductSheet'
@@ -67,15 +61,20 @@ export default function ProductCard({
   const [sheetOpen, setSheetOpen] = useState(false)
 
   // Use productUrls if available, otherwise fall back to legacy fields
-  const urls = productUrls.length > 0 ? productUrls : [{
-    url,
-    site,
-    currentPrice,
-    lastCrawledAt,
-    crawlStatus,
-    crawlError,
-    priceHistory: priceHistory || [],
-  }]
+  const urls =
+    productUrls.length > 0
+      ? productUrls
+      : [
+          {
+            url,
+            site,
+            currentPrice,
+            lastCrawledAt,
+            crawlStatus,
+            crawlError,
+            priceHistory: priceHistory || [],
+          },
+        ]
 
   // Get lowest price from all URLs
   const prices = urls
@@ -87,10 +86,11 @@ export default function ProductCard({
   const allCrawlDates = urls
     .map((urlEntry) => urlEntry.lastCrawledAt)
     .filter((date) => date !== null && date !== undefined)
-    .map((date) => typeof date === 'string' ? new Date(date) : date)
-  const displayLastCrawledAt = allCrawlDates.length > 0
-    ? new Date(Math.max(...allCrawlDates.map((d: Date) => d.getTime())))
-    : null
+    .map((date) => (typeof date === 'string' ? new Date(date) : date))
+  const displayLastCrawledAt =
+    allCrawlDates.length > 0
+      ? new Date(Math.max(...allCrawlDates.map((d: Date) => d.getTime())))
+      : null
 
   // Get overall status
   const hasSuccess = urls.some((urlEntry) => urlEntry.crawlStatus === 'success')
@@ -99,8 +99,8 @@ export default function ProductCard({
   const displayStatus: 'pending' | 'success' | 'failed' = hasSuccess
     ? 'success'
     : hasFailed
-    ? 'failed'
-    : 'pending'
+      ? 'failed'
+      : 'pending'
 
   // Get unique sites
   const sites = [...new Set(urls.map((urlEntry) => urlEntry.site))]
@@ -118,6 +118,7 @@ export default function ProductCard({
                   <div>
                     <div className="text-xs text-gray-400 mb-1">
                       {urls.length > 1 ? 'کمترین قیمت' : 'قیمت فعلی'}
+                      {}
                     </div>
                     <div className="text-xl font-bold text-white">
                       {formatPrice(displayPrice, true)}
@@ -129,13 +130,9 @@ export default function ProductCard({
                     )}
                   </div>
                 ) : isNotAvailable ? (
-                  <div className="text-sm text-orange-400">
-                    موجود نیست
-                  </div>
+                  <div className="text-sm text-orange-400">موجود نیست</div>
                 ) : (
-                  <div className="text-sm text-gray-400">
-                    قیمت نامشخص
-                  </div>
+                  <div className="text-sm text-gray-400">قیمت نامشخص</div>
                 )}
               </div>
 
@@ -170,18 +167,28 @@ export default function ProductCard({
                         siteName === 'technolife'
                           ? 'border border-blue-900 bg-[#223266]/50 text-white'
                           : siteName === 'mobile140'
-                          ? 'border border-sky-400 bg-sky-400/20 text-white'
-                          : siteName === 'gooshionline'
-                          ? 'border border-gray-400 bg-gray-400/20 text-white'
-                          : siteName === 'kasrapars'
-                          ? 'border border-yellow-400 bg-yellow-400/20 text-white'
-                          : 'border border-rose-400 bg-rose-400/20 text-white'
+                            ? 'border border-sky-400 bg-sky-400/20 text-white'
+                            : siteName === 'gooshionline'
+                              ? 'border border-gray-400 bg-gray-400/20 text-white'
+                              : siteName === 'kasrapars'
+                                ? 'border border-yellow-400 bg-yellow-400/20 text-white'
+                                : 'border border-rose-400 bg-rose-400/20 text-white'
                       }`}
                     >
-                      {siteName === 'torob' ? 'تربـــ' : siteName === 'technolife' ? 'تکنولایفــ' : siteName === 'mobile140' ? 'موبایل۱۴۰' : siteName === 'gooshionline' ? 'گوشی آنلاین' : siteName === 'kasrapars' ? 'کسری پلاس' : siteName}
+                      {siteName === 'torob'
+                        ? 'تربـــ'
+                        : siteName === 'technolife'
+                          ? 'تکنولایفــ'
+                          : siteName === 'mobile140'
+                            ? 'موبایل۱۴۰'
+                            : siteName === 'gooshionline'
+                              ? 'گوشی آنلاین'
+                              : siteName === 'kasrapars'
+                                ? 'کسری پلاس'
+                                : siteName}
                     </Badge>
                   ))}
-                  <Badge
+                  {/* <Badge
                     variant={
                       displayStatus === 'success'
                         ? 'success'
@@ -196,14 +203,31 @@ export default function ProductCard({
                       : displayStatus === 'failed'
                         ? 'ناموفق'
                         : 'در انتظار'}
-                  </Badge>
+                  </Badge> */}
                 </div>
-                <span className="text-sm text-gray-300 flex items-center gap-2">
+                <div className="mt-4 text-sm w-full text-gray-300 flex justify-between items-center-safe">
+                  <ClockFadingIcon className="size-4" />
                   {displayLastCrawledAt ? formatDate(displayLastCrawledAt) : 'هنوز بروزرسانی نشده'}
-                  <ClockFadingIcon className="size-4 mr-2" />
-                </span>
-                <div>
-          </div>
+                  <span className="bg-white/10 border border-gray-400 py-1 px-4 rounded-lg text-xs">
+                    {displayLastCrawledAt &&
+                      (() => {
+                        const now = Date.now()
+                        const last = new Date(displayLastCrawledAt).getTime()
+                        const diffMs = now - last
+                        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+                        const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+                        const diffMinutes = Math.floor(diffMs / (1000 * 60))
+
+                        if (diffDays >= 1) {
+                          return `${new Intl.NumberFormat('fa-IR').format(diffDays)} روز قبل`
+                        } else if (diffHours >= 1) {
+                          return `${new Intl.NumberFormat('fa-IR').format(diffHours)} ساعت قبل`
+                        } else {
+                          return `${new Intl.NumberFormat('fa-IR').format(diffMinutes)} دقیقه قبل`
+                        }
+                      })()}
+                  </span>
+                </div>
               </div>
             </div>
           </CardContent>

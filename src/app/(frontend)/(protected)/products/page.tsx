@@ -152,26 +152,29 @@ export default async function ProductsPage() {
           <div className="bg-green-500/20 border border-green-400 rounded-xl shadow p-6">
             <div className="text-sm font-medium text-gray-400">🇺🇸 دلار</div>
             <div className="mt-2 text-left text-3xl font-bold text-white">
-              {new Intl.NumberFormat('fa-IR').format(132150)}
+              {/* {new Intl.NumberFormat('fa-IR').format(132150)} */}
+              ...
             </div>
           </div>
           <div className="bg-purple-500/20 border border-purple-400 rounded-xl shadow p-6">
             <div className="text-sm font-medium text-gray-400">🇦🇪 درهم</div>
             <div className="mt-2 text-left text-3xl font-bold text-white">
-              {new Intl.NumberFormat('fa-IR').format(359910)}
+              {/* {new Intl.NumberFormat('fa-IR').format(359910)} */}
+              ...
             </div>
           </div>
           <div className="bg-cyan-500/20 border border-cyan-400 rounded-xl shadow p-6">
-            <div className="text-sm font-medium text-gray-400">زمان فعلی</div>
-            <div className="mt-2 text-lg font-bold text-white">
-              {new Intl.DateTimeFormat('fa-IR', {
+            <div className="text-sm font-medium text-gray-400">طــلا</div>
+            <div className="mt-2 text-lg text-left font-bold text-white">
+              ...
+              {/* {new Intl.DateTimeFormat('fa-IR', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: false,
-              }).format(new Date())}
+              }).format(new Date())} */}
             </div>
           </div>
         </div>
