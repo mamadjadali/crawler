@@ -13,7 +13,15 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import RefreshPriceIcon from './RefreshPriceIcon'
 import { formatPrice, formatDate } from '@/lib/utils/formatPrice'
-import { ArrowBigLeftDash, ChevronsLeft, ExternalLink, PencilIcon, TrendingUp, Copy, Check } from 'lucide-react'
+import {
+  ArrowBigLeftDash,
+  ChevronsLeft,
+  ExternalLink,
+  PencilIcon,
+  TrendingUp,
+  Copy,
+  Check,
+} from 'lucide-react'
 import { Separator } from './ui/separator'
 
 interface PriceHistoryItem {
@@ -70,38 +78,41 @@ export default function ProductSheet({
     }
   }
 
-  const handleRefreshComplete = (data: {
-    productUrls?: ProductUrl[]
-  }) => {
+  const handleRefreshComplete = (data: { productUrls?: ProductUrl[] }) => {
     if (data.productUrls) {
-      setRefreshedProductUrls(data.productUrls.map((urlEntry) => ({
-        ...urlEntry,
-        lastCrawledAt: urlEntry.lastCrawledAt
-          ? (typeof urlEntry.lastCrawledAt === 'string' ? new Date(urlEntry.lastCrawledAt) : urlEntry.lastCrawledAt)
-          : null,
-        priceHistory: (urlEntry.priceHistory || []).map((item) => ({
-          ...item,
-          crawledAt: typeof item.crawledAt === 'string' ? new Date(item.crawledAt) : item.crawledAt,
+      setRefreshedProductUrls(
+        data.productUrls.map((urlEntry) => ({
+          ...urlEntry,
+          lastCrawledAt: urlEntry.lastCrawledAt
+            ? typeof urlEntry.lastCrawledAt === 'string'
+              ? new Date(urlEntry.lastCrawledAt)
+              : urlEntry.lastCrawledAt
+            : null,
+          priceHistory: (urlEntry.priceHistory || []).map((item) => ({
+            ...item,
+            crawledAt:
+              typeof item.crawledAt === 'string' ? new Date(item.crawledAt) : item.crawledAt,
+          })),
         })),
-      })))
+      )
     }
   }
 
   // Helper function to calculate price change per site
   const calculatePriceChange = (priceHistory: PriceHistoryItem[]) => {
     if (!priceHistory || priceHistory.length < 2) return null
-    
+
     const sorted = [...priceHistory].sort((a, b) => {
       const dateA = typeof a.crawledAt === 'string' ? new Date(a.crawledAt) : a.crawledAt
       const dateB = typeof b.crawledAt === 'string' ? new Date(b.crawledAt) : b.crawledAt
       return dateA.getTime() - dateB.getTime()
     })
-    
+
     const firstPrice = sorted[0].price
     const lastPrice = sorted[sorted.length - 1].price
     const change = lastPrice - firstPrice
     const percentage = firstPrice > 0 ? (change / firstPrice) * 100 : 0
-    
+
     return {
       change,
       percentage,
@@ -116,16 +127,23 @@ export default function ProductSheet({
       .map((urlEntry) => ({
         price: urlEntry.currentPrice,
         site: urlEntry.site,
-        siteName: urlEntry.site === 'torob' ? 'تربـــ' : urlEntry.site === 'technolife' ? 'تکنولایفــ' : urlEntry.site === 'mobile140' ? 'موبایل۱۴۰' : urlEntry.site,
+        siteName:
+          urlEntry.site === 'torob'
+            ? 'تربـــ'
+            : urlEntry.site === 'technolife'
+              ? 'تکنولایفــ'
+              : urlEntry.site === 'mobile140'
+                ? 'موبایل۱۴۰'
+                : urlEntry.site,
       }))
       .filter((item) => item.price !== null && item.price !== undefined)
-    
+
     if (pricesWithSites.length === 0) return null
-    
-    const lowest = pricesWithSites.reduce((min, current) => 
-      (current.price as number) < (min.price as number) ? current : min
+
+    const lowest = pricesWithSites.reduce((min, current) =>
+      (current.price as number) < (min.price as number) ? current : min,
     )
-    
+
     return {
       price: lowest.price as number,
       site: lowest.site,
@@ -137,10 +155,11 @@ export default function ProductSheet({
   const allCrawlDates = refreshedProductUrls
     .map((urlEntry) => urlEntry.lastCrawledAt)
     .filter((date) => date !== null && date !== undefined)
-    .map((date) => typeof date === 'string' ? new Date(date) : date)
-  const mostRecentCrawl = allCrawlDates.length > 0
-    ? new Date(Math.max(...allCrawlDates.map((d: Date) => d.getTime())))
-    : null
+    .map((date) => (typeof date === 'string' ? new Date(date) : date))
+  const mostRecentCrawl =
+    allCrawlDates.length > 0
+      ? new Date(Math.max(...allCrawlDates.map((d: Date) => d.getTime())))
+      : null
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -169,7 +188,11 @@ export default function ProductSheet({
                     rel="noopener noreferrer"
                     className="inline-block w-1/2"
                   >
-                    <Button variant="default" size="icon" className="cursor-pointer border border-gray-400 rounded-lg w-full">
+                    <Button
+                      variant="default"
+                      size="icon"
+                      className="cursor-pointer border border-gray-400 rounded-lg w-full"
+                    >
                       <ExternalLink className="size-4" />
                     </Button>
                   </a>
@@ -181,7 +204,11 @@ export default function ProductSheet({
                     rel="noopener noreferrer"
                     className="inline-block w-1/2"
                   >
-                    <Button variant="default" size="icon" className="cursor-pointer border border-blue-400 rounded-lg w-full">
+                    <Button
+                      variant="default"
+                      size="icon"
+                      className="cursor-pointer border border-blue-400 rounded-lg w-full"
+                    >
                       <PencilIcon className="size-4" />
                     </Button>
                   </a>
@@ -200,21 +227,28 @@ export default function ProductSheet({
             </div>
           </SheetDescription>
         </SheetHeader>
-        
+
         <div className="mt-6 space-y-6">
           {/* Lowest Price Indicator Section */}
           {lowestPriceInfo && (
             <div className="bg-transparent rounded-lg p-4 border border-gray-400">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-white flex items-center gap-2">
-                  پایین ترین قیمت 
+                  پایین ترین قیمت
                   <ChevronsLeft className="size-4 text-green-400" />
-                   {lowestPriceInfo.siteName === 'technolife' ? 'تکنولایفــ' : lowestPriceInfo.siteName === 'torob' ? 'تربـــ' : lowestPriceInfo.siteName === 'mobile140' ? 'موبایل۱۴۰' : lowestPriceInfo.siteName === 'gooshionline' ? 'گوشی آنلاین' : lowestPriceInfo.siteName === 'kasrapars' ? 'کسری پلاس' : lowestPriceInfo.siteName}
+                  {lowestPriceInfo.siteName === 'technolife'
+                    ? 'تکنولایفــ'
+                    : lowestPriceInfo.siteName === 'torob'
+                      ? 'تربـــ'
+                      : lowestPriceInfo.siteName === 'mobile140'
+                        ? 'موبایل۱۴۰'
+                        : lowestPriceInfo.siteName === 'gooshionline'
+                          ? 'گوشی آنلاین'
+                          : lowestPriceInfo.siteName === 'kasrapars'
+                            ? 'کسری پلاس'
+                            : lowestPriceInfo.siteName}
                 </span>
-                <RefreshPriceIcon
-                  productId={productId}
-                  onRefreshComplete={handleRefreshComplete}
-                />
+                <RefreshPriceIcon productId={productId} onRefreshComplete={handleRefreshComplete} />
               </div>
             </div>
           )}
@@ -226,19 +260,35 @@ export default function ProductSheet({
             </h4>
             <div className="space-y-2">
               {refreshedProductUrls.map((urlEntry, index) => {
-                const siteName = urlEntry.site === 'torob' ? 'تربـــ' : urlEntry.site === 'technolife' ? 'تکنولایفــ' : urlEntry.site === 'mobile140' ? 'موبایل۱۴۰' : urlEntry.site === 'gooshionline' ? 'گوشی آنلاین' : urlEntry.site === 'kasrapars' ? 'کسری پلاس' : urlEntry.site
-                const siteColorClass = urlEntry.site === 'technolife'
-                  ? 'text-blue-400'
-                  : urlEntry.site === 'mobile140'
-                  ? 'text-sky-400'
-                  : urlEntry.site === 'gooshionline'
-                  ? 'text-gray-400'
-                  : urlEntry.site === 'kasrapars'
-                  ? 'text-yellow-400'
-                  : 'text-rose-400'
+                const siteName =
+                  urlEntry.site === 'torob'
+                    ? 'تربـــ'
+                    : urlEntry.site === 'technolife'
+                      ? 'تکنولایفــ'
+                      : urlEntry.site === 'mobile140'
+                        ? 'موبایل۱۴۰'
+                        : urlEntry.site === 'gooshionline'
+                          ? 'گوشی آنلاین'
+                          : urlEntry.site === 'kasrapars'
+                            ? 'کسری پلاس'
+                            : urlEntry.site
+                const siteColorClass =
+                  urlEntry.site === 'technolife'
+                    ? 'text-blue-400'
+                    : urlEntry.site === 'mobile140'
+                      ? 'text-sky-400'
+                      : urlEntry.site === 'gooshionline'
+                        ? 'text-gray-400'
+                        : urlEntry.site === 'kasrapars'
+                          ? 'text-yellow-400'
+                          : 'text-rose-400'
                 return (
                   <div key={index} className="flex items-center justify-between">
-                    <span className={`text-sm font-medium ${siteColorClass}`}>{siteName} :</span>
+                    <span className={`text-sm font-medium ${siteColorClass}`}>
+                      <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">
+                        {siteName} :
+                      </a>
+                    </span>
                     {urlEntry.crawlError === 'Product not available' ? (
                       <span className="text-sm text-orange-400 dark:text-orange-300">ناموجود</span>
                     ) : urlEntry.currentPrice !== null ? (
@@ -259,11 +309,20 @@ export default function ProductSheet({
                             <Copy className="h-4 w-4 text-gray-400" />
                           )}
                         </Button>
+                        <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 cursor-pointer text-blue-400"
+                          >
+                            <ExternalLink className="size-4" />
+                          </Button>
+                        </a>
                       </div>
                     ) : (
                       <span className="text-sm text-gray-500 dark:text-gray-400">قیمت نامشخص</span>
                     )}
-              {/* <Separator className="my-2 border-gray-400 border-b" /> */}
+                    {/* <Separator className="my-2 border-gray-400 border-b" /> */}
                   </div>
                 )
               })}
@@ -272,7 +331,18 @@ export default function ProductSheet({
 
           {/* Per-Site Sections */}
           {refreshedProductUrls.map((urlEntry, index) => {
-            const siteName = urlEntry.site === 'torob' ? 'تربـــ' : urlEntry.site === 'technolife' ? 'تکنولایفــ' : urlEntry.site === 'mobile140' ? 'موبایل۱۴۰' : urlEntry.site === 'gooshionline' ? 'گوشی آنلاین' : urlEntry.site === 'kasrapars' ? 'کسری پلاس' : urlEntry.site
+            const siteName =
+              urlEntry.site === 'torob'
+                ? 'تربـــ'
+                : urlEntry.site === 'technolife'
+                  ? 'تکنولایفــ'
+                  : urlEntry.site === 'mobile140'
+                    ? 'موبایل۱۴۰'
+                    : urlEntry.site === 'gooshionline'
+                      ? 'گوشی آنلاین'
+                      : urlEntry.site === 'kasrapars'
+                        ? 'کسری پلاس'
+                        : urlEntry.site
             const priceChange = calculatePriceChange(urlEntry.priceHistory || [])
 
             return (
@@ -287,15 +357,17 @@ export default function ProductSheet({
                           urlEntry.site === 'technolife'
                             ? 'border border-blue-900 bg-[#223266]/50 text-white'
                             : urlEntry.site === 'mobile140'
-                            ? 'border border-sky-600 bg-sky-600/20 text-white'
-                            : urlEntry.site === 'gooshionline'
-                            ? 'border border-gray-400 bg-gray-400/20 text-white'
-                            : urlEntry.site === 'kasrapars'
-                            ? 'border border-yellow-400 bg-yellow-400/20 text-white'
-                            : 'border border-rose-400 bg-rose-400/20 text-white'
+                              ? 'border border-sky-600 bg-sky-600/20 text-white'
+                              : urlEntry.site === 'gooshionline'
+                                ? 'border border-gray-400 bg-gray-400/20 text-white'
+                                : urlEntry.site === 'kasrapars'
+                                  ? 'border border-yellow-400 bg-yellow-400/20 text-white'
+                                  : 'border border-rose-400 bg-rose-400/20 text-white'
                         }`}
                       >
-                        {siteName}
+                        <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">
+                          {siteName}
+                        </a>
                       </Badge>
                       <Badge
                         variant={
@@ -314,11 +386,7 @@ export default function ProductSheet({
                             : 'در انتظار'}
                       </Badge>
                     </div>
-                    <a
-                      href={urlEntry.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">
                       <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer">
                         <ExternalLink className="size-4" />
                       </Button>
@@ -336,7 +404,9 @@ export default function ProductSheet({
                   {urlEntry.crawlError && (
                     <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-2 mb-3">
                       <p className="text-xs text-red-800 dark:text-red-200">
-                        {urlEntry.crawlError === 'Product not available' ? 'ناموجود' : urlEntry.crawlError}
+                        {urlEntry.crawlError === 'Product not available'
+                          ? 'ناموجود'
+                          : urlEntry.crawlError}
                       </p>
                     </div>
                   )}
@@ -351,7 +421,12 @@ export default function ProductSheet({
                         {priceChange.isIncrease && (
                           <div className="flex items-center gap-1 text-green-500">
                             <span>
-                              افزایش {formatPrice(Math.abs(priceChange.change), true)} ({new Intl.NumberFormat('fa-IR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(priceChange.percentage))}%)
+                              افزایش {formatPrice(Math.abs(priceChange.change), true)} (
+                              {new Intl.NumberFormat('fa-IR', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }).format(Math.abs(priceChange.percentage))}
+                              %)
                             </span>
                             <TrendingUp className="h-4 w-4" />
                           </div>
@@ -359,7 +434,12 @@ export default function ProductSheet({
                         {priceChange.isDecrease && (
                           <div className="flex items-center gap-1 text-red-500">
                             <span>
-                              کاهش {formatPrice(Math.abs(priceChange.change), true)} ({new Intl.NumberFormat('fa-IR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(priceChange.percentage))}%)
+                              کاهش {formatPrice(Math.abs(priceChange.change), true)} (
+                              {new Intl.NumberFormat('fa-IR', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }).format(Math.abs(priceChange.percentage))}
+                              %)
                             </span>
                             <TrendingUp className="h-4 w-4 rotate-180" />
                           </div>
@@ -382,8 +462,10 @@ export default function ProductSheet({
                       {urlEntry.priceHistory
                         .slice()
                         .sort((a, b) => {
-                          const dateA = typeof a.crawledAt === 'string' ? new Date(a.crawledAt) : a.crawledAt
-                          const dateB = typeof b.crawledAt === 'string' ? new Date(b.crawledAt) : b.crawledAt
+                          const dateA =
+                            typeof a.crawledAt === 'string' ? new Date(a.crawledAt) : a.crawledAt
+                          const dateB =
+                            typeof b.crawledAt === 'string' ? new Date(b.crawledAt) : b.crawledAt
                           return dateB.getTime() - dateA.getTime() // Newest first
                         })
                         .map((item, itemIndex) => (

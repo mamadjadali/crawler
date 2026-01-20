@@ -3,43 +3,146 @@ import type { SiteCrawler, CrawlResult } from './base'
 
 export class TorobCrawler implements SiteCrawler {
   private browser: Browser | null = null
+  private pagePool: Page[] = []
+  private readonly MAX_PAGES = 5
 
-  async crawl(url: string): Promise<CrawlResult> {
+  async getPage(): Promise<Page> {
+    // Clean up closed pages from pool
+    while (this.pagePool.length > 0) {
+      const page = this.pagePool.pop()!
+      try {
+        // Check if page is still open by accessing a property
+        if (!page.isClosed()) {
+          return page
+        }
+      } catch {
+        // Page is closed or invalid, continue to next
+      }
+    }
+
+    if (!this.browser) {
+      this.browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--disable-gpu',
+          // Remove '--disable-images' as it's not a valid flag
+          '--disable-plugins',
+          '--disable-extensions',
+          '--disable-background-networking',
+          '--disable-background-timer-throttling',
+          '--disable-renderer-backgrounding',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-breakpad',
+          '--disable-component-extensions-with-background-pages',
+          '--disable-features=TranslateUI',
+          '--disable-ipc-flooding-protection',
+          '--no-first-run',
+          '--no-default-browser-check',
+          '--no-pings',
+          '--no-zygote',
+          // Note: --single-process can cause issues with page reuse, removed for stability
+        ],
+        timeout: 20000, // Reduced from 30000
+      })
+    }
+
+    const page = await this.browser.newPage()
+
+    // Enable request interception to block images, stylesheets, fonts, etc.
+    await page.setRequestInterception(true)
+    page.on('request', (request) => {
+      const resourceType = request.resourceType()
+      // Block images, stylesheets, fonts, and media to speed up crawling
+      if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+        request.abort()
+      } else {
+        request.continue()
+      }
+    })
+
+    // Configure once on creation (reduced timeouts for faster crawling)
+    page.setDefaultNavigationTimeout(20000) // Reduced from 30000
+    page.setDefaultTimeout(20000) // Reduced from 30000
+    await page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    )
+
+    return page
+  }
+
+  async releasePage(page: Page): Promise<void> {
     try {
-      // Launch browser if not already launched
-      if (!this.browser) {
-        this.browser = await puppeteer.launch({
-          headless: true,
-          args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--disable-gpu',
-          ],
-          timeout: 60000,
-        })
+      // Check if page is still open before trying to reuse
+      if (page.isClosed()) {
+        return // Page already closed, don't add to pool
       }
 
-      const page = await this.browser.newPage()
+      // Clear page state
+      await page.goto('about:blank', { waitUntil: 'domcontentloaded' }).catch(() => {})
 
-      // Set default navigation timeout
-      page.setDefaultNavigationTimeout(60000)
-      page.setDefaultTimeout(60000)
+      // Double-check page is still open after navigation
+      if (page.isClosed()) {
+        return // Page closed during navigation
+      }
 
-      // Set user agent to mimic a real browser
-      await page.setUserAgent(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      )
+      // Return to pool if under max
+      if (this.pagePool.length < this.MAX_PAGES) {
+        this.pagePool.push(page)
+      } else {
+        await page.close()
+      }
+    } catch (error) {
+      // Page is broken, close it
+      await page.close().catch(() => {})
+    }
+  }
+
+  async crawl(url: string): Promise<CrawlResult> {
+    let page: Page | null = null
+    try {
+      page = await this.getPage()
 
       // Navigate to the product page
-      await page.goto(url, {
-        waitUntil: 'domcontentloaded',
-        timeout: 60000,
-      })
+      try {
+        // Check if page is still valid before navigation
+        if (page.isClosed()) {
+          // Page was closed, get a new one
+          page = await this.getPage()
+        }
+        
+        await page.goto(url, {
+          waitUntil: 'domcontentloaded',
+          timeout: 20000, // Reduced from 30000
+        })
+      } catch (navError) {
+        const errorMsg = navError instanceof Error ? navError.message : String(navError)
+        console.error(`[TorobCrawler] Navigation failed for ${url}:`, errorMsg)
+        
+        // If page is closed or target error, get a new page and retry once
+        if (errorMsg.includes('Target closed') || errorMsg.includes('Protocol error')) {
+          try {
+            if (page && !page.isClosed()) {
+              await this.releasePage(page)
+            }
+            page = await this.getPage()
+            await page.goto(url, {
+              waitUntil: 'domcontentloaded',
+              timeout: 20000, // Reduced from 30000
+            })
+          } catch (retryError) {
+            throw retryError
+          }
+        } else {
+          throw navError
+        }
+      }
 
-      // Wait a bit for dynamic content to load
-      await new Promise((resolve) => setTimeout(resolve, 3000))
+      // Wait for dynamic content to load (reduced from 3000ms to 2000ms)
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
       // Wait for price element to load
       // Torob.com typically shows prices in various formats
@@ -74,7 +177,7 @@ export class TorobCrawler implements SiteCrawler {
           // Try to wait for selector, but don't fail if not found
           try {
             await page.waitForSelector(selector, {
-              timeout: 5000,
+              timeout: 3000, // Reduced from 5000
             })
           } catch {
             // Selector not found, try next one
@@ -192,9 +295,8 @@ export class TorobCrawler implements SiteCrawler {
         }
       }
 
-      await page.close()
-
       if (price === null) {
+        if (page) await this.releasePage(page)
         return {
           success: false,
           price: null,
@@ -202,20 +304,31 @@ export class TorobCrawler implements SiteCrawler {
         }
       }
 
+      if (page) await this.releasePage(page)
+
       return {
         success: true,
         price,
       }
     } catch (error) {
+      if (page) await this.releasePage(page)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+      console.error(`[TorobCrawler] Crawl error for ${url}:`, errorMessage)
       return {
         success: false,
         price: null,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        error: errorMessage,
       }
     }
   }
 
   async close(): Promise<void> {
+    // Close all pages in pool
+    for (const page of this.pagePool) {
+      await page.close().catch(() => {})
+    }
+    this.pagePool = []
+
     if (this.browser) {
       await this.browser.close()
       this.browser = null

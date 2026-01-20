@@ -48,6 +48,7 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
   const [products, setProducts] = useState<Product[]>(initialProducts)
   const [isSearching, setIsSearching] = useState(false)
   const [lastSearchQuery, setLastSearchQuery] = useState<string>('')
+  // const [selectedCategory, setSelectedCategory] = useState<string>('')
 
   const searchQuery = searchParams.get('q') || ''
 
@@ -74,7 +75,11 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
           // Transform search results to match Product interface
           const transformedProducts = data.docs.map((product: any) => {
             let productImageUrl: string | null = null
-            if (product.productImage && typeof product.productImage === 'object' && product.productImage.url) {
+            if (
+              product.productImage &&
+              typeof product.productImage === 'object' &&
+              product.productImage.url
+            ) {
               productImageUrl = product.productImage.url
             } else if (typeof product.productImage === 'string') {
               productImageUrl = product.productImage
@@ -91,11 +96,14 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
               .map((urlEntry: any) => urlEntry.lastCrawledAt)
               .filter((date: any) => date !== null && date !== undefined)
               .map((date: string) => new Date(date))
-            const mostRecentCrawl = allCrawlDates.length > 0
-              ? new Date(Math.max(...allCrawlDates.map((d: Date) => d.getTime())))
-              : null
+            const mostRecentCrawl =
+              allCrawlDates.length > 0
+                ? new Date(Math.max(...allCrawlDates.map((d: Date) => d.getTime())))
+                : null
 
-            const hasSuccess = productUrls.some((urlEntry: any) => urlEntry.crawlStatus === 'success')
+            const hasSuccess = productUrls.some(
+              (urlEntry: any) => urlEntry.crawlStatus === 'success',
+            )
             const hasFailed = productUrls.some((urlEntry: any) => urlEntry.crawlStatus === 'failed')
             const overallStatus: 'pending' | 'success' | 'failed' = hasSuccess
               ? 'success'
@@ -109,7 +117,7 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
                 crawledAt: item.crawledAt ? new Date(item.crawledAt) : new Date(),
                 site: urlEntry.site,
                 url: urlEntry.url,
-              }))
+              })),
             )
 
             return {
@@ -123,24 +131,38 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
                 try {
                   const detectedSite = detectSite(urlEntry.url || '')
                   // If site field is missing, invalid, or doesn't match URL, use detected site
-                  if (!site || (site !== 'torob' && site !== 'technolife' && site !== 'mobile140' && site !== 'gooshionline' && site !== 'kasrapars') || site !== detectedSite) {
+                  if (
+                    !site ||
+                    (site !== 'torob' &&
+                      site !== 'technolife' &&
+                      site !== 'mobile140' &&
+                      site !== 'gooshionline' &&
+                      site !== 'kasrapars') ||
+                    site !== detectedSite
+                  ) {
                     site = detectedSite
                   }
                 } catch {
                   // If URL is invalid, keep original site or default to torob
-                  if (!site || (site !== 'torob' && site !== 'technolife' && site !== 'mobile140' && site !== 'gooshionline' && site !== 'kasrapars')) {
+                  if (
+                    !site ||
+                    (site !== 'torob' &&
+                      site !== 'technolife' &&
+                      site !== 'mobile140' &&
+                      site !== 'gooshionline' &&
+                      site !== 'kasrapars')
+                  ) {
                     site = 'torob'
                   }
                 }
-                
+
                 return {
                   url: urlEntry.url || '',
                   site: site,
                   currentPrice: urlEntry.currentPrice ?? null,
-                  lastCrawledAt: urlEntry.lastCrawledAt
-                    ? new Date(urlEntry.lastCrawledAt)
-                    : null,
-                  crawlStatus: (urlEntry.crawlStatus as 'pending' | 'success' | 'failed') || 'pending',
+                  lastCrawledAt: urlEntry.lastCrawledAt ? new Date(urlEntry.lastCrawledAt) : null,
+                  crawlStatus:
+                    (urlEntry.crawlStatus as 'pending' | 'success' | 'failed') || 'pending',
                   crawlError: urlEntry.crawlError || null,
                   priceHistory: (urlEntry.priceHistory || []).map((item: any) => ({
                     price: item.price,
@@ -154,7 +176,8 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
               currentPrice: lowestPrice,
               lastCrawledAt: mostRecentCrawl,
               crawlStatus: overallStatus,
-              crawlError: productUrls.find((urlEntry: any) => urlEntry.crawlError)?.crawlError || null,
+              crawlError:
+                productUrls.find((urlEntry: any) => urlEntry.crawlError)?.crawlError || null,
               priceHistory: allPriceHistory,
             }
           })
@@ -173,21 +196,24 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
     performSearch()
   }, [searchQuery, lastSearchQuery, initialProducts])
 
-  const handleSearch = useCallback((query: string) => {
-    const currentQuery = searchParams.get('q') || ''
-    // Only navigate if query actually changed
-    if (query === currentQuery) {
-      return
-    }
+  const handleSearch = useCallback(
+    (query: string) => {
+      const currentQuery = searchParams.get('q') || ''
+      // Only navigate if query actually changed
+      if (query === currentQuery) {
+        return
+      }
 
-    const params = new URLSearchParams(searchParams.toString())
-    if (query) {
-      params.set('q', query)
-    } else {
-      params.delete('q')
-    }
-    router.push(`/products?${params.toString()}`)
-  }, [router, searchParams])
+      const params = new URLSearchParams(searchParams.toString())
+      if (query) {
+        params.set('q', query)
+      } else {
+        params.delete('q')
+      }
+      router.push(`/products?${params.toString()}`)
+    },
+    [router, searchParams],
+  )
 
   return (
     <>
@@ -196,10 +222,22 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
         <div className="max-w-md">
           <SearchInput
             onSearch={handleSearch}
-            placeholder="جستجو بر اساس نام، شناسه یا لینک محصول..."
-            initialValue={searchQuery}
+            placeholder="جستجو بر اساس نام یا شناسه ..."
+            // initialValue={searchQuery}
+            value={searchQuery}
           />
         </div>
+        {/* <CategorySelect
+          value={selectedCategory}
+          onChange={(catId) => {
+            setSelectedCategory(catId)
+            // Update URL with category
+            const params = new URLSearchParams(searchParams.toString())
+            if (catId) params.set('category', catId)
+            else params.delete('category')
+            router.push(`/products?${params.toString()}`)
+          }}
+        /> */}
       </div>
 
       {/* Product List */}
@@ -214,4 +252,3 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
     </>
   )
 }
-

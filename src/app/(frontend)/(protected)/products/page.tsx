@@ -25,7 +25,11 @@ export default async function ProductsPage() {
   const transformedProducts = products.map((product: any) => {
     // Get product image URL from media relationship
     let productImageUrl: string | null = null
-    if (product.productImage && typeof product.productImage === 'object' && product.productImage.url) {
+    if (
+      product.productImage &&
+      typeof product.productImage === 'object' &&
+      product.productImage.url
+    ) {
       productImageUrl = product.productImage.url
     } else if (typeof product.productImage === 'string') {
       // If it's just an ID, we'd need to fetch it, but for now assume it's a URL
@@ -44,9 +48,10 @@ export default async function ProductsPage() {
       .map((urlEntry: any) => urlEntry.lastCrawledAt)
       .filter((date: any) => date !== null && date !== undefined)
       .map((date: string) => new Date(date))
-    const mostRecentCrawl = allCrawlDates.length > 0
-      ? new Date(Math.max(...allCrawlDates.map((d: Date) => d.getTime())))
-      : null
+    const mostRecentCrawl =
+      allCrawlDates.length > 0
+        ? new Date(Math.max(...allCrawlDates.map((d: Date) => d.getTime())))
+        : null
 
     // Get overall crawl status (success if any URL succeeded)
     const hasSuccess = productUrls.some((urlEntry: any) => urlEntry.crawlStatus === 'success')
@@ -64,7 +69,7 @@ export default async function ProductsPage() {
         crawledAt: item.crawledAt ? new Date(item.crawledAt) : new Date(),
         site: urlEntry.site,
         url: urlEntry.url,
-      }))
+      })),
     )
 
     return {
@@ -78,23 +83,36 @@ export default async function ProductsPage() {
         try {
           const detectedSite = detectSite(urlEntry.url || '')
           // If site field is missing, invalid, or doesn't match URL, use detected site
-          if (!site || (site !== 'torob' && site !== 'technolife' && site !== 'mobile140' && site !== 'gooshionline' && site !== 'kasrapars') || site !== detectedSite) {
+          if (
+            !site ||
+            (site !== 'torob' &&
+              site !== 'technolife' &&
+              site !== 'mobile140' &&
+              site !== 'gooshionline' &&
+              site !== 'kasrapars') ||
+            site !== detectedSite
+          ) {
             site = detectedSite
           }
         } catch {
           // If URL is invalid, keep original site or default to torob
-          if (!site || (site !== 'torob' && site !== 'technolife' && site !== 'mobile140' && site !== 'gooshionline' && site !== 'kasrapars')) {
+          if (
+            !site ||
+            (site !== 'torob' &&
+              site !== 'technolife' &&
+              site !== 'mobile140' &&
+              site !== 'gooshionline' &&
+              site !== 'kasrapars')
+          ) {
             site = 'torob'
           }
         }
-        
+
         return {
           url: urlEntry.url || '',
           site: site,
           currentPrice: urlEntry.currentPrice ?? null,
-          lastCrawledAt: urlEntry.lastCrawledAt
-            ? new Date(urlEntry.lastCrawledAt)
-            : null,
+          lastCrawledAt: urlEntry.lastCrawledAt ? new Date(urlEntry.lastCrawledAt) : null,
           crawlStatus: (urlEntry.crawlStatus as 'pending' | 'success' | 'failed') || 'pending',
           crawlError: urlEntry.crawlError || null,
           priceHistory: (urlEntry.priceHistory || []).map((item: any) => ({
@@ -119,44 +137,32 @@ export default async function ProductsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <p className="text-2xl font-bold text-gray-400 mb-2">
-            لیست محصولات
-          </p>
-          <p className="text-gray-600 dark:text-gray-400">
-            مدیریت و ردیابی قیمت محصولاتـ
-          </p>
+          <p className="text-2xl font-bold text-gray-400 mb-2">لیست محصولات</p>
+          <p className="text-gray-600 dark:text-gray-400">مدیریت و ردیابی قیمت محصولاتـ</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-transparent border border-gray-400 rounded-xl shadow p-6">
-            <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              کل محصولات
-            </div>
-            <div className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+            <div className="text-sm font-medium text-gray-400">کل محصولات</div>
+            <div className="mt-2 text-3xl font-bold text-white">
               {new Intl.NumberFormat('fa-IR').format(products.length)}
             </div>
           </div>
           <div className="bg-green-500/20 border border-green-400 rounded-xl shadow p-6">
-            <div className="text-sm font-medium text-gray-400">
-            🇺🇸 دلار
-            </div>
+            <div className="text-sm font-medium text-gray-400">🇺🇸 دلار</div>
             <div className="mt-2 text-left text-3xl font-bold text-white">
               {new Intl.NumberFormat('fa-IR').format(132150)}
             </div>
           </div>
           <div className="bg-purple-500/20 border border-purple-400 rounded-xl shadow p-6">
-            <div className="text-sm font-medium text-gray-400">
-            🇦🇪 درهم
-            </div>
+            <div className="text-sm font-medium text-gray-400">🇦🇪 درهم</div>
             <div className="mt-2 text-left text-3xl font-bold text-white">
               {new Intl.NumberFormat('fa-IR').format(359910)}
             </div>
           </div>
           <div className="bg-cyan-500/20 border border-cyan-400 rounded-xl shadow p-6">
-            <div className="text-sm font-medium text-gray-400">
-              زمان فعلی
-            </div>
+            <div className="text-sm font-medium text-gray-400">زمان فعلی</div>
             <div className="mt-2 text-lg font-bold text-white">
               {new Intl.DateTimeFormat('fa-IR', {
                 year: 'numeric',
@@ -171,16 +177,17 @@ export default async function ProductsPage() {
         </div>
 
         {/* Products Page Client Component with Search */}
-        <Suspense fallback={
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
-            <p className="mt-4 text-gray-400">در حال بارگذاری...</p>
-          </div>
-        }>
+        <Suspense
+          fallback={
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
+              <p className="mt-4 text-gray-400">در حال بارگذاری...</p>
+            </div>
+          }
+        >
           <ProductsPageClient initialProducts={transformedProducts} />
         </Suspense>
       </div>
     </div>
   )
 }
-

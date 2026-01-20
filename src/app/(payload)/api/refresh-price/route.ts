@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { crawlProduct } from '../../../../lib/crawler/crawler'
+import pLimit from 'p-limit'
 
 export async function POST(request: Request) {
   try {
@@ -36,16 +37,27 @@ export async function POST(request: Request) {
       return Response.json({ error: 'Product URLs are missing' }, { status: 400 })
     }
 
-    // Crawl all URLs for the product
-    const updatedProductUrls = await Promise.all(
-      product.productUrls.map(async (urlEntry: any) => {
+    // Crawl all URLs for the product with concurrency control
+    const urlLimit = pLimit(5) // Process 5 URLs concurrently per product
+    const crawlStartTime = Date.now()
+
+    const urlPromises = product.productUrls.map((urlEntry: any) =>
+      urlLimit(async () => {
         // Skip if URL is empty
         if (!urlEntry.url) {
           return urlEntry
         }
 
+        const urlStartTime = Date.now()
         try {
           const result = await crawlProduct(urlEntry.url, urlEntry.site || 'torob')
+          const urlEndTime = Date.now()
+          const urlDuration = ((urlEndTime - urlStartTime) / 1000).toFixed(2)
+          if (result.success) {
+            console.log(`[Crawl] ${urlEntry.site || 'torob'} - ${urlEntry.url.substring(0, 50)}... | Time: ${urlDuration}s | ✓ Success | Price: ${result.price?.toLocaleString('fa-IR')}`)
+          } else {
+            console.log(`[Crawl] ${urlEntry.site || 'torob'} - ${urlEntry.url.substring(0, 50)}... | Time: ${urlDuration}s | ✗ Failed | Error: ${result.error || 'Unknown'}`)
+          }
 
           if (result.success && result.price !== null) {
             return {
@@ -70,6 +82,9 @@ export async function POST(request: Request) {
             }
           }
         } catch (error) {
+          const urlEndTime = Date.now()
+          const urlDuration = ((urlEndTime - urlStartTime) / 1000).toFixed(2)
+          console.log(`[Crawl] ${urlEntry.site || 'torob'} - ${urlEntry.url.substring(0, 50)}... | Time: ${urlDuration}s | ✗ Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
           return {
             ...urlEntry,
             crawlStatus: 'failed',
@@ -79,21 +94,63 @@ export async function POST(request: Request) {
       })
     )
 
+    const settledResults = await Promise.allSettled(urlPromises)
+    const crawlEndTime = Date.now()
+    const totalDuration = ((crawlEndTime - crawlStartTime) / 1000).toFixed(2)
+    console.log(`[Crawl] Product ${product.id} - Total crawl time: ${totalDuration}s for ${product.productUrls.length} URL(s)`)
+    
+    const mapStartTime = Date.now()
+    const updatedProductUrls = settledResults.map((result) => {
+      if (result.status === 'fulfilled') {
+        return result.value
+      } else {
+        // If a promise was rejected, return a failed URL entry
+        // Find the corresponding URL entry to preserve its structure
+        const index = settledResults.indexOf(result)
+        const urlEntry = product.productUrls[index]
+        return {
+          ...urlEntry,
+          crawlStatus: 'failed',
+          crawlError: result.reason instanceof Error ? result.reason.message : 'Unknown error',
+        }
+      }
+    })
+    const mapEndTime = Date.now()
+    const mapDuration = ((mapEndTime - mapStartTime) / 1000).toFixed(2)
+    console.log(`[Crawl] Product ${product.id} - Result mapping time: ${mapDuration}s`)
+
     // Update the product with all URL crawl results
+    const dbUpdateStartTime = Date.now()
     const updated = await payload.update({
       collection: 'product-links',
       id,
       data: {
         productUrls: updatedProductUrls,
       },
+      depth: 0, // Don't populate relationships - faster
     })
+    const dbUpdateEndTime = Date.now()
+    const dbUpdateDuration = ((dbUpdateEndTime - dbUpdateStartTime) / 1000).toFixed(2)
+    console.log(`[Crawl] Product ${product.id} - Database update time: ${dbUpdateDuration}s`)
 
-    // Return complete updated product data for frontend state update
-    return Response.json({
+    // Return minimal data for frontend state update (reduced payload size)
+    const responseStartTime = Date.now()
+    const response = Response.json({
       success: true,
       productUrls: updatedProductUrls,
-      product: updated,
+      // Only return essential fields to reduce response size
+      product: {
+        id: updated.id,
+        name: updated.name,
+        updatedAt: updated.updatedAt,
+      },
     })
+    const responseEndTime = Date.now()
+    const responseDuration = ((responseEndTime - responseStartTime) / 1000).toFixed(2)
+    const totalApiTime = ((responseEndTime - crawlStartTime) / 1000).toFixed(2)
+    console.log(`[Crawl] Product ${product.id} - Response serialization time: ${responseDuration}s | Total API time: ${totalApiTime}s`)
+    
+    return response
   } catch (error) {
     return Response.json(
       {

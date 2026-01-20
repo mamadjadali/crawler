@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
         or: [
           { name: { contains: query } },
           { productId: { contains: query } },
-          { url: { contains: query } },
+          // { url: { contains: query } },
         ],
       },
       depth: 1,
@@ -40,8 +40,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to search products',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }
-

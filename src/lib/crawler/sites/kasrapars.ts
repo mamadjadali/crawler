@@ -3,44 +3,146 @@ import type { SiteCrawler, CrawlResult } from './base'
 
 export class KasraParsCrawler implements SiteCrawler {
   private browser: Browser | null = null
+  private pagePool: Page[] = []
+  private readonly MAX_PAGES = 5
+
+  async getPage(): Promise<Page> {
+    // Clean up closed pages from pool
+    while (this.pagePool.length > 0) {
+      const page = this.pagePool.pop()!
+      try {
+        // Check if page is still open by accessing a property
+        if (!page.isClosed()) {
+          return page
+        }
+      } catch {
+        // Page is closed or invalid, continue to next
+      }
+    }
+
+    if (!this.browser) {
+      this.browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--disable-gpu',
+          // Remove '--disable-images' as it's not a valid flag
+          '--disable-plugins',
+          '--disable-extensions',
+          '--disable-background-networking',
+          '--disable-background-timer-throttling',
+          '--disable-renderer-backgrounding',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-breakpad',
+          '--disable-component-extensions-with-background-pages',
+          '--disable-features=TranslateUI',
+          '--disable-ipc-flooding-protection',
+          '--no-first-run',
+          '--no-default-browser-check',
+          '--no-pings',
+          '--no-zygote',
+          // Note: --single-process can cause issues with page reuse, removed for stability
+        ],
+        timeout: 20000, // Reduced from 30000
+      })
+    }
+
+    const page = await this.browser.newPage()
+
+    // Enable request interception to block images, stylesheets, fonts, etc.
+    await page.setRequestInterception(true)
+    page.on('request', (request) => {
+      const resourceType = request.resourceType()
+      // Block images, stylesheets, fonts, and media to speed up crawling
+      if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+        request.abort()
+      } else {
+        request.continue()
+      }
+    })
+
+    // Configure once on creation (reduced timeouts for faster crawling)
+    page.setDefaultNavigationTimeout(20000) // Reduced from 30000
+    page.setDefaultTimeout(20000) // Reduced from 30000
+    await page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    )
+
+    return page
+  }
+
+  async releasePage(page: Page): Promise<void> {
+    try {
+      // Check if page is still open before trying to reuse
+      if (page.isClosed()) {
+        return // Page already closed, don't add to pool
+      }
+
+      // Clear page state
+      await page.goto('about:blank', { waitUntil: 'domcontentloaded' }).catch(() => {})
+
+      // Double-check page is still open after navigation
+      if (page.isClosed()) {
+        return // Page closed during navigation
+      }
+
+      // Return to pool if under max
+      if (this.pagePool.length < this.MAX_PAGES) {
+        this.pagePool.push(page)
+      } else {
+        await page.close()
+      }
+    } catch (error) {
+      // Page is broken, close it
+      await page.close().catch(() => {})
+    }
+  }
 
   async crawl(url: string): Promise<CrawlResult> {
     let page: Page | null = null
     try {
-      // Launch browser if not already launched
-      if (!this.browser) {
-        this.browser = await puppeteer.launch({
-          headless: true,
-          args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--disable-gpu',
-          ],
-          timeout: 60000,
-        })
-      }
-
-      page = await this.browser.newPage()
-
-      // Set default navigation timeout
-      page.setDefaultNavigationTimeout(60000)
-      page.setDefaultTimeout(60000)
-
-      // Set user agent to mimic a real browser
-      await page.setUserAgent(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      )
+      page = await this.getPage()
 
       // Navigate to the product page
-      await page.goto(url, {
-        waitUntil: 'networkidle0',
-        timeout: 60000,
-      })
+      try {
+        // Check if page is still valid before navigation
+        if (page.isClosed()) {
+          // Page was closed, get a new one
+          page = await this.getPage()
+        }
+        
+        await page.goto(url, {
+          waitUntil: 'domcontentloaded', // Changed from networkidle0 for faster loading
+          timeout: 20000, // Reduced from 30000
+        })
+      } catch (navError) {
+        const errorMsg = navError instanceof Error ? navError.message : String(navError)
+        console.error(`[KasraParsCrawler] Navigation failed for ${url}:`, errorMsg)
+        
+        // If page is closed or target error, get a new page and retry once
+        if (errorMsg.includes('Target closed') || errorMsg.includes('Protocol error')) {
+          try {
+            if (page && !page.isClosed()) {
+              await this.releasePage(page)
+            }
+            page = await this.getPage()
+            await page.goto(url, {
+              waitUntil: 'domcontentloaded', // Changed from networkidle0 for faster loading
+              timeout: 20000, // Reduced from 30000
+            })
+          } catch (retryError) {
+            throw retryError
+          }
+        } else {
+          throw navError
+        }
+      }
 
-      // Wait a bit for dynamic content to load
-      await new Promise((resolve) => setTimeout(resolve, 5000))
+      // Wait for dynamic content to load (reduced from 5000ms to 2000ms)
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
       // Helper function to parse price text
       const parsePrice = (priceText: string): number | null => {
@@ -178,7 +280,7 @@ export class KasraParsCrawler implements SiteCrawler {
         // Wait for price range section to appear
         try {
           await page.waitForSelector('section[class*="t-row"]', {
-            timeout: 5000,
+            timeout: 3000, // Reduced from 5000
           })
         } catch {
           // Continue anyway
@@ -251,7 +353,7 @@ export class KasraParsCrawler implements SiteCrawler {
         try {
           // Wait a bit for elements to appear
           try {
-            await page.waitForSelector(selector, { timeout: 3000 })
+            await page.waitForSelector(selector, { timeout: 2000 }) // Reduced from 3000
           } catch {
             // Continue anyway
           }
@@ -447,7 +549,7 @@ export class KasraParsCrawler implements SiteCrawler {
       // If we found prices, return the lowest one
       if (foundPrices.length > 0) {
         const lowestPrice = Math.min(...foundPrices)
-        await page.close()
+        if (page) await this.releasePage(page)
         return {
           success: true,
           price: lowestPrice,
@@ -472,7 +574,7 @@ export class KasraParsCrawler implements SiteCrawler {
             text.includes('موجود شد خبرم کنید') ||
             text.includes('فعلا موجود نیست')
           ) {
-            await page.close()
+            if (page) await this.releasePage(page)
             return {
               success: false,
               price: null,
@@ -484,7 +586,7 @@ export class KasraParsCrawler implements SiteCrawler {
         // Error check failed, continue
       }
 
-      await page.close()
+      if (page) await this.releasePage(page)
       return {
         success: false,
         price: null,
@@ -492,22 +594,25 @@ export class KasraParsCrawler implements SiteCrawler {
       }
     } catch (error) {
       if (page) {
-        try {
-          await page.close()
-        } catch {
-          // Ignore close errors
-        }
+        await this.releasePage(page)
       }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+      console.error(`[KasraParsCrawler] Crawl error for ${url}:`, errorMessage)
       return {
         success: false,
         price: null,
-        error:
-          error instanceof Error ? error.message : 'Unknown error occurred',
+        error: errorMessage,
       }
     }
   }
 
   async close(): Promise<void> {
+    // Close all pages in pool
+    for (const page of this.pagePool) {
+      await page.close().catch(() => {})
+    }
+    this.pagePool = []
+
     if (this.browser) {
       await this.browser.close()
       this.browser = null

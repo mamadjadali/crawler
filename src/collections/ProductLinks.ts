@@ -62,6 +62,14 @@ export const ProductLinks: CollectionConfig = {
       },
     },
     {
+      name: 'category',
+      label: 'Category',
+      type: 'relationship',
+      relationTo: 'categories',
+      required: false,
+      admin: { description: 'Select a category for this product' },
+    },
+    {
       name: 'productUrls',
       label: {
         en: 'Product URLs',
@@ -233,8 +241,9 @@ export const ProductLinks: CollectionConfig = {
         if (data.url && !data.productUrls) {
           const url = new URL(data.url)
           const hostname = url.hostname.toLowerCase()
-          let detectedSite: 'torob' | 'technolife' | 'mobile140' | 'gooshionline' | 'kasrapars' = 'torob'
-          
+          let detectedSite: 'torob' | 'technolife' | 'mobile140' | 'gooshionline' | 'kasrapars' =
+            'torob'
+
           if (hostname.includes('torob.com')) {
             detectedSite = 'torob'
           } else if (hostname.includes('technolife.com')) {
@@ -276,7 +285,10 @@ export const ProductLinks: CollectionConfig = {
                   urlEntry.site = 'mobile140'
                 } else if (hostname.includes('gooshi.online')) {
                   urlEntry.site = 'gooshionline'
-                } else if (hostname.includes('kasrapars.ir') || hostname.includes('plus.kasrapars.ir')) {
+                } else if (
+                  hostname.includes('kasrapars.ir') ||
+                  hostname.includes('plus.kasrapars.ir')
+                ) {
                   urlEntry.site = 'kasrapars'
                 } else {
                   urlEntry.site = 'torob' // Default fallback
@@ -310,8 +322,8 @@ export const ProductLinks: CollectionConfig = {
         // Only crawl on create or when productUrls change
         const shouldCrawl =
           operation === 'create' ||
-          (operation === 'update' && 
-           JSON.stringify(doc.productUrls) !== JSON.stringify(previousDoc?.productUrls))
+          (operation === 'update' &&
+            JSON.stringify(doc.productUrls) !== JSON.stringify(previousDoc?.productUrls))
 
         if (shouldCrawl && doc.productUrls && Array.isArray(doc.productUrls)) {
           try {
@@ -358,7 +370,7 @@ export const ProductLinks: CollectionConfig = {
                     crawlError: error instanceof Error ? error.message : 'Unknown error',
                   }
                 }
-              })
+              }),
             )
 
             // Update the document with crawl results for all URLs
@@ -382,4 +394,3 @@ export const ProductLinks: CollectionConfig = {
     ],
   },
 }
-

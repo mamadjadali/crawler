@@ -4,12 +4,12 @@ export const Users: CollectionConfig = {
   slug: 'users',
   labels: {
     singular: {
-      en: 'User',
-      fa: 'کاربر',
+      en: 'Admin',
+      fa: 'مدیر',
     },
     plural: {
-      en: 'Users',
-      fa: 'کاربران',
+      en: 'Admins',
+      fa: 'مدیرانــ',
     },
   },
   admin: {

@@ -6,11 +6,12 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
 import { Users } from './collections/Users'
+import { Clients } from './collections/Clients'
 import { Media } from './collections/Media'
 import { ProductLinks } from './collections/ProductLinks'
 import { en } from '@payloadcms/translations/languages/en'
 import { fa } from '@payloadcms/translations/languages/fa'
-
+import { Categories } from './collections/Categories'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -26,7 +27,7 @@ export default buildConfig({
     fallbackLanguage: 'en',
     supportedLanguages: { en, fa }, // default
   },
-  collections: [Users, Media, ProductLinks],
+  collections: [Users, Clients, Media, ProductLinks, Categories],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
