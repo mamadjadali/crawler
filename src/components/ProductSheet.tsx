@@ -183,9 +183,13 @@ export default function ProductSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="overflow-y-auto p-4 bg-[#0a0a0a] w-full sm:max-w-lg">
+      <SheetContent
+        id="sheet"
+        side="right"
+        className="overflow-y-auto p-4 bg-[#0a0a0a] w-full sm:max-w-lg"
+      >
         <SheetHeader>
-          <div className="flex items-center justify-center gap-4">
+          <div className="w-full flex items-center justify-center gap-4">
             {/* Product Image */}
             {productImageUrl && (
               <div className="relative w-28 h-28 bg-white flex-shrink-0 rounded-lg overflow-hidden">
@@ -198,8 +202,8 @@ export default function ProductSheet({
                 />
               </div>
             )}
-            <div className="flex flex-col gap-2">
-              <SheetTitle className="mb-2">{name}</SheetTitle>
+            <div className="w-full flex flex-col gap-2">
+              <SheetTitle className="mb-2 text-xl text-left">{name}</SheetTitle>
               <div className="flex items-center w-full gap-2">
                 {refreshedProductUrls.length > 0 && (
                   <a
@@ -219,7 +223,7 @@ export default function ProductSheet({
                 )}
                 {collectionProductId && (
                   <a
-                    href={`https://mobile140.com/dashboard/store/product/${collectionProductId}/edit`}
+                    href={`https://mobile140.com/dashboard/store/products?id=${collectionProductId}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-block w-1/2"

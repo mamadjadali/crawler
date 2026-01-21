@@ -110,6 +110,8 @@ export default function ProductCard({
       <SheetTrigger asChild>
         <Card className="cursor-pointer border border-gray-400 hover:shadow-lg transition-shadow">
           <CardContent className="p-4">
+            <CardTitle className="leading-6 text-left text-lg">{name}</CardTitle>
+            <Separator className="mt-2 mb-4 border-gray-400 border-b" />
             {/* Top Section: Price and Image */}
             <div className="flex items-center gap-4 mb-4">
               {/* Price Section */}
@@ -152,7 +154,7 @@ export default function ProductCard({
 
             {/* Bottom Section: Name, URL, Badges */}
             <div className="space-y-2">
-              <CardTitle className="leading-6">{name}</CardTitle>
+              {/* <CardTitle className="leading-6">{name}</CardTitle> */}
               <CardDescription className="text-xs">
                 {/* {url} */}
                 <Separator className="my-4 border-gray-400 border-b" />

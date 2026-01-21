@@ -1,7 +1,15 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --font-mono: 'Dana', sans-serif;
+}
+
+html {
+  scrollbar-width: none;
+}
+
+#sheet {
+  scrollbar-width: none;
 }
 
 @font-face {
