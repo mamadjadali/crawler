@@ -1,14 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
 import { Sheet, SheetTrigger } from '@/components/ui/sheet'
-import ProductSheet from './ProductSheet'
 import { formatDate, formatPrice } from '@/lib/utils/formatPrice'
-import { Separator } from './ui/separator'
 import { ClockFadingIcon } from 'lucide-react'
+import Image from 'next/image'
+import { useState } from 'react'
+import ProductSheet from './ProductSheet'
+import { Separator } from './ui/separator'
 
 interface PriceHistoryItem {
   price: number
@@ -60,8 +60,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  // Use productUrls if available, otherwise fall back to legacy fields
-  const urls =
+  const initialUrls =
     productUrls.length > 0
       ? productUrls
       : [
@@ -76,14 +75,35 @@ export default function ProductCard({
           },
         ]
 
+  const [urlsState, setUrlsState] = useState<ProductUrl[]>(initialUrls)
+
+  // Use productUrls if available, otherwise fall back to legacy fields
+  // const urls =
+  //   productUrls.length > 0
+  //     ? productUrls
+  //     : [
+  //         {
+  //           url,
+  //           site,
+  //           currentPrice,
+  //           lastCrawledAt,
+  //           crawlStatus,
+  //           crawlError,
+  //           priceHistory: priceHistory || [],
+  //         },
+  //       ]
+
   // Get lowest price from all URLs
-  const prices = urls
+  // const prices = urls
+  const prices = urlsState
+
     .map((urlEntry) => urlEntry.currentPrice)
     .filter((price) => price !== null && price !== undefined)
   const displayPrice = prices.length > 0 ? Math.min(...prices) : null
 
   // Get most recent crawl date
-  const allCrawlDates = urls
+  // const allCrawlDates = urls
+  const allCrawlDates = urlsState
     .map((urlEntry) => urlEntry.lastCrawledAt)
     .filter((date) => date !== null && date !== undefined)
     .map((date) => (typeof date === 'string' ? new Date(date) : date))
@@ -93,9 +113,11 @@ export default function ProductCard({
       : null
 
   // Get overall status
-  const hasSuccess = urls.some((urlEntry) => urlEntry.crawlStatus === 'success')
-  const hasFailed = urls.some((urlEntry) => urlEntry.crawlStatus === 'failed')
-  const isNotAvailable = urls.some((urlEntry) => urlEntry.crawlError === 'Product not available')
+  const hasSuccess = urlsState.some((urlEntry) => urlEntry.crawlStatus === 'success')
+  const hasFailed = urlsState.some((urlEntry) => urlEntry.crawlStatus === 'failed')
+  const isNotAvailable = urlsState.some(
+    (urlEntry) => urlEntry.crawlError === 'Product not available',
+  )
   const displayStatus: 'pending' | 'success' | 'failed' = hasSuccess
     ? 'success'
     : hasFailed
@@ -103,14 +125,14 @@ export default function ProductCard({
       : 'pending'
 
   // Get unique sites
-  const sites = [...new Set(urls.map((urlEntry) => urlEntry.site))]
+  const sites = [...new Set(urlsState.map((urlEntry) => urlEntry.site))]
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
-        <Card className="cursor-pointer border border-gray-400 hover:shadow-lg transition-shadow">
+        <Card className="cursor-pointer border shadow-none border-gray-400 hover:shadow-lg transition-shadow">
           <CardContent className="p-4">
-            <CardTitle className="leading-6 text-left text-lg">{name}</CardTitle>
+            <CardTitle className="text-neutral-700 leading-6 text-left text-lg">{name}</CardTitle>
             <Separator className="mt-2 mb-4 border-gray-400 border-b" />
             {/* Top Section: Price and Image */}
             <div className="flex items-center gap-4 mb-4">
@@ -118,23 +140,23 @@ export default function ProductCard({
               <div className="flex-1">
                 {displayPrice !== null ? (
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">
-                      {urls.length > 1 ? 'کمترین قیمت' : 'قیمت فعلی'}
+                    <div className="text-xs text-gray-500 mb-1">
+                      {urlsState.length > 1 ? 'کمترین قیمت' : 'قیمت فعلی'}
                       {}
                     </div>
-                    <div className="text-xl font-bold text-white">
+                    <div className="text-xl font-bold text-neutral-700">
                       {formatPrice(displayPrice, true)}
                     </div>
-                    {urls.length > 1 && (
+                    {urlsState.length > 1 && (
                       <div className="text-xs text-gray-500 mt-1">
-                        از {new Intl.NumberFormat('fa-IR').format(urls.length)} منبع
+                        از {new Intl.NumberFormat('fa-IR').format(urlsState.length)} منبع
                       </div>
                     )}
                   </div>
                 ) : isNotAvailable ? (
                   <div className="text-sm text-orange-400">موجود نیست</div>
                 ) : (
-                  <div className="text-sm text-gray-400">قیمت نامشخص</div>
+                  <div className="text-sm text-gray-500">قیمت نامشخص</div>
                 )}
               </div>
 
@@ -165,16 +187,18 @@ export default function ProductCard({
                     <Badge
                       key={siteName}
                       variant="outline"
-                      className={`text-xs rounded-lg px-4 py-1 ${
+                      className={`text-[10px] rounded-lg px-2 py-0 ${
                         siteName === 'technolife'
-                          ? 'border border-blue-900 bg-[#223266]/50 text-white'
+                          ? ' bg-blue-900 border-none text-white'
                           : siteName === 'mobile140'
-                            ? 'border border-sky-400 bg-sky-400/20 text-white'
+                            ? 'border-none bg-sky-400 text-white'
                             : siteName === 'gooshionline'
-                              ? 'border border-gray-400 bg-gray-400/20 text-white'
+                              ? 'border-none bg-gray-400 text-white'
                               : siteName === 'kasrapars'
-                                ? 'border border-yellow-400 bg-yellow-400/20 text-white'
-                                : 'border border-rose-400 bg-rose-400/20 text-white'
+                                ? 'border-none bg-yellow-400 text-white'
+                                : siteName === 'farnaa'
+                                  ? 'border-none bg-pink-600 text-white'
+                                  : 'border-none bg-rose-400 text-white'
                       }`}
                     >
                       {siteName === 'torob'
@@ -187,7 +211,9 @@ export default function ProductCard({
                               ? 'گوشی آنلاین'
                               : siteName === 'kasrapars'
                                 ? 'کسری پلاس'
-                                : siteName}
+                                : siteName === 'farnaa'
+                                  ? 'فــرنا'
+                                  : siteName}
                     </Badge>
                   ))}
                   {/* <Badge
@@ -207,10 +233,10 @@ export default function ProductCard({
                         : 'در انتظار'}
                   </Badge> */}
                 </div>
-                <div className="mt-4 text-sm w-full text-gray-300 flex justify-between items-center-safe">
+                <div className="mt-4 text-sm w-full text-neutral-700 flex justify-between items-center-safe">
                   <ClockFadingIcon className="size-4" />
                   {displayLastCrawledAt ? formatDate(displayLastCrawledAt) : 'هنوز بروزرسانی نشده'}
-                  <span className="bg-white/10 border border-gray-400 py-1 px-4 rounded-lg text-xs">
+                  <span className=" border border-gray-400 text-neutral-700 py-1 px-4 rounded-lg text-xs">
                     {displayLastCrawledAt &&
                       (() => {
                         const now = Date.now()
@@ -243,7 +269,9 @@ export default function ProductCard({
         collectionProductId={productId}
         name={name}
         productImageUrl={productImageUrl}
-        productUrls={urls}
+        // productUrls={urls}
+        productUrls={urlsState}
+        onUrlsUpdate={setUrlsState}
       />
     </Sheet>
   )

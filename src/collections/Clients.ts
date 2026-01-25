@@ -13,9 +13,13 @@ export const Clients: CollectionConfig = {
     },
   },
   admin: {
-    useAsTitle: 'email',
+    useAsTitle: 'username',
   },
-  auth: true,
+  auth: {
+    loginWithUsername: {
+      requireEmail: true,
+    },
+  },
   fields: [
     {
       name: 'fullname',

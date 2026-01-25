@@ -5,6 +5,7 @@ import { TechnolifeCrawler } from './sites/technolife'
 import { Mobile140Crawler } from './sites/mobile140'
 import { GooshiOnlineCrawler } from './sites/gooshionline'
 import { KasraParsCrawler } from './sites/kasrapars'
+import { FarnaaCrawler } from './sites/farnaa'
 import { detectSite } from '../utils/detectSite'
 
 // Re-export detectSite for backward compatibility
@@ -28,6 +29,8 @@ function getCrawler(site: string): SiteCrawler {
       crawlerInstances.set(site, new GooshiOnlineCrawler())
     } else if (site === 'kasrapars') {
       crawlerInstances.set(site, new KasraParsCrawler())
+    } else if (site === 'farnaa') {
+      crawlerInstances.set(site, new FarnaaCrawler())
     } else {
       throw new Error(`Unsupported site: ${site}`)
     }

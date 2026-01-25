@@ -24,6 +24,10 @@ export class GooshiOnlineCrawler implements SiteCrawler {
 
       // Parse with Cheerio
       const $ = cheerio.load(html)
+      $('h2')
+        .filter((_, el) => $(el).text().includes('محصولات مرتبط'))
+        .parent()
+        .remove()
 
       let price: number | null = null
 
@@ -46,7 +50,16 @@ export class GooshiOnlineCrawler implements SiteCrawler {
       // Try each selector
       for (const selector of priceSelectors) {
         try {
-          const priceElement = $(selector).first()
+          // const priceElement = $(selector).first()
+          const priceElement = $(selector)
+            .filter((_, el) => {
+              const $el = $(el)
+              return (
+                $el.closest('.swiper-slide').length === 0 &&
+                $el.closest('.classic-products-item').length === 0
+              )
+            })
+            .first()
 
           if (priceElement.length > 0) {
             const priceText = priceElement.text().trim()
@@ -86,7 +99,7 @@ export class GooshiOnlineCrawler implements SiteCrawler {
 
               cleanedPrice = cleanedPrice.replace(
                 /[۰-۹٠-٩]/g,
-                (char) => persianToEnglish[char] || char
+                (char) => persianToEnglish[char] || char,
               )
 
               // Remove dots that are used as thousands separators in Persian format
@@ -104,11 +117,7 @@ export class GooshiOnlineCrawler implements SiteCrawler {
 
               const parsedPrice = parseFloat(cleanedPrice)
               // Check if it's a reasonable price (between 1000 and 1 billion)
-              if (
-                !isNaN(parsedPrice) &&
-                parsedPrice >= 1000 &&
-                parsedPrice <= 1000000000
-              ) {
+              if (!isNaN(parsedPrice) && parsedPrice >= 1000 && parsedPrice <= 1000000000) {
                 price = parsedPrice // Use the main product price found
                 break
               }
@@ -121,63 +130,56 @@ export class GooshiOnlineCrawler implements SiteCrawler {
       }
 
       // If no price found with selectors, try to find any number that looks like a price
-      if (!price) {
-        try {
-          const bodyText = $('body').text()
-          if (bodyText) {
-            // Look for price patterns like: 22,377,700 تومان or 22377700 تومان
-            const pricePatterns = [
-              /(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)\s*تومان/gi,
-              /(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)\s*ريال/gi,
-              /قیمت[:\s]*(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)/gi,
-              // More patterns
-              /قیمت\s*:?\s*(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)/gi,
-              /(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)\s*ت\.?و\.?م\.?ان/gi,
-            ]
+      // if (!price) {
+      //   try {
+      //     const bodyText = $('body').text()
+      //     if (bodyText) {
+      //       // Look for price patterns like: 22,377,700 تومان or 22377700 تومان
+      //       const pricePatterns = [
+      //         /(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)\s*تومان/gi,
+      //         /(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)\s*ريال/gi,
+      //         /قیمت[:\s]*(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)/gi,
+      //         // More patterns
+      //         /قیمت\s*:?\s*(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)/gi,
+      //         /(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)\s*ت\.?و\.?م\.?ان/gi,
+      //       ]
 
-            const foundPrices: number[] = []
+      //       const foundPrices: number[] = []
 
-            for (const pattern of pricePatterns) {
-              const matches = bodyText.match(pattern)
-              if (matches && matches.length > 0) {
-                for (const match of matches) {
-                  const cleanedPrice = match
-                    .replace(/[^\d.,]/g, '')
-                    .replace(/,/g, '')
-                    .trim()
+      //       for (const pattern of pricePatterns) {
+      //         const matches = bodyText.match(pattern)
+      //         if (matches && matches.length > 0) {
+      //           for (const match of matches) {
+      //             const cleanedPrice = match
+      //               .replace(/[^\d.,]/g, '')
+      //               .replace(/,/g, '')
+      //               .trim()
 
-                  const parsedPrice = parseFloat(cleanedPrice)
-                  // Only accept reasonable prices
-                  if (
-                    !isNaN(parsedPrice) &&
-                    parsedPrice >= 1000 &&
-                    parsedPrice <= 1000000000
-                  ) {
-                    foundPrices.push(parsedPrice)
-                  }
-                }
-              }
-            }
+      //             const parsedPrice = parseFloat(cleanedPrice)
+      //             // Only accept reasonable prices
+      //             if (!isNaN(parsedPrice) && parsedPrice >= 1000 && parsedPrice <= 1000000000) {
+      //               foundPrices.push(parsedPrice)
+      //             }
+      //           }
+      //         }
+      //       }
 
-            // If we found multiple prices, use the first/main product price (not necessarily the lowest)
-            // For GooshiOnline, we want the main product price, not seller prices
-            if (foundPrices.length > 0) {
-              // Use the first price found (main product price), not the lowest
-              price = foundPrices[0]
-            }
-          }
-        } catch {
-          // Fallback failed
-        }
-      }
+      //       // If we found multiple prices, use the first/main product price (not necessarily the lowest)
+      //       // For GooshiOnline, we want the main product price, not seller prices
+      //       if (foundPrices.length > 0) {
+      //         // Use the first price found (main product price), not the lowest
+      //         price = foundPrices[0]
+      //       }
+      //     }
+      //   } catch {
+      //     // Fallback failed
+      //   }
+      // }
 
       // If no price found, check if product is not available (only for the main/default variant)
       if (price === null) {
         // Check if product is not available - only check main product area, not variant-specific messages
-        const notAvailableSelectors = [
-          '.product-outofstock-message',
-          '.alert.alert-sm.alert-red',
-        ]
+        const notAvailableSelectors = ['.product-outofstock-message', '.alert.alert-sm.alert-red']
 
         let isNotAvailable = false
         for (const selector of notAvailableSelectors) {
@@ -189,14 +191,17 @@ export class GooshiOnlineCrawler implements SiteCrawler {
               text.includes('موجود نمی‌باشد') ||
               text.includes('موجود نیست') ||
               text.includes('موجود شد خبرم کنید') ||
-              text.includes('فعلا موجود نیست')
+              text.includes('فعلا موجود نیست') ||
+              text.includes('مهلت خرید این محصول به پایان رسیده است.')
             ) {
               // Verify this is in the main product area, not just a variant option
               // For GooshiOnline, check if it's in the main product form area
-              const isMainProductArea = element.closest('form[name="addtocart"]').length > 0 ||
-                                       element.closest('.md:border.rounded').length > 0 ||
-                                       element.hasClass('product-outofstock-message')
-              
+              const isMainProductArea =
+                element.closest('form[name="addtocart"]').length > 0 ||
+                element.closest('.md:border.rounded').length > 0 ||
+                element.hasClass('product-outofstock-message') ||
+                element.hasClass('lg:flex flex-wrap mb-24 md:mb-32 2xl:mb-36 ng-scope')
+
               if (isMainProductArea || element.length === 1) {
                 isNotAvailable = true
                 break
@@ -228,8 +233,7 @@ export class GooshiOnlineCrawler implements SiteCrawler {
       return {
         success: false,
         price: null,
-        error:
-          error instanceof Error ? error.message : 'Unknown error occurred',
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
       }
     }
   }
@@ -238,4 +242,3 @@ export class GooshiOnlineCrawler implements SiteCrawler {
     // No-op: no browser to close
   }
 }
-

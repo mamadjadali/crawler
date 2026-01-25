@@ -36,14 +36,14 @@ export default function SearchInput({
 
   return (
     <div className="relative w-full">
-      <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white" />
+      <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-700" />
 
       <Input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="pr-10 pl-10 bg-transparent rounded-lg border border-gray-400 text-white placeholder:text-sm placeholder:text-gray-500"
+        className="pr-10 pl-10 bg-transparent rounded-lg border border-gray-400 text-neutral-700 placeholder:text-sm placeholder:text-gray-500"
         dir="rtl"
       />
 
@@ -52,7 +52,7 @@ export default function SearchInput({
           variant="ghost"
           size="icon"
           onClick={() => setQuery('')}
-          className="absolute left-3 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400 hover:text-white"
+          className="absolute left-3 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400 hover:text-neutral-700"
         >
           <X className="h-4 w-4" />
         </Button>

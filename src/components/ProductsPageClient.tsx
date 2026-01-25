@@ -1,10 +1,12 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, useEffect, useCallback } from 'react'
-import SearchInput from './SearchInput'
-import ProductList from './ProductList'
 import { detectSite } from '@/lib/utils/detectSite'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
+import ProductList from './ProductList'
+import CategorySelect from './CategorySelect'
+import SearchInput from './SearchInput'
+import BrandsSelect from './BrandsSelect'
 
 interface ProductUrl {
   url: string
@@ -48,28 +50,46 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
   const [products, setProducts] = useState<Product[]>(initialProducts)
   const [isSearching, setIsSearching] = useState(false)
   const [lastSearchQuery, setLastSearchQuery] = useState<string>('')
-  // const [selectedCategory, setSelectedCategory] = useState<string>('')
+  const [lastCategory, setLastCategory] = useState<string>('')
+  const [lastSelectedBrand, setLastSelectedBrand] = useState<string>('')
 
   const searchQuery = searchParams.get('q') || ''
+  const selectedCategory = searchParams.get('category') || ''
+  const selectedBrand = searchParams.get('brand') || ''
 
   useEffect(() => {
-    // Only perform search if query actually changed
-    if (searchQuery === lastSearchQuery) {
+    // Only perform fetch if the inputs actually changed
+    if (
+      searchQuery === lastSearchQuery &&
+      selectedCategory === lastCategory &&
+      selectedBrand === lastSelectedBrand
+    ) {
       return
     }
 
     const performSearch = async () => {
-      if (!searchQuery.trim()) {
+      const q = searchQuery.trim()
+      const category = selectedCategory.trim()
+
+      if (!q && !category && !selectedBrand) {
         setProducts(initialProducts)
         setIsSearching(false)
         setLastSearchQuery('')
+        setLastCategory('')
+        setLastSelectedBrand('')
         return
       }
 
       setIsSearching(true)
       setLastSearchQuery(searchQuery)
+      setLastCategory(selectedCategory)
+      setLastSelectedBrand(selectedBrand)
       try {
-        const response = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`)
+        const params = new URLSearchParams()
+        if (q) params.set('q', q)
+        if (category) params.set('category', category)
+        if (selectedBrand) params.set('brand', selectedBrand)
+        const response = await fetch(`/api/search?${params.toString()}`)
         if (response.ok) {
           const data = await response.json()
           // Transform search results to match Product interface
@@ -137,7 +157,8 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
                       site !== 'technolife' &&
                       site !== 'mobile140' &&
                       site !== 'gooshionline' &&
-                      site !== 'kasrapars') ||
+                      site !== 'kasrapars' &&
+                      site !== 'farnaa') ||
                     site !== detectedSite
                   ) {
                     site = detectedSite
@@ -150,7 +171,8 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
                       site !== 'technolife' &&
                       site !== 'mobile140' &&
                       site !== 'gooshionline' &&
-                      site !== 'kasrapars')
+                      site !== 'kasrapars' &&
+                      site !== 'farnaa')
                   ) {
                     site = 'torob'
                   }
@@ -194,7 +216,15 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
     }
 
     performSearch()
-  }, [searchQuery, lastSearchQuery, initialProducts])
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedBrand,
+    lastSearchQuery,
+    lastCategory,
+    lastSelectedBrand,
+    initialProducts,
+  ])
 
   const handleSearch = useCallback(
     (query: string) => {
@@ -219,25 +249,38 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
     <>
       {/* Search Input */}
       <div className="mb-8">
-        <div className="max-w-md">
-          <SearchInput
-            onSearch={handleSearch}
-            placeholder="جستجو بر اساس نام یا شناسه ..."
-            // initialValue={searchQuery}
-            value={searchQuery}
-          />
+        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-4">
+          <div className="w-full md:max-w-md">
+            <SearchInput
+              onSearch={handleSearch}
+              placeholder="جستجو بر اساس نام یا شناسه ..."
+              value={searchQuery}
+            />
+          </div>
+          <div className="w-full">
+            <CategorySelect
+              value={selectedCategory}
+              onChange={(catId) => {
+                const params = new URLSearchParams(searchParams.toString())
+                if (catId) params.set('category', catId)
+                else params.delete('category')
+                router.push(`/products?${params.toString()}`)
+              }}
+            />
+          </div>
+          <div className="w-full">
+            <BrandsSelect
+              value={selectedBrand}
+              onChange={(brandId) => {
+                const params = new URLSearchParams(searchParams.toString())
+                if (brandId) params.set('brand', brandId)
+                else params.delete('brand')
+                router.push(`/products?${params.toString()}`)
+              }}
+            />
+          </div>
         </div>
-        {/* <CategorySelect
-          value={selectedCategory}
-          onChange={(catId) => {
-            setSelectedCategory(catId)
-            // Update URL with category
-            const params = new URLSearchParams(searchParams.toString())
-            if (catId) params.set('category', catId)
-            else params.delete('category')
-            router.push(`/products?${params.toString()}`)
-          }}
-        /> */}
+        {/* <ThemeSelector /> */}
       </div>
 
       {/* Product List */}

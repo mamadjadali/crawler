@@ -12,6 +12,7 @@ import { ProductLinks } from './collections/ProductLinks'
 import { en } from '@payloadcms/translations/languages/en'
 import { fa } from '@payloadcms/translations/languages/fa'
 import { Categories } from './collections/Categories'
+import { Brands } from './collections/Brands'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -27,7 +28,7 @@ export default buildConfig({
     fallbackLanguage: 'en',
     supportedLanguages: { en, fa }, // default
   },
-  collections: [Users, Clients, Media, ProductLinks, Categories],
+  collections: [Users, Clients, Media, ProductLinks, Categories, Brands],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -89,7 +89,8 @@ export default async function ProductsPage() {
               site !== 'technolife' &&
               site !== 'mobile140' &&
               site !== 'gooshionline' &&
-              site !== 'kasrapars') ||
+              site !== 'kasrapars' &&
+              site !== 'farnaa') ||
             site !== detectedSite
           ) {
             site = detectedSite
@@ -102,7 +103,8 @@ export default async function ProductsPage() {
               site !== 'technolife' &&
               site !== 'mobile140' &&
               site !== 'gooshionline' &&
-              site !== 'kasrapars')
+              site !== 'kasrapars' &&
+              site !== 'farnaa')
           ) {
             site = 'torob'
           }
@@ -133,39 +135,33 @@ export default async function ProductsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8">
+    <div className="min-h-screen bg-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <p className="text-2xl font-bold text-gray-400 mb-2">لیست محصولات</p>
-          <p className="text-gray-600 dark:text-gray-400">مدیریت و ردیابی قیمت محصولاتـ</p>
-        </div>
-
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-transparent border border-gray-400 rounded-xl shadow p-6">
+          <div className="bg-transparent border border-gray-400 rounded-xl  p-6">
             <div className="text-sm font-medium text-gray-400">کل محصولات</div>
-            <div className="mt-2 text-3xl font-bold text-white">
+            <div className="mt-2 text-3xl font-bold text-neutral-700">
               {new Intl.NumberFormat('fa-IR').format(products.length)}
             </div>
           </div>
-          <div className="bg-green-500/20 border border-green-400 rounded-xl shadow p-6">
+          <div className="bg-green-500/20 border border-green-400 rounded-xl  p-6">
             <div className="text-sm font-medium text-gray-400">🇺🇸 دلار</div>
-            <div className="mt-2 text-left text-3xl font-bold text-white">
+            <div className="mt-2 text-left text-3xl font-bold text-neutral-700">
               {/* {new Intl.NumberFormat('fa-IR').format(132150)} */}
               ...
             </div>
           </div>
-          <div className="bg-purple-500/20 border border-purple-400 rounded-xl shadow p-6">
+          <div className="bg-gray-500/20 border border-gray-400 rounded-xl  p-6">
             <div className="text-sm font-medium text-gray-400">🇦🇪 درهم</div>
-            <div className="mt-2 text-left text-3xl font-bold text-white">
+            <div className="mt-2 text-left text-3xl font-bold text-neutral-700">
               {/* {new Intl.NumberFormat('fa-IR').format(359910)} */}
               ...
             </div>
           </div>
-          <div className="bg-cyan-500/20 border border-cyan-400 rounded-xl shadow p-6">
+          <div className="bg-yellow-500/20 border border-yellow-400 rounded-xl  p-6">
             <div className="text-sm font-medium text-gray-400">طــلا</div>
-            <div className="mt-2 text-lg text-left font-bold text-white">
+            <div className="mt-2 text-3xl text-left font-bold text-neutral-700">
               ...
               {/* {new Intl.DateTimeFormat('fa-IR', {
                 year: 'numeric',
@@ -183,8 +179,8 @@ export default async function ProductsPage() {
         <Suspense
           fallback={
             <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
-              <p className="mt-4 text-gray-400">در حال بارگذاری...</p>
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-700"></div>
+              <p className="mt-4 text-gray-700">در حال بارگذاری...</p>
             </div>
           }
         >

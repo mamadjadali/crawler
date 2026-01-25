@@ -10,10 +10,19 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { formatDate, formatPrice } from '@/lib/utils/formatPrice'
-import { Check, ChevronsLeft, Copy, ExternalLink, PencilIcon, TrendingUp } from 'lucide-react'
+import {
+  Check,
+  ChevronsLeft,
+  Copy,
+  ExternalLink,
+  PencilIcon,
+  SquareStack,
+  TrendingUp,
+} from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import RefreshPriceIcon from './RefreshPriceIcon'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from './ui/dropdown-menu'
 
 interface PriceHistoryItem {
   price: number
@@ -40,6 +49,7 @@ interface ProductSheetProps {
   name: string
   productImageUrl?: string | null
   productUrls: ProductUrl[]
+  onUrlsUpdate?: React.Dispatch<React.SetStateAction<ProductUrl[]>> //
 }
 
 export default function ProductSheet({
@@ -50,6 +60,7 @@ export default function ProductSheet({
   name,
   productImageUrl,
   productUrls = [],
+  onUrlsUpdate, // ← add this
 }: ProductSheetProps) {
   const [refreshedProductUrls, setRefreshedProductUrls] = useState<ProductUrl[]>(productUrls)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
@@ -98,23 +109,44 @@ export default function ProductSheet({
     copyText()
   }
 
+  // const handleRefreshComplete = (data: { productUrls?: ProductUrl[] }) => {
+  //   if (data.productUrls) {
+  //     setRefreshedProductUrls(
+  //       data.productUrls.map((urlEntry) => ({
+  //         ...urlEntry,
+  //         lastCrawledAt: urlEntry.lastCrawledAt
+  //           ? typeof urlEntry.lastCrawledAt === 'string'
+  //             ? new Date(urlEntry.lastCrawledAt)
+  //             : urlEntry.lastCrawledAt
+  //           : null,
+  //         priceHistory: (urlEntry.priceHistory || []).map((item) => ({
+  //           ...item,
+  //           crawledAt:
+  //             typeof item.crawledAt === 'string' ? new Date(item.crawledAt) : item.crawledAt,
+  //         })),
+  //       })),
+  //     )
+  //   }
+  // }
   const handleRefreshComplete = (data: { productUrls?: ProductUrl[] }) => {
     if (data.productUrls) {
-      setRefreshedProductUrls(
-        data.productUrls.map((urlEntry) => ({
-          ...urlEntry,
-          lastCrawledAt: urlEntry.lastCrawledAt
-            ? typeof urlEntry.lastCrawledAt === 'string'
-              ? new Date(urlEntry.lastCrawledAt)
-              : urlEntry.lastCrawledAt
-            : null,
-          priceHistory: (urlEntry.priceHistory || []).map((item) => ({
-            ...item,
-            crawledAt:
-              typeof item.crawledAt === 'string' ? new Date(item.crawledAt) : item.crawledAt,
-          })),
+      const updatedUrls = data.productUrls.map((urlEntry) => ({
+        ...urlEntry,
+        lastCrawledAt: urlEntry.lastCrawledAt
+          ? typeof urlEntry.lastCrawledAt === 'string'
+            ? new Date(urlEntry.lastCrawledAt)
+            : urlEntry.lastCrawledAt
+          : null,
+        priceHistory: (urlEntry.priceHistory || []).map((item) => ({
+          ...item,
+          crawledAt: typeof item.crawledAt === 'string' ? new Date(item.crawledAt) : item.crawledAt,
         })),
-      )
+      }))
+
+      setRefreshedProductUrls(updatedUrls)
+
+      // Sync back to parent
+      onUrlsUpdate?.(updatedUrls)
     }
   }
 
@@ -186,7 +218,7 @@ export default function ProductSheet({
       <SheetContent
         id="sheet"
         side="right"
-        className="overflow-y-auto p-4 bg-[#0a0a0a] w-full sm:max-w-lg"
+        className="overflow-y-auto p-4 bg-white w-full sm:max-w-lg"
       >
         <SheetHeader>
           <div className="w-full flex items-center justify-center gap-4">
@@ -203,7 +235,7 @@ export default function ProductSheet({
               </div>
             )}
             <div className="w-full flex flex-col gap-2">
-              <SheetTitle className="mb-2 text-xl text-left">{name}</SheetTitle>
+              <SheetTitle className="mb-2 text-neutral-700 text-xl text-left">{name}</SheetTitle>
               <div className="flex items-center w-full gap-2">
                 {refreshedProductUrls.length > 0 && (
                   <a
@@ -242,10 +274,8 @@ export default function ProductSheet({
           </div>
           <SheetDescription>
             {/* <div> */}
-            <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1">
-              آخرین بروزرسانی
-            </span>
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="text-xs text-neutral-700 block my-1">آخرین بروزرسانی</span>
+            <span className="text-sm text-neutral-700">
               {mostRecentCrawl ? formatDate(mostRecentCrawl) : 'هنوز بروزرسانی نشده'}
             </span>
             {/* </div> */}
@@ -257,7 +287,7 @@ export default function ProductSheet({
           {lowestPriceInfo && (
             <div className="bg-transparent rounded-lg p-4 border border-gray-400">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-white flex items-center gap-2">
+                <span className="text-sm font-medium text-neutral-700 flex items-center gap-2">
                   پایین ترین قیمت
                   <ChevronsLeft className="size-4 text-green-400" />
                   {lowestPriceInfo.siteName === 'technolife'
@@ -279,9 +309,23 @@ export default function ProductSheet({
 
           {/* Current Prices List */}
           <div className="bg-transparent rounded-lg p-4 border border-gray-400">
-            <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
-              قیمت‌های فعلی
-            </h4>
+            <div className="flex items-center justify-between mb-6">
+              <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                قیمت‌های فعلی
+              </h4>
+              <Button
+                className="cursor-pointer text-[#284e8f] text-xs bg-[#e6f3ff] rounded-lg"
+                onClick={() => {
+                  const urls = refreshedProductUrls.map((u) => u.url).filter(Boolean)
+
+                  const encoded = encodeURIComponent(JSON.stringify(urls))
+                  window.open(`/open-all?urls=${encoded}`, '_blank')
+                }}
+              >
+                باز کردن همه سایت‌ها
+                <SquareStack className="size-4" />
+              </Button>
+            </div>
             <div className="space-y-2">
               {refreshedProductUrls.map((urlEntry, index) => {
                 const siteName =
@@ -295,17 +339,21 @@ export default function ProductSheet({
                           ? 'گوشی آنلاین'
                           : urlEntry.site === 'kasrapars'
                             ? 'کسری پلاس'
-                            : urlEntry.site
+                            : urlEntry.site === 'farnaa'
+                              ? 'فرنا'
+                              : urlEntry.site
                 const siteColorClass =
                   urlEntry.site === 'technolife'
-                    ? 'text-blue-400'
+                    ? 'text-blue-700'
                     : urlEntry.site === 'mobile140'
-                      ? 'text-sky-400'
+                      ? 'text-sky-600'
                       : urlEntry.site === 'gooshionline'
                         ? 'text-gray-400'
                         : urlEntry.site === 'kasrapars'
                           ? 'text-yellow-400'
-                          : 'text-rose-400'
+                          : urlEntry.site === 'farnaa'
+                            ? 'text-[#d90268]'
+                            : 'text-rose-400'
                 return (
                   <div key={index} className="flex items-center justify-between">
                     <span className={`text-sm font-medium ${siteColorClass}`}>
@@ -314,10 +362,10 @@ export default function ProductSheet({
                       </a>
                     </span>
                     {urlEntry.crawlError === 'Product not available' ? (
-                      <span className="text-sm text-orange-400 dark:text-orange-300">ناموجود</span>
+                      <span className="text-base text-orange-400">ناموجود</span>
                     ) : urlEntry.currentPrice !== null ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-lg font-semibold text-white">
+                        <span className="text-lg font-semibold text-neutral-700">
                           {formatPrice(urlEntry.currentPrice, true)}
                         </span>
                         <Button
@@ -366,7 +414,9 @@ export default function ProductSheet({
                       ? 'گوشی آنلاین'
                       : urlEntry.site === 'kasrapars'
                         ? 'کسری پلاس'
-                        : urlEntry.site
+                        : urlEntry.site === 'farnaa'
+                          ? 'فرنا'
+                          : urlEntry.site
             const priceChange = calculatePriceChange(urlEntry.priceHistory || [])
 
             return (
@@ -379,14 +429,16 @@ export default function ProductSheet({
                         variant="outline"
                         className={`rounded-lg px-4 py-1 ${
                           urlEntry.site === 'technolife'
-                            ? 'border border-blue-900 bg-[#223266]/50 text-white'
+                            ? 'border border-blue-900 bg-[#223266]/50 text-blue-900'
                             : urlEntry.site === 'mobile140'
-                              ? 'border border-sky-600 bg-sky-600/20 text-white'
+                              ? 'border border-sky-600 bg-sky-600/20 text-sky-600'
                               : urlEntry.site === 'gooshionline'
-                                ? 'border border-gray-400 bg-gray-400/20 text-white'
+                                ? 'border border-gray-400 bg-gray-400/20 text-gray-400'
                                 : urlEntry.site === 'kasrapars'
-                                  ? 'border border-yellow-400 bg-yellow-400/20 text-white'
-                                  : 'border border-rose-400 bg-rose-400/20 text-white'
+                                  ? 'border border-yellow-400 bg-yellow-400/20 text-yellow-400'
+                                  : urlEntry.site === 'farnaa'
+                                    ? 'border border-pink-600 bg-pink-600/20 text-pink-600'
+                                    : 'border border-rose-400 bg-rose-400/20 text-rose-400'
                         }`}
                       >
                         <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">
@@ -419,15 +471,15 @@ export default function ProductSheet({
 
                   {/* Last crawled */}
                   {urlEntry.lastCrawledAt && (
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                    <div className="text-xs text-neutral-700 mb-3">
                       آخرین بروزرسانی: {formatDate(urlEntry.lastCrawledAt)}
                     </div>
                   )}
 
                   {/* Error message */}
                   {urlEntry.crawlError && (
-                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-2 mb-3">
-                      <p className="text-xs text-red-800 dark:text-red-200">
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-800 rounded-lg p-2 mb-3">
+                      <p className="text-xs text-red-800 ">
                         {urlEntry.crawlError === 'Product not available'
                           ? 'ناموجود'
                           : urlEntry.crawlError}
@@ -439,9 +491,7 @@ export default function ProductSheet({
                   {priceChange && (
                     <div className="mb-4">
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-gray-400 dark:text-gray-500">
-                          تغییر قیمت ({siteName}):
-                        </span>
+                        <span className="text-neutral-700">تغییر قیمت ({siteName}):</span>
                         {priceChange.isIncrease && (
                           <div className="flex items-center gap-1 text-green-500">
                             <span>
@@ -479,7 +529,7 @@ export default function ProductSheet({
                 {/* Price History List for this Site */}
                 {urlEntry.priceHistory && urlEntry.priceHistory.length > 0 && (
                   <div className="bg-transparent rounded-lg p-4 border border-gray-400">
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                    <h4 className="text-sm font-medium text-neutral-700 mb-4">
                       تاریخچه قیمت ({siteName})
                     </h4>
                     <div className="space-y-2 max-h-64 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -497,10 +547,10 @@ export default function ProductSheet({
                             key={itemIndex}
                             className="flex items-center justify-between py-2 px-3 bg-transparent rounded-lg border border-gray-400"
                           >
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
+                            <span className="text-sm font-medium text-neutral-700">
                               {formatPrice(item.price, true)}
                             </span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                            <span className="text-xs text-gray-600">
                               {formatDate(item.crawledAt)}
                             </span>
                           </div>

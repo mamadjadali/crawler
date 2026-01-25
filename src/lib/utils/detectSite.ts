@@ -27,6 +27,10 @@ export function detectSite(url: string): string {
       return 'kasrapars'
     }
 
+    if (hostname.includes('farnaa.com')) {
+      return 'farnaa'
+    }
+
     // Default fallback
     return 'torob'
   } catch {

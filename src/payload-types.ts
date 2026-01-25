@@ -73,6 +73,7 @@ export interface Config {
     media: Media;
     'product-links': ProductLink;
     categories: Category;
+    brands: Brand;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -85,6 +86,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'product-links': ProductLinksSelect<false> | ProductLinksSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    brands: BrandsSelect<false> | BrandsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -129,20 +131,19 @@ export interface UserAuthOperations {
 }
 export interface ClientAuthOperations {
   forgotPassword: {
-    email: string;
-    password: string;
+    username: string;
   };
   login: {
-    email: string;
     password: string;
+    username: string;
   };
   registerFirstUser: {
-    email: string;
     password: string;
+    username: string;
+    email: string;
   };
   unlock: {
-    email: string;
-    password: string;
+    username: string;
   };
 }
 /**
@@ -179,6 +180,7 @@ export interface Client {
   updatedAt: string;
   createdAt: string;
   email: string;
+  username: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
   salt?: string | null;
@@ -236,6 +238,10 @@ export interface ProductLink {
    */
   category?: (string | null) | Category;
   /**
+   * Select a brand for this product
+   */
+  brand?: (string | null) | Brand;
+  /**
    * Product URLs to crawl (can add multiple URLs from different sites)
    */
   productUrls: {
@@ -246,7 +252,7 @@ export interface ProductLink {
     /**
      * Site will be auto-detected from URL if not provided
      */
-    site?: ('torob' | 'technolife' | 'mobile140' | 'gooshionline' | 'kasrapars') | null;
+    site?: ('torob' | 'technolife' | 'mobile140' | 'gooshionline' | 'kasrapars' | 'farnaa') | null;
     /**
      * Latest crawled price from this URL
      */
@@ -280,6 +286,17 @@ export interface ProductLink {
  * via the `definition` "categories".
  */
 export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brands".
+ */
+export interface Brand {
   id: string;
   name: string;
   slug: string;
@@ -329,6 +346,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: string | Category;
+      } | null)
+    | ({
+        relationTo: 'brands';
+        value: string | Brand;
       } | null);
   globalSlug?: string | null;
   user:
@@ -413,6 +434,7 @@ export interface ClientsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   email?: T;
+  username?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
   salt?: T;
@@ -454,6 +476,7 @@ export interface ProductLinksSelect<T extends boolean = true> {
   productId?: T;
   productImage?: T;
   category?: T;
+  brand?: T;
   productUrls?:
     | T
     | {
@@ -480,6 +503,16 @@ export interface ProductLinksSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brands_select".
+ */
+export interface BrandsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   updatedAt?: T;

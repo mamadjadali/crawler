@@ -9,24 +9,24 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-interface Category {
+interface Brands {
   id: string
   name: string
 }
 
-interface CategorySelectProps {
+interface BrandsSelectProps {
   value?: string
-  onChange: (categoryId: string) => void
+  onChange: (brandId: string) => void
 }
 
-export default function CategorySelect({ value = '', onChange }: CategorySelectProps) {
-  const [categories, setCategories] = useState<Category[]>([])
+export default function BrandsSelect({ value = '', onChange }: BrandsSelectProps) {
+  const [brands, setBrands] = useState<Brands[]>([])
   const [selected, setSelected] = useState<string>(value || '__all__')
   useEffect(() => {
-    fetch('/api/custom/category')
+    fetch('/api/custom/brands')
       .then((res) => res.json())
-      .then((data) => setCategories(data.categories))
-      .catch((err) => console.error('Failed to fetch categories', err))
+      .then((data) => setBrands(data.brands))
+      .catch((err) => console.error('Failed to fetch brands', err))
   }, [])
 
   useEffect(() => {
@@ -48,13 +48,17 @@ export default function CategorySelect({ value = '', onChange }: CategorySelectP
       }}
     >
       <SelectTrigger className="w-full rounded-lg border border-blue-400 bg-transparent text-neutral-700">
-        <SelectValue placeholder="همه دسته‌بندی‌ها" />
+        <SelectValue placeholder="همه برنــدها" />
       </SelectTrigger>
       <SelectContent className="rounded-lg bg-white border border-gray-400">
-        <SelectItem value="__all__">همه دسته‌بندی‌ها</SelectItem>
-        {categories.map((cat) => (
-          <SelectItem className="hover:text-blue-400 cursor-pointer" key={cat.id} value={cat.id}>
-            {cat.name}
+        <SelectItem value="__all__">همه برنــدها</SelectItem>
+        {brands.map((brand) => (
+          <SelectItem
+            className="hover:text-blue-400 cursor-pointer"
+            key={brand.id}
+            value={brand.id}
+          >
+            {brand.name}
           </SelectItem>
         ))}
       </SelectContent>

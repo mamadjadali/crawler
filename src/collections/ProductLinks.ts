@@ -70,6 +70,14 @@ export const ProductLinks: CollectionConfig = {
       admin: { description: 'Select a category for this product' },
     },
     {
+      name: 'brand',
+      label: 'Brand',
+      type: 'relationship',
+      relationTo: 'brands',
+      required: false,
+      admin: { description: 'Select a brand for this product' },
+    },
+    {
       name: 'productUrls',
       label: {
         en: 'Product URLs',
@@ -113,6 +121,7 @@ export const ProductLinks: CollectionConfig = {
             { label: { en: 'Mobile140', fa: 'موبایل۱۴۰' }, value: 'mobile140' },
             { label: { en: 'GooshiOnline', fa: 'گوشی آنلاین' }, value: 'gooshionline' },
             { label: { en: 'KasraPars', fa: 'کسراپارس' }, value: 'kasrapars' },
+            { label: { en: 'Farnaa', fa: 'فرنا' }, value: 'farnaa' },
           ],
           admin: {
             description: {
@@ -241,8 +250,13 @@ export const ProductLinks: CollectionConfig = {
         if (data.url && !data.productUrls) {
           const url = new URL(data.url)
           const hostname = url.hostname.toLowerCase()
-          let detectedSite: 'torob' | 'technolife' | 'mobile140' | 'gooshionline' | 'kasrapars' =
-            'torob'
+          let detectedSite:
+            | 'torob'
+            | 'technolife'
+            | 'mobile140'
+            | 'gooshionline'
+            | 'kasrapars'
+            | 'farnaa' = 'torob'
 
           if (hostname.includes('torob.com')) {
             detectedSite = 'torob'
@@ -254,6 +268,8 @@ export const ProductLinks: CollectionConfig = {
             detectedSite = 'gooshionline'
           } else if (hostname.includes('kasrapars.ir') || hostname.includes('plus.kasrapars.ir')) {
             detectedSite = 'kasrapars'
+          } else if (hostname.includes('farnaa.com')) {
+            detectedSite = 'farnaa'
           }
 
           data.productUrls = [
@@ -290,6 +306,8 @@ export const ProductLinks: CollectionConfig = {
                   hostname.includes('plus.kasrapars.ir')
                 ) {
                   urlEntry.site = 'kasrapars'
+                } else if (hostname.includes('farnaa.com')) {
+                  urlEntry.site = 'farnaa'
                 } else {
                   urlEntry.site = 'torob' // Default fallback
                 }

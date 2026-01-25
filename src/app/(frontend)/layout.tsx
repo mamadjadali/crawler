@@ -2,8 +2,8 @@ import React from 'react'
 import './styles.css'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+  description: '',
+  title: 'Ara',
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
@@ -12,7 +12,11 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="fa" dir="rtl">
       <body>
+        {/* <Providers> */}
+        {/* <ThemeProvider> */}
         <main>{children}</main>
+        {/* </ThemeProvider> */}
+        {/* </Providers> */}
       </body>
     </html>
   )
