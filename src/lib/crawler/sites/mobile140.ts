@@ -24,6 +24,24 @@ export class Mobile140Crawler implements SiteCrawler {
 
       // Parse with Cheerio
       const $ = cheerio.load(html)
+      // $('*')
+      //   .filter((_, el) => {
+      //     const text = $(el).text()
+      //     return text.includes('بیمه')
+      //   })
+      //   .remove()
+      const mainPriceText = $('.flex.justify-start.flex-col.items-end.mr-auto.text-xl.leading-7')
+        .first()
+        .text()
+        .trim()
+
+      if (mainPriceText.includes('تماس بگیرید')) {
+        return {
+          success: false,
+          price: null,
+          error: 'Product not available',
+        }
+      }
 
       let price: number | null = null
 
@@ -85,7 +103,7 @@ export class Mobile140Crawler implements SiteCrawler {
 
               cleanedPrice = cleanedPrice.replace(
                 /[۰-۹٠-٩]/g,
-                (char) => persianToEnglish[char] || char
+                (char) => persianToEnglish[char] || char,
               )
 
               // Remove dots that are used as thousands separators in Persian format
@@ -103,11 +121,7 @@ export class Mobile140Crawler implements SiteCrawler {
 
               const parsedPrice = parseFloat(cleanedPrice)
               // Check if it's a reasonable price (between 1000 and 1 billion)
-              if (
-                !isNaN(parsedPrice) &&
-                parsedPrice >= 1000 &&
-                parsedPrice <= 1000000000
-              ) {
+              if (!isNaN(parsedPrice) && parsedPrice >= 1000 && parsedPrice <= 1000000000) {
                 price = parsedPrice // Use the main product price found
                 break
               }
@@ -147,11 +161,7 @@ export class Mobile140Crawler implements SiteCrawler {
 
                   const parsedPrice = parseFloat(cleanedPrice)
                   // Only accept reasonable prices
-                  if (
-                    !isNaN(parsedPrice) &&
-                    parsedPrice >= 1000 &&
-                    parsedPrice <= 1000000000
-                  ) {
+                  if (!isNaN(parsedPrice) && parsedPrice >= 1000 && parsedPrice <= 1000000000) {
                     foundPrices.push(parsedPrice)
                   }
                 }
@@ -177,7 +187,7 @@ export class Mobile140Crawler implements SiteCrawler {
           '.rounded-lg.border.border-neutral-200.bg-neutral-100',
           '.text-neutral-700.text-right.leading-8.text-sm',
         ]
-        
+
         let isNotAvailable = false
         for (const selector of notAvailableSelectors) {
           const element = $(selector).first() // Only check the first/main instance
@@ -187,14 +197,16 @@ export class Mobile140Crawler implements SiteCrawler {
             if (
               text.includes('موجود نیست') ||
               text.includes('موجود شد خبرم کنید') ||
-              text.includes('فعلا موجود نیست')
+              text.includes('فعلا موجود نیست') ||
+              text.includes('تماس بگیرید')
             ) {
               // Verify this is in the main product area, not just a variant option
               const parent = element.parent()
-              const isMainProductArea = parent.hasClass('container-item') || 
-                                       parent.closest('.container-item').length > 0 ||
-                                       element.closest('.flex.justify-start.flex-col.items-end').length > 0
-              
+              const isMainProductArea =
+                parent.hasClass('container-item') ||
+                parent.closest('.container-item').length > 0 ||
+                element.closest('.flex.justify-start.flex-col.items-end').length > 0
+
               if (isMainProductArea || element.length === 1) {
                 isNotAvailable = true
                 break
@@ -226,8 +238,7 @@ export class Mobile140Crawler implements SiteCrawler {
       return {
         success: false,
         price: null,
-        error:
-          error instanceof Error ? error.message : 'Unknown error occurred',
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
       }
     }
   }
@@ -236,4 +247,3 @@ export class Mobile140Crawler implements SiteCrawler {
     // No-op: no browser to close
   }
 }
-

@@ -96,9 +96,12 @@ export default function ProductCard({
   // Get lowest price from all URLs
   // const prices = urls
   const prices = urlsState
-
+    .filter(
+      (urlEntry): urlEntry is ProductUrl & { currentPrice: number } =>
+        urlEntry.crawlError !== 'Product not available' && urlEntry.currentPrice !== null,
+    )
     .map((urlEntry) => urlEntry.currentPrice)
-    .filter((price) => price !== null && price !== undefined)
+
   const displayPrice = prices.length > 0 ? Math.min(...prices) : null
 
   // Get most recent crawl date
