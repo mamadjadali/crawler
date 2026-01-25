@@ -13,11 +13,24 @@ export async function GET() {
       sort: 'name',
     })
 
+    const brandsWithCount = await Promise.all(
+      results.docs.map(async (brand: any) => {
+        const countResult = await payload.find({
+          collection: 'product-links', // your product collection
+          where: { brand: { equals: brand.id } },
+          limit: 0, // we only need totalDocs
+        })
+
+        return {
+          id: brand.id,
+          name: brand.name,
+          count: countResult.totalDocs || 0,
+        }
+      }),
+    )
+
     return Response.json({
-      brands: results.docs.map((brand: any) => ({
-        id: brand.id,
-        name: brand.name,
-      })),
+      brands: brandsWithCount,
     })
   } catch (error) {
     console.error('Brands error:', error)

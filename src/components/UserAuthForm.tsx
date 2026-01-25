@@ -66,7 +66,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         return
       }
 
-      alert('خوش آمدید 👋')
+      // alert('خوش آمدید 👋')
 
       router.push('/products')
     } catch {

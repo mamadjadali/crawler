@@ -12,6 +12,7 @@ import {
 interface Brands {
   id: string
   name: string
+  count?: number
 }
 
 interface BrandsSelectProps {
@@ -59,6 +60,9 @@ export default function BrandsSelect({ value = '', onChange }: BrandsSelectProps
             value={brand.id}
           >
             {brand.name}
+            <span className="text-gray-400 text-xs">
+              {(brand.count ?? 0).toLocaleString('fa-IR')}
+            </span>
           </SelectItem>
         ))}
       </SelectContent>

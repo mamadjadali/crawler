@@ -13,11 +13,30 @@ export async function GET() {
       sort: 'name',
     })
 
+    const categoriesWithCount = await Promise.all(
+      results.docs.map(async (cat: any) => {
+        const countResult = await payload.find({
+          collection: 'product-links', // your product collection
+          where: { category: { equals: cat.id } },
+          limit: 0, // we just need the totalDocs
+        })
+
+        return {
+          id: cat.id,
+          name: cat.name,
+          count: countResult.totalDocs || 0,
+        }
+      }),
+    )
+
+    // return Response.json({
+    //   categories: results.docs.map((cat: any) => ({
+    //     id: cat.id,
+    //     name: cat.name,
+    //   })),
+    // })
     return Response.json({
-      categories: results.docs.map((cat: any) => ({
-        id: cat.id,
-        name: cat.name,
-      })),
+      categories: categoriesWithCount, // <- return the one with counts
     })
   } catch (error) {
     console.error('Categories error:', error)

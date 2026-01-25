@@ -12,6 +12,7 @@ import {
 interface Category {
   id: string
   name: string
+  count?: number
 }
 
 interface CategorySelectProps {
@@ -55,6 +56,10 @@ export default function CategorySelect({ value = '', onChange }: CategorySelectP
         {categories.map((cat) => (
           <SelectItem className="hover:text-blue-400 cursor-pointer" key={cat.id} value={cat.id}>
             {cat.name}
+            <span className="text-gray-400 text-xs">
+              {(cat.count ?? 0).toLocaleString('fa-IR')}
+            </span>{' '}
+            {/* ← count */}
           </SelectItem>
         ))}
       </SelectContent>

@@ -21,6 +21,17 @@ export class FarnaaCrawler implements SiteCrawler {
 
       const html = await response.text()
       const $ = cheerio.load(html)
+      const hasReplacement = $('span')
+        .toArray()
+        .some((el) => $(el).text().includes('محصولات جایگزین'))
+
+      if (hasReplacement) {
+        return {
+          success: false,
+          price: null,
+          error: 'Product not available',
+        }
+      }
 
       // -------------------------------
       // 1️⃣ JSON-LD (MOST RELIABLE)
@@ -60,11 +71,7 @@ export class FarnaaCrawler implements SiteCrawler {
       // -------------------------------
       let $root = $('.product').first()
       $('.product').each((_, el) => {
-        if (
-          $(el)
-            .find('.js-add-to-cart,.js-btn-add-to-cart')
-            .length > 0
-        ) {
+        if ($(el).find('.js-add-to-cart,.js-btn-add-to-cart').length > 0) {
           $root = $(el)
           return false
         }
@@ -79,13 +86,11 @@ export class FarnaaCrawler implements SiteCrawler {
         '.price-product span',
         '.price ins span',
         '.price',
-        '[class*="price"]',
+        // '[class*="price"]',
       ]
 
       for (const selector of selectors) {
-        const text =
-          $root.find(selector).first().text().trim() ||
-          $(selector).first().text().trim()
+        const text = $root.find(selector).first().text().trim() || $(selector).first().text().trim()
 
         const parsed = this.parsePrice(text)
         if (parsed) {
@@ -99,20 +104,25 @@ export class FarnaaCrawler implements SiteCrawler {
       // -------------------------------
       // 4️⃣ TEXT FALLBACK (LAST RESORT)
       // -------------------------------
-      const bodyText = $root.text() || $('body').text()
-      const parsed = this.parsePrice(bodyText)
+      // const bodyText = $root.text() || $('body').text()
+      // const parsed = this.parsePrice(bodyText)
 
-      if (parsed) {
-        return {
-          success: true,
-          price: parsed,
-        }
-      }
+      // if (parsed) {
+      //   return {
+      //     success: true,
+      //     price: parsed,
+      //   }
+      // }
 
+      // return {
+      //   success: false,
+      //   price: null,
+      //   error: 'Price not found',
+      // }
       return {
         success: false,
         price: null,
-        error: 'Price not found',
+        error: 'Product not available',
       }
     } catch (error) {
       return {

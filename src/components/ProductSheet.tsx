@@ -176,6 +176,7 @@ export default function ProductSheet({
   // Get lowest price and which site has it
   const lowestPriceInfo = useMemo(() => {
     const pricesWithSites = refreshedProductUrls
+      .filter((urlEntry) => urlEntry.currentPrice !== null && !urlEntry.crawlError)
       .map((urlEntry) => ({
         price: urlEntry.currentPrice,
         site: urlEntry.site,
