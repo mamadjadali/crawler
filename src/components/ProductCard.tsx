@@ -95,14 +95,26 @@ export default function ProductCard({
 
   // Get lowest price from all URLs
   // const prices = urls
-  const prices = urlsState
-    .filter(
-      (urlEntry): urlEntry is ProductUrl & { currentPrice: number } =>
-        urlEntry.crawlError !== 'Product not available' && urlEntry.currentPrice !== null,
-    )
-    .map((urlEntry) => urlEntry.currentPrice)
+  // const prices = urlsState
+  //   .filter(
+  //     (urlEntry): urlEntry is ProductUrl & { currentPrice: number } =>
+  //       urlEntry.crawlError !== 'Product not available' && urlEntry.currentPrice !== null,
+  //   )
+  //   .map((urlEntry) => urlEntry.currentPrice)
 
-  const displayPrice = prices.length > 0 ? Math.min(...prices) : null
+  // const displayPrice = prices.length > 0 ? Math.min(...prices) : null
+  const lowestPriceEntry = urlsState
+    .filter(
+      (u): u is ProductUrl & { currentPrice: number } =>
+        u.crawlError !== 'Product not available' && u.currentPrice !== null,
+    )
+    .reduce<(ProductUrl & { currentPrice: number }) | null>((lowest, current) => {
+      if (!lowest) return current
+      return current.currentPrice < lowest.currentPrice ? current : lowest
+    }, null)
+
+  const displayPrice = lowestPriceEntry?.currentPrice ?? null
+  const lowestPriceSite = lowestPriceEntry?.site ?? null
 
   // Get most recent crawl date
   // const allCrawlDates = urls
@@ -143,9 +155,25 @@ export default function ProductCard({
               <div className="flex-1">
                 {displayPrice !== null ? (
                   <div>
-                    <div className="text-xs text-gray-500 mb-1">
+                    <div className="text-xs flex gap-1 text-gray-500 mb-2">
                       {urlsState.length > 1 ? 'کمترین قیمت' : 'قیمت فعلی'}
-                      {}
+                      {lowestPriceSite && (
+                        <div className="text-xs text-green-600 font-bold">
+                          {lowestPriceSite === 'torob'
+                            ? 'تربـــ'
+                            : lowestPriceSite === 'technolife'
+                              ? 'تکنولایفــ'
+                              : lowestPriceSite === 'mobile140'
+                                ? 'موبایل۱۴۰'
+                                : lowestPriceSite === 'gooshionline'
+                                  ? 'گوشی آنلاین'
+                                  : lowestPriceSite === 'kasrapars'
+                                    ? 'کسری پلاس'
+                                    : lowestPriceSite === 'farnaa'
+                                      ? 'فرنا'
+                                      : lowestPriceSite}
+                        </div>
+                      )}
                     </div>
                     <div className="text-xl font-bold text-neutral-700">
                       {formatPrice(displayPrice, true)}
@@ -161,6 +189,8 @@ export default function ProductCard({
                 ) : (
                   <div className="text-sm text-gray-500">قیمت نامشخص</div>
                 )}
+
+                {/* {brand && <div className="text-xs text-gray-500 mt-1">برند: {brand}</div>} */}
               </div>
 
               {/* Product Image */}

@@ -7,6 +7,8 @@ import ProductList from './ProductList'
 import CategorySelect from './CategorySelect'
 import SearchInput from './SearchInput'
 import BrandsSelect from './BrandsSelect'
+import { Button } from './ui/button'
+import { LayoutGrid, LayoutList } from 'lucide-react'
 
 interface ProductUrl {
   url: string
@@ -44,6 +46,9 @@ interface ProductsPageClientProps {
   initialProducts: Product[]
 }
 
+type ViewMode = 'grid' | 'list'
+const VIEW_KEY = 'products:view'
+
 export default function ProductsPageClient({ initialProducts }: ProductsPageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -52,6 +57,34 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
   const [lastSearchQuery, setLastSearchQuery] = useState<string>('')
   const [lastCategory, setLastCategory] = useState<string>('')
   const [lastSelectedBrand, setLastSelectedBrand] = useState<string>('')
+
+  // Grid/List view state
+  // const [view, setView] = useState<ViewMode>(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const saved = localStorage.getItem(VIEW_KEY) as ViewMode | null
+  //     if (saved === 'grid' || saved === 'list') return saved
+  //   }
+  //   return 'grid'
+  // })
+
+  // // Persist changes
+  // useEffect(() => {
+  //   localStorage.setItem(VIEW_KEY, view)
+  // }, [view])
+  const [view, setView] = useState<ViewMode>('list')
+  const [isViewLoaded, setIsViewLoaded] = useState(false)
+
+  // Load persisted view
+  useEffect(() => {
+    const saved = localStorage.getItem(VIEW_KEY) as ViewMode | null
+    if (saved === 'grid' || saved === 'list') setView(saved)
+    setIsViewLoaded(true) // mark view as loaded
+  }, [])
+
+  // Persist changes
+  useEffect(() => {
+    localStorage.setItem(VIEW_KEY, view)
+  }, [view])
 
   const searchQuery = searchParams.get('q') || ''
   const selectedCategory = searchParams.get('category') || ''
@@ -279,18 +312,33 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
               }}
             />
           </div>
+          {/* View Toggle */}
+          <div className="flex border-none rounded-lg text-sm">
+            <Button
+              className={`px-3 py-1 ${view === 'grid' ? 'bg-neutral-700 text-white cursor-pointer' : 'bg-white text-neutral-700 cursor-pointer'}`}
+              onClick={() => setView('grid')}
+            >
+              <LayoutGrid />
+            </Button>
+            <Button
+              className={`px-3 py-1 ${view === 'list' ? 'bg-neutral-700 text-white cursor-pointer' : 'bg-white text-neutral-700 cursor-pointer'}`}
+              onClick={() => setView('list')}
+            >
+              <LayoutList />
+            </Button>
+          </div>
         </div>
         {/* <ThemeSelector /> */}
       </div>
 
       {/* Product List */}
-      {isSearching ? (
+      {isSearching || !isViewLoaded ? (
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
           <p className="mt-4 text-gray-400">در حال جستجو...</p>
         </div>
       ) : (
-        <ProductList products={products} />
+        <ProductList products={products} view={view} />
       )}
     </>
   )

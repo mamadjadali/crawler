@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Origami } from 'lucide-react'
 
 interface Brands {
   id: string
@@ -48,11 +49,14 @@ export default function BrandsSelect({ value = '', onChange }: BrandsSelectProps
         onChange(next)
       }}
     >
-      <SelectTrigger className="w-full rounded-lg border border-blue-400 bg-transparent text-neutral-700">
+      <SelectTrigger className="w-full rounded-lg border border-gray-400 bg-transparent text-neutral-700">
         <SelectValue placeholder="همه برنــدها" />
       </SelectTrigger>
       <SelectContent className="rounded-lg bg-white border border-gray-400">
-        <SelectItem value="__all__">همه برنــدها</SelectItem>
+        <SelectItem value="__all__">
+          <Origami />
+          همه برنــدها
+        </SelectItem>
         {brands.map((brand) => (
           <SelectItem
             className="hover:text-blue-400 cursor-pointer"

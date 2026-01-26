@@ -204,6 +204,16 @@ export default function ProductSheet({
     }
   }, [refreshedProductUrls])
 
+  const sortedCurrentPrices = useMemo(() => {
+    return [...refreshedProductUrls].sort((a, b) => {
+      // unavailable / unknown prices go to bottom
+      if (a.currentPrice == null) return 1
+      if (b.currentPrice == null) return -1
+
+      return a.currentPrice - b.currentPrice // lowest first
+    })
+  }, [refreshedProductUrls])
+
   // Get most recent crawl date
   const allCrawlDates = refreshedProductUrls
     .map((urlEntry) => urlEntry.lastCrawledAt)
@@ -328,7 +338,7 @@ export default function ProductSheet({
               </Button>
             </div>
             <div className="space-y-2">
-              {refreshedProductUrls.map((urlEntry, index) => {
+              {sortedCurrentPrices.map((urlEntry, index) => {
                 const siteName =
                   urlEntry.site === 'torob'
                     ? 'تربـــ'
@@ -403,7 +413,7 @@ export default function ProductSheet({
           </div>
 
           {/* Per-Site Sections */}
-          {refreshedProductUrls.map((urlEntry, index) => {
+          {sortedCurrentPrices.map((urlEntry, index) => {
             const siteName =
               urlEntry.site === 'torob'
                 ? 'تربـــ'

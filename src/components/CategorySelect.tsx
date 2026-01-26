@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { SlidersHorizontal } from 'lucide-react'
 
 interface Category {
   id: string
@@ -48,11 +49,14 @@ export default function CategorySelect({ value = '', onChange }: CategorySelectP
         onChange(next)
       }}
     >
-      <SelectTrigger className="w-full rounded-lg border border-blue-400 bg-transparent text-neutral-700">
+      <SelectTrigger className="w-full rounded-lg border border-gray-400 bg-transparent text-neutral-700">
         <SelectValue placeholder="همه دسته‌بندی‌ها" />
       </SelectTrigger>
       <SelectContent className="rounded-lg bg-white border border-gray-400">
-        <SelectItem value="__all__">همه دسته‌بندی‌ها</SelectItem>
+        <SelectItem value="__all__">
+          <SlidersHorizontal />
+          همه دسته‌بندی‌ها
+        </SelectItem>
         {categories.map((cat) => (
           <SelectItem className="hover:text-blue-400 cursor-pointer" key={cat.id} value={cat.id}>
             {cat.name}
