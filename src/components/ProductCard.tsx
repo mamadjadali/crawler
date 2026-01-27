@@ -77,32 +77,6 @@ export default function ProductCard({
 
   const [urlsState, setUrlsState] = useState<ProductUrl[]>(initialUrls)
 
-  // Use productUrls if available, otherwise fall back to legacy fields
-  // const urls =
-  //   productUrls.length > 0
-  //     ? productUrls
-  //     : [
-  //         {
-  //           url,
-  //           site,
-  //           currentPrice,
-  //           lastCrawledAt,
-  //           crawlStatus,
-  //           crawlError,
-  //           priceHistory: priceHistory || [],
-  //         },
-  //       ]
-
-  // Get lowest price from all URLs
-  // const prices = urls
-  // const prices = urlsState
-  //   .filter(
-  //     (urlEntry): urlEntry is ProductUrl & { currentPrice: number } =>
-  //       urlEntry.crawlError !== 'Product not available' && urlEntry.currentPrice !== null,
-  //   )
-  //   .map((urlEntry) => urlEntry.currentPrice)
-
-  // const displayPrice = prices.length > 0 ? Math.min(...prices) : null
   const lowestPriceEntry = urlsState
     .filter(
       (u): u is ProductUrl & { currentPrice: number } =>
@@ -262,22 +236,6 @@ export default function ProductCard({
                                   : siteName}
                     </Badge>
                   ))}
-                  {/* <Badge
-                    variant={
-                      displayStatus === 'success'
-                        ? 'success'
-                        : displayStatus === 'failed'
-                          ? 'destructive'
-                          : 'secondary'
-                    }
-                    className="text-xs rounded-lg px-4 py-1"
-                  >
-                    {displayStatus === 'success'
-                      ? 'موفق'
-                      : displayStatus === 'failed'
-                        ? 'ناموفق'
-                        : 'در انتظار'}
-                  </Badge> */}
                 </div>
                 <div className="mt-4 text-sm w-full text-neutral-700 flex justify-between items-center-safe">
                   <ClockFadingIcon className="size-4" />

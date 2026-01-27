@@ -29,5 +29,45 @@ export const Clients: CollectionConfig = {
         fa: 'نام کامل',
       },
     },
+    {
+      name: 'role',
+      label: {
+        en: 'role',
+        fa: 'رول',
+      },
+      required: true,
+      defaultValue: 'pawn',
+      type: 'select',
+      options: [
+        {
+          label: 'God',
+          value: 'god',
+        },
+        {
+          label: 'King',
+          value: 'king',
+        },
+        {
+          label: 'Queen',
+          value: 'queen',
+        },
+        {
+          label: 'Rook',
+          value: 'rook',
+        },
+        {
+          label: 'Bishop',
+          value: 'bishop',
+        },
+        {
+          label: 'Knight',
+          value: 'knight',
+        },
+        {
+          label: 'Pawn',
+          value: 'pawn',
+        },
+      ],
+    },
   ],
 }

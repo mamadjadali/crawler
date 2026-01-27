@@ -61,7 +61,7 @@ export default function ProductSheet({
   name,
   productImageUrl,
   productUrls = [],
-  onUrlsUpdate, // ← add this
+  onUrlsUpdate,
 }: ProductSheetProps) {
   const [refreshedProductUrls, setRefreshedProductUrls] = useState<ProductUrl[]>(productUrls)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
@@ -74,15 +74,6 @@ export default function ProductSheet({
   const torobUrl = useMemo(() => {
     return productUrls.find((u) => u.site === 'torob')?.url ?? null
   }, [productUrls])
-  // const handleCopyPrice = async (price: number, index: number) => {
-  //   try {
-  //     await navigator.clipboard.writeText(price.toString())
-  //     setCopiedIndex(index)
-  //     setTimeout(() => setCopiedIndex(null), 2000)
-  //   } catch (err) {
-  //     console.error('Failed to copy price:', err)
-  //   }
-  // }
 
   const handleCopyPrice = (price: number, index: number) => {
     if (typeof window === 'undefined') return // ensure client
@@ -114,25 +105,6 @@ export default function ProductSheet({
     copyText()
   }
 
-  // const handleRefreshComplete = (data: { productUrls?: ProductUrl[] }) => {
-  //   if (data.productUrls) {
-  //     setRefreshedProductUrls(
-  //       data.productUrls.map((urlEntry) => ({
-  //         ...urlEntry,
-  //         lastCrawledAt: urlEntry.lastCrawledAt
-  //           ? typeof urlEntry.lastCrawledAt === 'string'
-  //             ? new Date(urlEntry.lastCrawledAt)
-  //             : urlEntry.lastCrawledAt
-  //           : null,
-  //         priceHistory: (urlEntry.priceHistory || []).map((item) => ({
-  //           ...item,
-  //           crawledAt:
-  //             typeof item.crawledAt === 'string' ? new Date(item.crawledAt) : item.crawledAt,
-  //         })),
-  //       })),
-  //     )
-  //   }
-  // }
   const handleRefreshComplete = (data: { productUrls?: ProductUrl[] }) => {
     if (data.productUrls) {
       const updatedUrls = data.productUrls.map((urlEntry) => ({
@@ -231,8 +203,9 @@ export default function ProductSheet({
 
   const isRecentlyUpdated = useMemo(() => {
     if (!mostRecentCrawl) return false
-    const FIVE_MINUTES = 5 * 60 * 1000
-    return Date.now() - mostRecentCrawl.getTime() < FIVE_MINUTES
+    // const FIVE_MINUTES = 5 * 60 * 1000
+    const TEN_MINUTES = 10 * 60 * 1000
+    return Date.now() - mostRecentCrawl.getTime() < TEN_MINUTES
   }, [mostRecentCrawl])
 
   return (
@@ -317,7 +290,6 @@ export default function ProductSheet({
             <span className="text-sm text-neutral-700">
               {mostRecentCrawl ? formatDate(mostRecentCrawl) : 'هنوز بروزرسانی نشده'}
             </span>
-            {/* </div> */}
           </SheetDescription>
         </SheetHeader>
 

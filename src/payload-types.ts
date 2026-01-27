@@ -177,6 +177,7 @@ export interface User {
 export interface Client {
   id: string;
   fullname?: string | null;
+  role: 'god' | 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -431,6 +432,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface ClientsSelect<T extends boolean = true> {
   fullname?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

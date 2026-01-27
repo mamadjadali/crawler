@@ -9,6 +9,7 @@ import SearchInput from './SearchInput'
 import BrandsSelect from './BrandsSelect'
 import { Button } from './ui/button'
 import { LayoutGrid, LayoutList } from 'lucide-react'
+import RefreshCategoryButton from './RefreshCategoryButton'
 
 interface ProductUrl {
   url: string
@@ -58,19 +59,6 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
   const [lastCategory, setLastCategory] = useState<string>('')
   const [lastSelectedBrand, setLastSelectedBrand] = useState<string>('')
 
-  // Grid/List view state
-  // const [view, setView] = useState<ViewMode>(() => {
-  //   if (typeof window !== 'undefined') {
-  //     const saved = localStorage.getItem(VIEW_KEY) as ViewMode | null
-  //     if (saved === 'grid' || saved === 'list') return saved
-  //   }
-  //   return 'grid'
-  // })
-
-  // // Persist changes
-  // useEffect(() => {
-  //   localStorage.setItem(VIEW_KEY, view)
-  // }, [view])
   const [view, setView] = useState<ViewMode>('list')
   const [isViewLoaded, setIsViewLoaded] = useState(false)
 
@@ -312,6 +300,9 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
               }}
             />
           </div>
+          {/* category Refresh */}
+          <RefreshCategoryButton category={selectedCategory} brand={selectedBrand} />
+
           {/* View Toggle */}
           <div className="flex border-none rounded-lg text-sm">
             <Button

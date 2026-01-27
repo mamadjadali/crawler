@@ -2,7 +2,6 @@
 
 import { Sheet, SheetTrigger } from '@/components/ui/sheet'
 import { formatPrice } from '@/lib/utils/formatPrice'
-import { ClockAlert, TriangleAlert } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import ProductSheet from './ProductSheet'
@@ -87,10 +86,6 @@ export default function ProductRow({
           {/* Product Info */}
           <div className="w-full  items-center flex justify-between">
             <div className="font-medium text-neutral-700">{name}</div>
-            {/* <div className="flex items-center gap-2 text-xs text-neutral-600 mt-2">
-              <ClockFadingIcon className="w-3 h-3" />
-              {displayLastCrawledAt ? formatDate(displayLastCrawledAt) : 'هنوز بروزرسانی نشده'}
-            </div> */}
             <div className="flex flex-col justify-center items-center gap-2">
               {displayPrice !== null ? (
                 <div className="font-bold text-neutral-700">{formatPrice(displayPrice, true)}</div>
@@ -113,14 +108,33 @@ export default function ProductRow({
                     'border py-1 text-center px-4 rounded-lg text-xs flex items-center border-gray-400 text-neutral-700'
                   let icon: React.ReactNode = null
 
-                  if (diffDays >= 3) {
+                  if (diffMinutes <= 10) {
                     className =
-                      'border-red-500 text-center text-red-600 border-2 py-1 px-4 rounded-lg text-xs flex items-center gap-2'
-                    icon = <TriangleAlert className="size-4 text-red-600 animate-pulse" />
+                      'border-green-500 text-center text-green-600 border py-2 px-4 rounded-lg text-xs flex items-center gap-2'
+                    icon = (
+                      <span className="relative flex size-3">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
+                      </span>
+                    )
                   } else if (diffDays >= 2) {
                     className =
-                      'border-yellow-400 text-center text-yellow-700 border-2 justify-center py-1 px-4 rounded-lg text-xs flex items-center gap-2'
-                    icon = <ClockAlert className="size-4 text-yellow-700 animate-pulse" />
+                      'border-red-500 text-center text-red-600 border py-2 px-4 rounded-lg text-xs flex items-center gap-2'
+                    icon = (
+                      <span className="relative flex size-3">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex size-3 rounded-full bg-red-500"></span>
+                      </span>
+                    )
+                  } else if (diffDays >= 1) {
+                    className =
+                      'border-yellow-400 text-center text-yellow-700 border justify-center py-2 px-4 rounded-lg text-xs flex items-center gap-2'
+                    icon = (
+                      <span className="relative flex size-3">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-400 opacity-75"></span>
+                        <span className="relative inline-flex size-3 rounded-full bg-yellow-500"></span>
+                      </span>
+                    )
                   }
 
                   // Determine display text

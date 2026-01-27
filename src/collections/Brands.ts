@@ -2,7 +2,16 @@ import { CollectionConfig } from 'payload'
 
 export const Brands: CollectionConfig = {
   slug: 'brands',
-  labels: { singular: 'Brand', plural: 'Brands' },
+  labels: {
+    singular: {
+      en: 'Brand',
+      fa: 'برنــد',
+    },
+    plural: {
+      en: 'Brands',
+      fa: 'بــرنــد‌ها',
+    },
+  },
   fields: [
     { name: 'name', type: 'text', required: true },
     { name: 'slug', type: 'text', required: true },
