@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
 import { Sheet, SheetTrigger } from '@/components/ui/sheet'
 import { formatDate, formatPrice } from '@/lib/utils/formatPrice'
-import { ClockFadingIcon } from 'lucide-react'
+import { ClockAlert, ClockFadingIcon, TriangleAlert } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import ProductSheet from './ProductSheet'
@@ -127,6 +127,19 @@ export default function ProductCard({
       ? new Date(Math.max(...allCrawlDates.map((d: Date) => d.getTime())))
       : null
 
+  let lastCrawlClass = 'border border-gray-400 text-neutral-700'
+
+  if (displayLastCrawledAt) {
+    const now = Date.now()
+    const last = new Date(displayLastCrawledAt).getTime()
+    const diffDays = Math.floor((now - last) / (1000 * 60 * 60 * 24))
+
+    if (diffDays >= 3) {
+      lastCrawlClass = 'border-2 border-red-500 text-red-600'
+    } else if (diffDays >= 2) {
+      lastCrawlClass = 'border-2 animate-pulse border-yellow-400 text-yellow-700'
+    }
+  }
   // Get overall status
   const hasSuccess = urlsState.some((urlEntry) => urlEntry.crawlStatus === 'success')
   const hasFailed = urlsState.some((urlEntry) => urlEntry.crawlStatus === 'failed')
@@ -269,25 +282,45 @@ export default function ProductCard({
                 <div className="mt-4 text-sm w-full text-neutral-700 flex justify-between items-center-safe">
                   <ClockFadingIcon className="size-4" />
                   {displayLastCrawledAt ? formatDate(displayLastCrawledAt) : 'هنوز بروزرسانی نشده'}
-                  <span className=" border border-gray-400 text-neutral-700 py-1 px-4 rounded-lg text-xs">
-                    {displayLastCrawledAt &&
-                      (() => {
-                        const now = Date.now()
-                        const last = new Date(displayLastCrawledAt).getTime()
-                        const diffMs = now - last
-                        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-                        const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-                        const diffMinutes = Math.floor(diffMs / (1000 * 60))
+                  {displayLastCrawledAt &&
+                    (() => {
+                      const now = Date.now()
+                      const last = new Date(displayLastCrawledAt).getTime()
+                      const diffMs = now - last
+                      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+                      const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+                      const diffMinutes = Math.floor(diffMs / (1000 * 60))
 
-                        if (diffDays >= 1) {
-                          return `${new Intl.NumberFormat('fa-IR').format(diffDays)} روز قبل`
-                        } else if (diffHours >= 1) {
-                          return `${new Intl.NumberFormat('fa-IR').format(diffHours)} ساعت قبل`
-                        } else {
-                          return `${new Intl.NumberFormat('fa-IR').format(diffMinutes)} دقیقه قبل`
-                        }
-                      })()}
-                  </span>
+                      // Determine color & icon
+                      let className =
+                        'border py-1 px-4 rounded-lg text-xs flex items-center gap-1 border-gray-400 text-neutral-700'
+                      let icon: React.ReactNode = null
+
+                      if (diffDays >= 3) {
+                        className =
+                          'border-red-500 text-red-600 border py-1 px-4 rounded-lg text-xs flex items-center gap-2'
+                        icon = <TriangleAlert className="size-4 text-red-600 animate-pulse" />
+                      } else if (diffDays >= 2) {
+                        className =
+                          'border-yellow-400 text-yellow-700 border py-1 px-4 rounded-lg text-xs flex items-center gap-2'
+                        icon = <ClockAlert className="size-4 text-yellow-700 animate-pulse" />
+                      }
+
+                      // Determine display text
+                      let text = ''
+                      if (diffDays >= 1)
+                        text = `${new Intl.NumberFormat('fa-IR').format(diffDays)} روز قبل`
+                      else if (diffHours >= 1)
+                        text = `${new Intl.NumberFormat('fa-IR').format(diffHours)} ساعت قبل`
+                      else text = `${new Intl.NumberFormat('fa-IR').format(diffMinutes)} دقیقه قبل`
+
+                      return (
+                        <span className={className}>
+                          {icon}
+                          {text}
+                        </span>
+                      )
+                    })()}
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@
 
 import { Sheet, SheetTrigger } from '@/components/ui/sheet'
 import { formatPrice } from '@/lib/utils/formatPrice'
+import { ClockAlert, TriangleAlert } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import ProductSheet from './ProductSheet'
@@ -90,7 +91,7 @@ export default function ProductRow({
               <ClockFadingIcon className="w-3 h-3" />
               {displayLastCrawledAt ? formatDate(displayLastCrawledAt) : 'هنوز بروزرسانی نشده'}
             </div> */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col justify-center items-center gap-2">
               {displayPrice !== null ? (
                 <div className="font-bold text-neutral-700">{formatPrice(displayPrice, true)}</div>
               ) : (
@@ -98,25 +99,45 @@ export default function ProductRow({
               )}
 
               {/* Last crawled */}
-              <span className="w-full border text-center border-gray-400 text-neutral-700 py-1 px-4 rounded-lg text-xs">
-                {displayLastCrawledAt &&
-                  (() => {
-                    const now = Date.now()
-                    const last = new Date(displayLastCrawledAt).getTime()
-                    const diffMs = now - last
-                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-                    const diffMinutes = Math.floor(diffMs / (1000 * 60))
+              {displayLastCrawledAt &&
+                (() => {
+                  const now = Date.now()
+                  const last = new Date(displayLastCrawledAt).getTime()
+                  const diffMs = now - last
+                  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+                  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+                  const diffMinutes = Math.floor(diffMs / (1000 * 60))
 
-                    if (diffDays >= 1) {
-                      return `${new Intl.NumberFormat('fa-IR').format(diffDays)} روز قبل`
-                    } else if (diffHours >= 1) {
-                      return `${new Intl.NumberFormat('fa-IR').format(diffHours)} ساعت قبل`
-                    } else {
-                      return `${new Intl.NumberFormat('fa-IR').format(diffMinutes)} دقیقه قبل`
-                    }
-                  })()}
-              </span>
+                  // Determine color & icon
+                  let className =
+                    'border py-1 text-center px-4 rounded-lg text-xs flex items-center border-gray-400 text-neutral-700'
+                  let icon: React.ReactNode = null
+
+                  if (diffDays >= 3) {
+                    className =
+                      'border-red-500 text-center text-red-600 border-2 py-1 px-4 rounded-lg text-xs flex items-center gap-2'
+                    icon = <TriangleAlert className="size-4 text-red-600 animate-pulse" />
+                  } else if (diffDays >= 2) {
+                    className =
+                      'border-yellow-400 text-center text-yellow-700 border-2 justify-center py-1 px-4 rounded-lg text-xs flex items-center gap-2'
+                    icon = <ClockAlert className="size-4 text-yellow-700 animate-pulse" />
+                  }
+
+                  // Determine display text
+                  let text = ''
+                  if (diffDays >= 1)
+                    text = `${new Intl.NumberFormat('fa-IR').format(diffDays)} روز قبل`
+                  else if (diffHours >= 1)
+                    text = `${new Intl.NumberFormat('fa-IR').format(diffHours)} ساعت قبل`
+                  else text = `${new Intl.NumberFormat('fa-IR').format(diffMinutes)} دقیقه قبل`
+
+                  return (
+                    <span className={className}>
+                      {icon}
+                      {text}
+                    </span>
+                  )
+                })()}
             </div>
           </div>
         </div>

@@ -15,15 +15,10 @@ interface ProductUrl {
 
 interface RefreshPriceIconProps {
   productId: string
-  onRefreshComplete?: (data: {
-    productUrls?: ProductUrl[]
-  }) => void
+  onRefreshComplete?: (data: { productUrls?: ProductUrl[] }) => void
 }
 
-export default function RefreshPriceIcon({
-  productId,
-  onRefreshComplete,
-}: RefreshPriceIconProps) {
+export default function RefreshPriceIcon({ productId, onRefreshComplete }: RefreshPriceIconProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -65,7 +60,7 @@ export default function RefreshPriceIcon({
         disabled={loading}
         variant="ghost"
         size="icon"
-        className="h-8 w-8"
+        className="h-8 w-8 cursor-pointer"
         title="Refresh price"
         aria-label="Refresh price"
       >

@@ -10,19 +10,20 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { formatDate, formatPrice } from '@/lib/utils/formatPrice'
+import { cn } from '@/lib/utils/utils'
 import {
   Check,
   ChevronsLeft,
   Copy,
   ExternalLink,
   PencilIcon,
+  RefreshCcw,
   SquareStack,
   TrendingUp,
 } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import RefreshPriceIcon from './RefreshPriceIcon'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from './ui/dropdown-menu'
 
 interface PriceHistoryItem {
   price: number
@@ -70,6 +71,9 @@ export default function ProductSheet({
     setRefreshedProductUrls(productUrls)
   }, [productUrls])
 
+  const torobUrl = useMemo(() => {
+    return productUrls.find((u) => u.site === 'torob')?.url ?? null
+  }, [productUrls])
   // const handleCopyPrice = async (price: number, index: number) => {
   //   try {
   //     await navigator.clipboard.writeText(price.toString())
@@ -79,6 +83,7 @@ export default function ProductSheet({
   //     console.error('Failed to copy price:', err)
   //   }
   // }
+
   const handleCopyPrice = (price: number, index: number) => {
     if (typeof window === 'undefined') return // ensure client
     const text = price.toString()
@@ -224,6 +229,12 @@ export default function ProductSheet({
       ? new Date(Math.max(...allCrawlDates.map((d: Date) => d.getTime())))
       : null
 
+  const isRecentlyUpdated = useMemo(() => {
+    if (!mostRecentCrawl) return false
+    const FIVE_MINUTES = 5 * 60 * 1000
+    return Date.now() - mostRecentCrawl.getTime() < FIVE_MINUTES
+  }, [mostRecentCrawl])
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
@@ -281,6 +292,23 @@ export default function ProductSheet({
                   </a>
                 )}
               </div>
+              {torobUrl && (
+                <a
+                  href={`https://panel.torob.com/s/product?error_reason=all&was_accessible=all&availability=all&is_active=all&torob_category=0&q=${torobUrl}&pageSize=50&sortById=&sortByDesc=false&checked_for_merge=all&stock_status=all&show_as_offline=all&instance_id=9327&problems=all`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block w-full"
+                >
+                  <Button
+                    variant="default"
+                    size="icon"
+                    className="cursor-pointer border text-red-400 border-red-400 rounded-lg w-full"
+                  >
+                    <RefreshCcw className="size-4" />
+                    رفــرش تربـــــ
+                  </Button>
+                </a>
+              )}
             </div>
           </div>
           <SheetDescription>
@@ -296,8 +324,14 @@ export default function ProductSheet({
         <div className="mt-6 space-y-6">
           {/* Lowest Price Indicator Section */}
           {lowestPriceInfo && (
-            <div className="bg-transparent rounded-lg p-4 border border-gray-400">
-              <div className="flex items-center justify-between mb-2">
+            // <div className="bg-transparent rounded-lg p-4 border border-gray-400">
+            <div
+              className={cn(
+                'bg-transparent rounded-lg p-4 border transition-colors',
+                isRecentlyUpdated ? 'border-green-600 bg-green-500/20' : 'border-gray-400',
+              )}
+            >
+              <div className="flex items-center justify-between gap-2">
                 <span className="text-sm font-medium text-neutral-700 flex items-center gap-2">
                   پایین ترین قیمت
                   <ChevronsLeft className="size-4 text-green-400" />
@@ -313,6 +347,18 @@ export default function ProductSheet({
                             ? 'کسری پلاس'
                             : lowestPriceInfo.siteName}
                 </span>
+                {isRecentlyUpdated && (
+                  <Badge
+                    variant="outline"
+                    className="text-green-600 gap-3 rounded-lg border-green-600 bg-white text-xs px-3 py-2"
+                  >
+                    <span className="relative flex size-3">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
+                    </span>
+                    تازه بروز شده
+                  </Badge>
+                )}
                 <RefreshPriceIcon productId={productId} onRefreshComplete={handleRefreshComplete} />
               </div>
             </div>
