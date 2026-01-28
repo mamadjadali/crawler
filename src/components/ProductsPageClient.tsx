@@ -1,15 +1,15 @@
 'use client'
 
 import { detectSite } from '@/lib/utils/detectSite'
+import { Form, LayoutGrid, LayoutList } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import ProductList from './ProductList'
-import CategorySelect from './CategorySelect'
-import SearchInput from './SearchInput'
 import BrandsSelect from './BrandsSelect'
-import { Button } from './ui/button'
-import { LayoutGrid, LayoutList } from 'lucide-react'
+import CategorySelect from './CategorySelect'
+import ProductList from './ProductList'
 import RefreshCategoryButton from './RefreshCategoryButton'
+import SearchInput from './SearchInput'
+import { Button } from './ui/button'
 
 interface ProductUrl {
   url: string
@@ -47,7 +47,7 @@ interface ProductsPageClientProps {
   initialProducts: Product[]
 }
 
-type ViewMode = 'grid' | 'list'
+type ViewMode = 'grid' | 'list' | 'detail'
 const VIEW_KEY = 'products:view'
 
 export default function ProductsPageClient({ initialProducts }: ProductsPageClientProps) {
@@ -65,7 +65,7 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
   // Load persisted view
   useEffect(() => {
     const saved = localStorage.getItem(VIEW_KEY) as ViewMode | null
-    if (saved === 'grid' || saved === 'list') setView(saved)
+    if (saved === 'grid' || saved === 'list' || saved === 'detail') setView(saved)
     setIsViewLoaded(true) // mark view as loaded
   }, [])
 
@@ -179,7 +179,10 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
                       site !== 'mobile140' &&
                       site !== 'gooshionline' &&
                       site !== 'kasrapars' &&
-                      site !== 'farnaa') ||
+                      site !== 'farnaa' &&
+                      site !== 'yaran' &&
+                      site !== 'zitro' &&
+                      site !== 'greenlion') ||
                     site !== detectedSite
                   ) {
                     site = detectedSite
@@ -193,7 +196,10 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
                       site !== 'mobile140' &&
                       site !== 'gooshionline' &&
                       site !== 'kasrapars' &&
-                      site !== 'farnaa')
+                      site !== 'farnaa' &&
+                      site !== 'yaran' &&
+                      site !== 'zitro' &&
+                      site !== 'greenlion')
                   ) {
                     site = 'torob'
                   }
@@ -316,6 +322,12 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
               onClick={() => setView('list')}
             >
               <LayoutList />
+            </Button>
+            <Button
+              className={`px-3 py-1 ${view === 'detail' ? 'bg-neutral-700 text-white cursor-pointer' : 'bg-white text-neutral-700 cursor-pointer'}`}
+              onClick={() => setView('detail')}
+            >
+              <Form />
             </Button>
           </div>
         </div>

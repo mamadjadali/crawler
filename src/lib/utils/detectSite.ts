@@ -31,10 +31,20 @@ export function detectSite(url: string): string {
       return 'farnaa'
     }
 
+    if (hostname.includes('zitro.ir')) {
+      return 'zitro'
+    }
+
+    if (hostname.includes('yaranstore.ir')) {
+      return 'yaran'
+    }
+    if (hostname.includes('greenlionofficial.ir')) {
+      return 'greenlion'
+    }
+
     // Default fallback
     return 'torob'
   } catch {
     throw new Error('Invalid URL')
   }
 }
-

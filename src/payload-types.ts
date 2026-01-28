@@ -253,7 +253,19 @@ export interface ProductLink {
     /**
      * Site will be auto-detected from URL if not provided
      */
-    site?: ('torob' | 'technolife' | 'mobile140' | 'gooshionline' | 'kasrapars' | 'farnaa') | null;
+    site?:
+      | (
+          | 'torob'
+          | 'technolife'
+          | 'mobile140'
+          | 'gooshionline'
+          | 'kasrapars'
+          | 'farnaa'
+          | 'zitro'
+          | 'yaran'
+          | 'greenlion'
+        )
+      | null;
     /**
      * Latest crawled price from this URL
      */

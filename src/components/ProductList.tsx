@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import ProductCard from './ProductCard'
 import ProductRow from './ProductRow'
+import ProductRowDetail from './ProductRowDetail'
 
 interface PriceHistoryItem {
   price: number
@@ -38,8 +39,8 @@ interface Product {
 
 interface ProductListProps {
   products: Product[]
-  view: 'grid' | 'list'
-  onViewChange?: (view: 'grid' | 'list') => void
+  view: 'grid' | 'list' | 'detail'
+  onViewChange?: (view: 'grid' | 'list' | 'detail') => void
 }
 
 const VIEW_KEY = 'products:view'
@@ -100,7 +101,7 @@ export default function ProductList({ products, view, onViewChange }: ProductLis
             />
           ))}
         </div>
-      ) : (
+      ) : view === 'list' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {products.map((product) => (
             <ProductRow
@@ -113,7 +114,20 @@ export default function ProductList({ products, view, onViewChange }: ProductLis
             />
           ))}
         </div>
-      )}
+      ) : view === 'detail' ? (
+        <div className="flex flex-col gap-4">
+          {products.map((product) => (
+            <ProductRowDetail
+              key={product.id}
+              id={product.id}
+              name={product.name}
+              productId={product.productId}
+              productImageUrl={product.productImageUrl}
+              productUrls={product.productUrls}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }

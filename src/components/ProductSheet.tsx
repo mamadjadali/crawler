@@ -164,7 +164,11 @@ export default function ProductSheet({
               ? 'تکنولایفــ'
               : urlEntry.site === 'mobile140'
                 ? 'موبایل۱۴۰'
-                : urlEntry.site,
+                : urlEntry.site === 'zitro'
+                  ? 'زیــتـرو'
+                  : urlEntry.site === 'greenlion'
+                    ? 'گرین لاین'
+                    : urlEntry.site,
       }))
       .filter((item) => item.price !== null && item.price !== undefined)
 
@@ -317,7 +321,15 @@ export default function ProductSheet({
                           ? 'گوشی آنلاین'
                           : lowestPriceInfo.siteName === 'kasrapars'
                             ? 'کسری پلاس'
-                            : lowestPriceInfo.siteName}
+                            : lowestPriceInfo.siteName === 'faarna'
+                              ? 'فــرنا'
+                              : lowestPriceInfo.siteName === 'zitro'
+                                ? 'زیـتـرو'
+                                : lowestPriceInfo.siteName === 'yaran'
+                                  ? 'یــاران'
+                                  : lowestPriceInfo.siteName === 'greenlion'
+                                    ? 'گرین لاین'
+                                    : lowestPriceInfo.siteName}
                 </span>
                 {isRecentlyUpdated && (
                   <Badge
@@ -370,7 +382,13 @@ export default function ProductSheet({
                             ? 'کسری پلاس'
                             : urlEntry.site === 'farnaa'
                               ? 'فرنا'
-                              : urlEntry.site
+                              : urlEntry.site === 'zitro'
+                                ? 'زیــتـرو'
+                                : urlEntry.site === 'yaran'
+                                  ? 'یــاران'
+                                  : urlEntry.site === 'greenlion'
+                                    ? 'گرین لاین'
+                                    : urlEntry.site
                 const siteColorClass =
                   urlEntry.site === 'technolife'
                     ? 'text-blue-700'
@@ -382,7 +400,13 @@ export default function ProductSheet({
                           ? 'text-yellow-400'
                           : urlEntry.site === 'farnaa'
                             ? 'text-[#d90268]'
-                            : 'text-rose-400'
+                            : urlEntry.site === 'zitro'
+                              ? 'text-[#ff6000]'
+                              : urlEntry.site === 'yaran'
+                                ? 'text-[#9b0505]'
+                                : urlEntry.site === 'greenlion'
+                                  ? 'text-[#0d452b]'
+                                  : 'text-rose-400'
                 return (
                   <div key={index} className="flex items-center justify-between">
                     <span className={`text-sm font-medium ${siteColorClass}`}>
@@ -421,7 +445,9 @@ export default function ProductSheet({
                         </a>
                       </div>
                     ) : (
-                      <span className="text-sm text-gray-500 dark:text-gray-400">قیمت نامشخص</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        قیمت نامشخص (احتمالا ناموجود)
+                      </span>
                     )}
                     {/* <Separator className="my-2 border-gray-400 border-b" /> */}
                   </div>
@@ -445,7 +471,13 @@ export default function ProductSheet({
                         ? 'کسری پلاس'
                         : urlEntry.site === 'farnaa'
                           ? 'فرنا'
-                          : urlEntry.site
+                          : urlEntry.site === 'zitro'
+                            ? 'زیــتـرو'
+                            : urlEntry.site === 'yaran'
+                              ? 'یــاران'
+                              : urlEntry.site === 'greenlion'
+                                ? 'گرین لاین'
+                                : urlEntry.site
             const priceChange = calculatePriceChange(urlEntry.priceHistory || [])
 
             return (
@@ -467,7 +499,13 @@ export default function ProductSheet({
                                   ? 'border border-yellow-400 bg-yellow-400/20 text-yellow-400'
                                   : urlEntry.site === 'farnaa'
                                     ? 'border border-pink-600 bg-pink-600/20 text-pink-600'
-                                    : 'border border-rose-400 bg-rose-400/20 text-rose-400'
+                                    : urlEntry.site === 'zitro'
+                                      ? 'border border-orange-600 bg-orange-600/20 text-orange-600'
+                                      : urlEntry.site === 'yaran'
+                                        ? 'border border-[#9b0505] bg-[#9b0505] text-white'
+                                        : urlEntry.site === 'greenlion'
+                                          ? 'border border-[#0d452b] bg-[#0d452b] text-white'
+                                          : 'border border-rose-400 bg-rose-400/20 text-rose-400'
                         }`}
                       >
                         <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">

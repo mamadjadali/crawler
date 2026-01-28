@@ -6,7 +6,7 @@
  */
 export function formatPrice(
   price: number | null | undefined,
-  usePersianNumerals: boolean = false
+  usePersianNumerals: boolean = false,
 ): string {
   if (price === null || price === undefined || isNaN(price)) {
     return 'قیمت نامشخص'
@@ -41,6 +41,43 @@ export function formatPrice(
   }
 }
 
+export function formatPricev2(
+  price: number | null | undefined,
+  usePersianNumerals: boolean = false,
+): string {
+  if (price === null || price === undefined || isNaN(price)) {
+    return 'قیمت نامشخص'
+  }
+
+  try {
+    // Format number with thousand separators
+    const formatted = new Intl.NumberFormat('fa-IR').format(price)
+
+    // Convert to Persian numerals if requested
+    if (usePersianNumerals) {
+      const persianDigits: { [key: string]: string } = {
+        '0': '۰',
+        '1': '۱',
+        '2': '۲',
+        '3': '۳',
+        '4': '۴',
+        '5': '۵',
+        '6': '۶',
+        '7': '۷',
+        '8': '۸',
+        '9': '۹',
+      }
+
+      return formatted.replace(/\d/g, (digit) => persianDigits[digit] || digit)
+    }
+
+    return formatted
+  } catch (error) {
+    // Fallback to simple formatting if Intl is not available
+    return price.toLocaleString()
+  }
+}
+
 /**
  * Format date to Persian/Farsi format
  * @param date - Date object or string
@@ -68,4 +105,3 @@ export function formatDate(date: Date | string | null | undefined): string {
     return d.toLocaleDateString('fa-IR')
   }
 }
-

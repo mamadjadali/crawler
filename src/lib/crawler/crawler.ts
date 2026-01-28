@@ -7,6 +7,9 @@ import { GooshiOnlineCrawler } from './sites/gooshionline'
 import { KasraParsCrawler } from './sites/kasrapars'
 import { FarnaaCrawler } from './sites/farnaa'
 import { detectSite } from '../utils/detectSite'
+import { ZitroCrawler } from './sites/zitro'
+import { YaranCrawler } from './sites/yaran'
+import { GreenLionCrawler } from './sites/greenlion'
 
 // Re-export detectSite for backward compatibility
 export { detectSite }
@@ -31,6 +34,12 @@ function getCrawler(site: string): SiteCrawler {
       crawlerInstances.set(site, new KasraParsCrawler())
     } else if (site === 'farnaa') {
       crawlerInstances.set(site, new FarnaaCrawler())
+    } else if (site === 'zitro') {
+      crawlerInstances.set(site, new ZitroCrawler())
+    } else if (site === 'yaran') {
+      crawlerInstances.set(site, new YaranCrawler())
+    } else if (site === 'greenlion') {
+      crawlerInstances.set(site, new GreenLionCrawler())
     } else {
       throw new Error(`Unsupported site: ${site}`)
     }
@@ -44,10 +53,7 @@ function getCrawler(site: string): SiteCrawler {
  * @param site - Optional site identifier (will be auto-detected if not provided)
  * @returns Promise resolving to crawl result
  */
-export async function crawlProduct(
-  url: string,
-  site?: string
-): Promise<CrawlResult> {
+export async function crawlProduct(url: string, site?: string): Promise<CrawlResult> {
   try {
     // Detect site if not provided
     const detectedSite = site || detectSite(url)
@@ -79,4 +85,3 @@ export async function closeAllCrawlers(): Promise<void> {
   }
   crawlerInstances.clear()
 }
-

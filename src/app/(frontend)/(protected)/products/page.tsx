@@ -90,7 +90,10 @@ export default async function ProductsPage() {
               site !== 'mobile140' &&
               site !== 'gooshionline' &&
               site !== 'kasrapars' &&
-              site !== 'farnaa') ||
+              site !== 'farnaa' &&
+              site !== 'yaran' &&
+              site !== 'zitro' &&
+              site !== 'greenlion') ||
             site !== detectedSite
           ) {
             site = detectedSite
@@ -104,7 +107,10 @@ export default async function ProductsPage() {
               site !== 'mobile140' &&
               site !== 'gooshionline' &&
               site !== 'kasrapars' &&
-              site !== 'farnaa')
+              site !== 'farnaa' &&
+              site !== 'yaran' &&
+              site !== 'zitro' &&
+              site !== 'greenlion')
           ) {
             site = 'torob'
           }

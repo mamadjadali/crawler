@@ -122,6 +122,9 @@ export const ProductLinks: CollectionConfig = {
             { label: { en: 'GooshiOnline', fa: 'گوشی آنلاین' }, value: 'gooshionline' },
             { label: { en: 'KasraPars', fa: 'کسراپارس' }, value: 'kasrapars' },
             { label: { en: 'Farnaa', fa: 'فرنا' }, value: 'farnaa' },
+            { label: { en: 'Zitro', fa: 'زیــترو' }, value: 'zitro' },
+            { label: { en: 'Yaran', fa: 'یـاران' }, value: 'yaran' },
+            { label: { en: 'Green Lion', fa: 'گرین لاین' }, value: 'greenlion' },
           ],
           admin: {
             description: {
@@ -256,7 +259,10 @@ export const ProductLinks: CollectionConfig = {
             | 'mobile140'
             | 'gooshionline'
             | 'kasrapars'
-            | 'farnaa' = 'torob'
+            | 'farnaa'
+            | 'zitro'
+            | 'yaran'
+            | 'greenlion' = 'torob'
 
           if (hostname.includes('torob.com')) {
             detectedSite = 'torob'
@@ -270,6 +276,12 @@ export const ProductLinks: CollectionConfig = {
             detectedSite = 'kasrapars'
           } else if (hostname.includes('farnaa.com')) {
             detectedSite = 'farnaa'
+          } else if (hostname.includes('zitro.ir')) {
+            detectedSite = 'zitro'
+          } else if (hostname.includes('yaranstore.ir')) {
+            detectedSite = 'yaran'
+          } else if (hostname.includes('greenlionofficial.ir')) {
+            detectedSite = 'greenlion'
           }
 
           data.productUrls = [
@@ -308,6 +320,12 @@ export const ProductLinks: CollectionConfig = {
                   urlEntry.site = 'kasrapars'
                 } else if (hostname.includes('farnaa.com')) {
                   urlEntry.site = 'farnaa'
+                } else if (hostname.includes('zitro.ir')) {
+                  urlEntry.site = 'zitro'
+                } else if (hostname.includes('yaranstore.ir')) {
+                  urlEntry.site = 'yaran'
+                } else if (hostname.includes('greenlionofficial.ir')) {
+                  urlEntry.site = 'greenlion'
                 } else {
                   urlEntry.site = 'torob' // Default fallback
                 }
