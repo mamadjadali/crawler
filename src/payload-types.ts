@@ -264,6 +264,8 @@ export interface ProductLink {
           | 'zitro'
           | 'yaran'
           | 'greenlion'
+          | 'plazadigital'
+          | 'ithome'
         )
       | null;
     /**

@@ -59,7 +59,7 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
   const [lastCategory, setLastCategory] = useState<string>('')
   const [lastSelectedBrand, setLastSelectedBrand] = useState<string>('')
 
-  const [view, setView] = useState<ViewMode>('list')
+  const [view, setView] = useState<ViewMode>('detail')
   const [isViewLoaded, setIsViewLoaded] = useState(false)
 
   // Load persisted view
@@ -182,7 +182,9 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
                       site !== 'farnaa' &&
                       site !== 'yaran' &&
                       site !== 'zitro' &&
-                      site !== 'greenlion') ||
+                      site !== 'greenlion' &&
+                      site !== 'plazadigital' &&
+                      site !== 'ithome') ||
                     site !== detectedSite
                   ) {
                     site = detectedSite
@@ -199,7 +201,9 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
                       site !== 'farnaa' &&
                       site !== 'yaran' &&
                       site !== 'zitro' &&
-                      site !== 'greenlion')
+                      site !== 'greenlion' &&
+                      site !== 'plazadigital' &&
+                      site !== 'ithome')
                   ) {
                     site = 'torob'
                   }

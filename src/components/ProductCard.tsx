@@ -164,7 +164,11 @@ export default function ProductCard({
                                           ? 'یــاران'
                                           : lowestPriceSite === 'greenlion'
                                             ? 'گرین لاین'
-                                            : lowestPriceSite}
+                                            : lowestPriceSite === 'plazadigital'
+                                              ? 'پـلازا دیجیتال'
+                                              : lowestPriceSite === 'ithome'
+                                                ? 'آی تی هوم'
+                                                : lowestPriceSite}
                         </div>
                       )}
                     </div>
@@ -230,7 +234,11 @@ export default function ProductCard({
                                       ? 'border-none bg-[#9b0505] text-white'
                                       : siteName === 'greenlion'
                                         ? 'border-none bg-[#0d452b] text-white'
-                                        : 'border-none bg-rose-400 text-white'
+                                        : siteName === 'plazadigital'
+                                          ? 'border-none bg-[#069f49] text-white'
+                                          : siteName === 'ithome'
+                                            ? 'border-none bg-[#124bb2] text-white'
+                                            : 'border-none bg-rose-400 text-white'
                       }`}
                     >
                       {siteName === 'torob'
@@ -251,7 +259,11 @@ export default function ProductCard({
                                       ? 'یــاران'
                                       : siteName === 'greenlion'
                                         ? 'گرین لاین'
-                                        : siteName}
+                                        : siteName === 'plazadigital'
+                                          ? 'پـلازا دیجیتال'
+                                          : siteName === 'ithome'
+                                            ? 'آی تی هوم'
+                                            : siteName}
                     </Badge>
                   ))}
                 </div>

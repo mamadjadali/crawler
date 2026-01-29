@@ -93,7 +93,9 @@ export default async function ProductsPage() {
               site !== 'farnaa' &&
               site !== 'yaran' &&
               site !== 'zitro' &&
-              site !== 'greenlion') ||
+              site !== 'greenlion' &&
+              site !== 'plazadigital' &&
+              site !== 'ithome') ||
             site !== detectedSite
           ) {
             site = detectedSite
@@ -110,7 +112,9 @@ export default async function ProductsPage() {
               site !== 'farnaa' &&
               site !== 'yaran' &&
               site !== 'zitro' &&
-              site !== 'greenlion')
+              site !== 'greenlion' &&
+              site !== 'plazadigital' &&
+              site !== 'ithome')
           ) {
             site = 'torob'
           }
@@ -144,7 +148,7 @@ export default async function ProductsPage() {
     <div className="min-h-screen bg-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-transparent border border-gray-400 rounded-xl  p-6">
             <div className="text-sm font-medium text-gray-400">کل محصولات</div>
             <div className="mt-2 text-3xl font-bold text-neutral-700">
@@ -154,14 +158,14 @@ export default async function ProductsPage() {
           <div className="bg-green-500/20 border border-green-400 rounded-xl  p-6">
             <div className="text-sm font-medium text-gray-400">🇺🇸 دلار</div>
             <div className="mt-2 text-left text-3xl font-bold text-neutral-700">
-              {/* {new Intl.NumberFormat('fa-IR').format(132150)} */}
+              
               ...
             </div>
           </div>
           <div className="bg-gray-500/20 border border-gray-400 rounded-xl  p-6">
             <div className="text-sm font-medium text-gray-400">🇦🇪 درهم</div>
             <div className="mt-2 text-left text-3xl font-bold text-neutral-700">
-              {/* {new Intl.NumberFormat('fa-IR').format(359910)} */}
+              
               ...
             </div>
           </div>
@@ -169,17 +173,9 @@ export default async function ProductsPage() {
             <div className="text-sm font-medium text-gray-400">طــلا</div>
             <div className="mt-2 text-3xl text-left font-bold text-neutral-700">
               ...
-              {/* {new Intl.DateTimeFormat('fa-IR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-              }).format(new Date())} */}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Products Page Client Component with Search */}
         <Suspense

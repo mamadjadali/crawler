@@ -57,7 +57,7 @@ export class TechnolifeCrawler implements SiteCrawler {
     page.on('request', (request) => {
       const resourceType = request.resourceType()
       // Block images, stylesheets, fonts, and media to speed up crawling
-      if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+      if (['image', 'font', 'media'].includes(resourceType)) {
         request.abort()
       } else {
         request.continue()
@@ -253,61 +253,6 @@ export class TechnolifeCrawler implements SiteCrawler {
           continue
         }
       }
-
-      // If no price found with selectors, try to find any number that looks like a price
-      // if (!price) {
-      //   try {
-      //     // const bodyText = await page.evaluate(() => document.body.textContent)
-      //     // Remove "alternative products" section first
-      //     await page.evaluate(() => {
-      //       const altSection = document.querySelectorAll('h2#alternative_product')
-      //       altSection.forEach((el) => el.closest('section')?.remove())
-      //     })
-
-      //     // Then get text content of remaining page
-      //     const bodyText = await page.evaluate(() => document.body.textContent)
-      //     if (bodyText) {
-      //       // Look for price patterns like: 1,234,567 تومان or 1234567 تومان
-      //       const pricePatterns = [
-      //         /(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)\s*تومان/gi,
-      //         /(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)\s*ريال/gi,
-      //         /قیمت[:\s]*(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)/gi,
-      //         // More patterns
-      //         /قیمت\s*:?\s*(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)/gi,
-      //         /(\d{1,3}(?:[,\s]\d{3})*(?:[,\s]\d{3})*)\s*ت\.?و\.?م\.?ان/gi,
-      //       ]
-
-      //       const foundPrices: number[] = []
-
-      //       for (const pattern of pricePatterns) {
-      //         const matches = bodyText.match(pattern)
-      //         if (matches && matches.length > 0) {
-      //           for (const match of matches) {
-      //             const cleanedPrice = match
-      //               .replace(/[^\d.,]/g, '')
-      //               .replace(/,/g, '')
-      //               .trim()
-
-      //             const parsedPrice = parseFloat(cleanedPrice)
-      //             // Only accept reasonable prices
-      //             if (!isNaN(parsedPrice) && parsedPrice >= 1000 && parsedPrice <= 1000000000) {
-      //               foundPrices.push(parsedPrice)
-      //             }
-      //           }
-      //         }
-      //       }
-
-      //       // If we found multiple prices, use the first/main product price (not necessarily the lowest)
-      //       // For Technolife, we want the main product price, not seller prices
-      //       if (foundPrices.length > 0) {
-      //         // Use the first price found (main product price), not the lowest
-      //         price = foundPrices[0]
-      //       }
-      //     }
-      //   } catch {
-      //     // Fallback failed
-      //   }
-      // }
 
       if (price === null) {
         if (page) await this.releasePage(page)

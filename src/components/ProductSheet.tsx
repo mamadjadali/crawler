@@ -168,7 +168,11 @@ export default function ProductSheet({
                   ? 'زیــتـرو'
                   : urlEntry.site === 'greenlion'
                     ? 'گرین لاین'
-                    : urlEntry.site,
+                    : urlEntry.site === 'plazadigital'
+                      ? 'پـلازا دیجیتال'
+                      : urlEntry.site === 'ithome'
+                        ? 'آی تی هوم'
+                        : urlEntry.site,
       }))
       .filter((item) => item.price !== null && item.price !== undefined)
 
@@ -187,11 +191,23 @@ export default function ProductSheet({
 
   const sortedCurrentPrices = useMemo(() => {
     return [...refreshedProductUrls].sort((a, b) => {
-      // unavailable / unknown prices go to bottom
-      if (a.currentPrice == null) return 1
-      if (b.currentPrice == null) return -1
+      const aUnavailable =
+        a.currentPrice == null ||
+        a.crawlError === 'Product not available' ||
+        a.crawlError === 'Price not found'
 
-      return a.currentPrice - b.currentPrice // lowest first
+      const bUnavailable =
+        b.currentPrice == null ||
+        b.crawlError === 'Product not available' ||
+        b.crawlError === 'Price not found'
+
+      // Unavailable / unknown prices go to bottom
+      if (aUnavailable && !bUnavailable) return 1
+      if (!aUnavailable && bUnavailable) return -1
+      if (aUnavailable && bUnavailable) return 0 // keep relative order
+
+      // Both have valid prices, sort lowest first
+      return a.currentPrice! - b.currentPrice!
     })
   }, [refreshedProductUrls])
 
@@ -298,56 +314,61 @@ export default function ProductSheet({
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
-          {/* Lowest Price Indicator Section */}
-          {lowestPriceInfo && (
-            // <div className="bg-transparent rounded-lg p-4 border border-gray-400">
-            <div
-              className={cn(
-                'bg-transparent rounded-lg p-4 border transition-colors',
-                isRecentlyUpdated ? 'border-green-600 bg-green-500/20' : 'border-gray-400',
-              )}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium text-neutral-700 flex items-center gap-2">
-                  پایین ترین قیمت
-                  <ChevronsLeft className="size-4 text-green-400" />
-                  {lowestPriceInfo.siteName === 'technolife'
-                    ? 'تکنولایفــ'
-                    : lowestPriceInfo.siteName === 'torob'
-                      ? 'تربـــ'
-                      : lowestPriceInfo.siteName === 'mobile140'
-                        ? 'موبایل۱۴۰'
-                        : lowestPriceInfo.siteName === 'gooshionline'
-                          ? 'گوشی آنلاین'
-                          : lowestPriceInfo.siteName === 'kasrapars'
-                            ? 'کسری پلاس'
-                            : lowestPriceInfo.siteName === 'faarna'
-                              ? 'فــرنا'
-                              : lowestPriceInfo.siteName === 'zitro'
-                                ? 'زیـتـرو'
-                                : lowestPriceInfo.siteName === 'yaran'
-                                  ? 'یــاران'
-                                  : lowestPriceInfo.siteName === 'greenlion'
-                                    ? 'گرین لاین'
-                                    : lowestPriceInfo.siteName}
-                </span>
-                {isRecentlyUpdated && (
-                  <Badge
-                    variant="outline"
-                    className="text-green-600 gap-3 rounded-lg border-green-600 bg-white text-xs px-3 py-2"
-                  >
-                    <span className="relative flex size-3">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
-                    </span>
-                    تازه بروز شده
-                  </Badge>
+          <div className="flex items-center justify-between gap-4">
+            {/* Lowest Price Indicator Section */}
+            {lowestPriceInfo && (
+              // <div className="bg-transparent rounded-lg p-4 border border-gray-400">
+              <div
+                className={cn(
+                  'bg-transparent rounded-lg p-4 border transition-colors',
+                  isRecentlyUpdated ? 'border-green-600 bg-green-500/20' : 'border-gray-400',
                 )}
-                <RefreshPriceIcon productId={productId} onRefreshComplete={handleRefreshComplete} />
+              >
+                <div className="flex items-center justify-between gap-6">
+                  <span className="text-sm font-medium text-neutral-700 flex items-center gap-2">
+                    پایین ترین قیمت
+                    <ChevronsLeft className="size-4 text-green-400" />
+                    {lowestPriceInfo.siteName === 'technolife'
+                      ? 'تکنولایفــ'
+                      : lowestPriceInfo.siteName === 'torob'
+                        ? 'تربـــ'
+                        : lowestPriceInfo.siteName === 'mobile140'
+                          ? 'موبایل۱۴۰'
+                          : lowestPriceInfo.siteName === 'gooshionline'
+                            ? 'گوشی آنلاین'
+                            : lowestPriceInfo.siteName === 'kasrapars'
+                              ? 'کسری پلاس'
+                              : lowestPriceInfo.siteName === 'faarna'
+                                ? 'فــرنا'
+                                : lowestPriceInfo.siteName === 'zitro'
+                                  ? 'زیـتـرو'
+                                  : lowestPriceInfo.siteName === 'yaran'
+                                    ? 'یــاران'
+                                    : lowestPriceInfo.siteName === 'greenlion'
+                                      ? 'گرین لاین'
+                                      : lowestPriceInfo.siteName === 'plazadigital'
+                                        ? 'پـلازا دیجیتال'
+                                        : lowestPriceInfo.siteName === 'ithome'
+                                          ? 'آی تی هوم'
+                                          : lowestPriceInfo.siteName}
+                  </span>
+                  {isRecentlyUpdated && (
+                    <Badge
+                      variant="outline"
+                      className="text-green-600 gap-3 rounded-lg border-green-600 bg-white text-xs px-3 py-2"
+                    >
+                      <span className="relative flex size-3">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
+                      </span>
+                      تازه بروز شده
+                    </Badge>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-
+            )}
+            <RefreshPriceIcon productId={productId} onRefreshComplete={handleRefreshComplete} />
+          </div>
           {/* Current Prices List */}
           <div className="bg-transparent rounded-lg p-4 border border-gray-400">
             <div className="flex items-center justify-between mb-6">
@@ -388,7 +409,11 @@ export default function ProductSheet({
                                   ? 'یــاران'
                                   : urlEntry.site === 'greenlion'
                                     ? 'گرین لاین'
-                                    : urlEntry.site
+                                    : urlEntry.site === 'plazadigital'
+                                      ? 'پـلازا دیجیتال'
+                                      : urlEntry.site === 'ithome'
+                                        ? 'آی تی هوم'
+                                        : urlEntry.site
                 const siteColorClass =
                   urlEntry.site === 'technolife'
                     ? 'text-blue-700'
@@ -406,7 +431,11 @@ export default function ProductSheet({
                                 ? 'text-[#9b0505]'
                                 : urlEntry.site === 'greenlion'
                                   ? 'text-[#0d452b]'
-                                  : 'text-rose-400'
+                                  : urlEntry.site === 'plazadigital'
+                                    ? 'text-[#069f49]'
+                                    : urlEntry.site === 'ithome'
+                                      ? 'text-[#124bb2]'
+                                      : 'text-rose-400'
                 return (
                   <div key={index} className="flex items-center justify-between">
                     <span className={`text-sm font-medium ${siteColorClass}`}>
@@ -416,7 +445,11 @@ export default function ProductSheet({
                     </span>
                     {urlEntry.crawlError === 'Product not available' ? (
                       <span className="text-base text-orange-400">ناموجود</span>
-                    ) : urlEntry.currentPrice !== null ? (
+                    ) : urlEntry.crawlError === 'Price not found' ? (
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        قیمت نامشخص (احتمالا ناموجود)
+                      </span>
+                    ) : urlEntry.currentPrice !== null && urlEntry.currentPrice !== undefined ? (
                       <div className="flex items-center gap-2">
                         <span className="text-lg font-semibold text-neutral-700">
                           {formatPrice(urlEntry.currentPrice, true)}
@@ -477,7 +510,11 @@ export default function ProductSheet({
                               ? 'یــاران'
                               : urlEntry.site === 'greenlion'
                                 ? 'گرین لاین'
-                                : urlEntry.site
+                                : urlEntry.site === 'plazadigital'
+                                  ? 'پـلازا دیجیتال'
+                                  : urlEntry.site === 'ithome'
+                                    ? 'آی تی هوم'
+                                    : urlEntry.site
             const priceChange = calculatePriceChange(urlEntry.priceHistory || [])
 
             return (
@@ -490,22 +527,26 @@ export default function ProductSheet({
                         variant="outline"
                         className={`rounded-lg px-4 py-1 ${
                           urlEntry.site === 'technolife'
-                            ? 'border border-blue-900 bg-[#223266]/50 text-blue-900'
+                            ? 'border-none bg-[#223266] text-white'
                             : urlEntry.site === 'mobile140'
-                              ? 'border border-sky-600 bg-sky-600/20 text-sky-600'
+                              ? 'border-none bg-sky-600 text-white'
                               : urlEntry.site === 'gooshionline'
-                                ? 'border border-gray-400 bg-gray-400/20 text-gray-400'
+                                ? 'border-none bg-gray-400 text-white'
                                 : urlEntry.site === 'kasrapars'
-                                  ? 'border border-yellow-400 bg-yellow-400/20 text-yellow-400'
+                                  ? 'border-none bg-yellow-400 text-white'
                                   : urlEntry.site === 'farnaa'
-                                    ? 'border border-pink-600 bg-pink-600/20 text-pink-600'
+                                    ? 'border-none bg-pink-600 text-white'
                                     : urlEntry.site === 'zitro'
-                                      ? 'border border-orange-600 bg-orange-600/20 text-orange-600'
+                                      ? 'border-none bg-orange-600 text-white'
                                       : urlEntry.site === 'yaran'
-                                        ? 'border border-[#9b0505] bg-[#9b0505] text-white'
+                                        ? 'border-none bg-[#9b0505] text-white'
                                         : urlEntry.site === 'greenlion'
-                                          ? 'border border-[#0d452b] bg-[#0d452b] text-white'
-                                          : 'border border-rose-400 bg-rose-400/20 text-rose-400'
+                                          ? 'border-none bg-[#0d452b] text-white'
+                                          : urlEntry.site === 'plazadigital'
+                                            ? 'border-none bg-[#069f49] text-white'
+                                            : urlEntry.site === 'ithome'
+                                              ? 'border-none bg-[#124bb2] text-white'
+                                              : 'border-none bg-rose-400 text-white'
                         }`}
                       >
                         <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">

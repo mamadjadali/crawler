@@ -1,9 +1,8 @@
 'use client'
 
 import { Sheet, SheetTrigger } from '@/components/ui/sheet'
-import { formatPrice, formatPricev2 } from '@/lib/utils/formatPrice'
+import { formatPricev2 } from '@/lib/utils/formatPrice'
 import { MoveDown } from 'lucide-react'
-import Image from 'next/image'
 import { useState } from 'react'
 import ProductSheet from './ProductSheet'
 
@@ -67,16 +66,24 @@ export default function ProductRowDetail({
   // Unique sites
   const sites = [...new Set(urlsState.map((u) => u.site))]
 
-  const sortedCurrentPrices = [...productUrls].sort((a, b) => {
-    const aUnavailable = a.currentPrice == null || a.crawlError === 'Product not available'
-    const bUnavailable = b.currentPrice == null || b.crawlError === 'Product not available'
+  const sortedCurrentPrices = [...urlsState].sort((a, b) => {
+    const aUnavailable =
+      a.currentPrice == null ||
+      a.crawlError === 'Product not available' ||
+      a.crawlError === 'Price not found'
+
+    const bUnavailable =
+      b.currentPrice == null ||
+      b.crawlError === 'Product not available' ||
+      b.crawlError === 'Price not found'
+
     // Unavailable / unknown prices go to bottom
-    if (a.currentPrice == null) return 1
-    if (b.currentPrice == null) return -1
-    if (aUnavailable && !bUnavailable) return 1 // a goes after b
-    if (!aUnavailable && bUnavailable) return -1 // a goes before b
+    if (aUnavailable && !bUnavailable) return 1
+    if (!aUnavailable && bUnavailable) return -1
     if (aUnavailable && bUnavailable) return 0 // both unavailable, keep order
-    return a.currentPrice - b.currentPrice // lowest first
+
+    // Both have valid prices, sort lowest first
+    return a.currentPrice! - b.currentPrice!
   })
 
   return (
@@ -104,7 +111,13 @@ export default function ProductRowDetail({
                             ? 'زیــتـرو'
                             : lowestPriceSite === 'yaran'
                               ? 'یــاران'
-                              : (lowestPriceSite ?? '-')}
+                              : lowestPriceSite === 'greenlion'
+                                ? 'گرین لاین'
+                                : lowestPriceSite === 'plazadigital'
+                                  ? 'پـلازا دیجیتال'
+                                  : lowestPriceSite === 'ithome'
+                                    ? 'آی تی هوم'
+                                    : (lowestPriceSite ?? '-')}
             </div>
             <div className="w-auto">
               {displayLastCrawledAt &&
@@ -190,7 +203,11 @@ export default function ProductRowDetail({
                                     ? 'یــاران'
                                     : urlEntry.site === 'greenlion'
                                       ? 'گرین لاین'
-                                      : urlEntry.site
+                                      : urlEntry.site === 'plazadigital'
+                                        ? 'پـلازا دیجیتال'
+                                        : urlEntry.site === 'ithome'
+                                          ? 'آی تی هوم'
+                                          : urlEntry.site
 
                   const siteColorClass =
                     urlEntry.site === 'technolife'
@@ -209,7 +226,11 @@ export default function ProductRowDetail({
                                   ? 'bg-[#9b0505] text-white px-3 py-1 rounded-lg text-xs'
                                   : urlEntry.site === 'greenlion'
                                     ? 'bg-[#0d452b] text-white px-3 py-1 rounded-lg text-xs'
-                                    : 'bg-rose-400 text-white px-3 py-1 rounded-lg text-xs' // torob as default
+                                    : urlEntry.site === 'plazadigital'
+                                      ? 'bg-[#069f49] text-white px-3 py-1 rounded-lg text-xs'
+                                      : urlEntry.site === 'ithome'
+                                        ? 'bg-[#124bb2] text-white px-3 py-1 rounded-lg text-xs'
+                                        : 'bg-rose-400 text-white px-3 py-1 rounded-lg text-xs' // torob as default
 
                   return (
                     <div
@@ -220,6 +241,10 @@ export default function ProductRowDetail({
                       <MoveDown className="size-2 text-gray-400" />
                       {urlEntry.crawlError === 'Product not available' ? (
                         <span className="text-orange-400">ناموجود</span>
+                      ) : urlEntry.crawlError === 'Price not found' ? (
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                          قیمت نامشخص (احتمالا ناموجود)
+                        </span>
                       ) : urlEntry.currentPrice !== null ? (
                         <span className="text-neutral-700 text-base font-semibold">
                           {formatPricev2(urlEntry.currentPrice, true)}
@@ -251,16 +276,3 @@ export default function ProductRowDetail({
     </Sheet>
   )
 }
-
-// {/* Image */}
-//           {productImageUrl && (
-//             <div className="w-16 h-16 hidden md:block bg-white rounded-lg overflow-hidden flex-shrink-0">
-//               <Image
-//                 src={productImageUrl}
-//                 alt={name}
-//                 width={64}
-//                 height={64}
-//                 className="object-contain"
-//               />
-//             </div>
-//           )}

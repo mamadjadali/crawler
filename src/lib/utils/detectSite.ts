@@ -42,6 +42,14 @@ export function detectSite(url: string): string {
       return 'greenlion'
     }
 
+    if (hostname.includes('plazadigital.ir')) {
+      return 'plazadigital'
+    }
+
+    if (hostname.includes('ithome.ir')) {
+      return 'ithome'
+    }
+
     // Default fallback
     return 'torob'
   } catch {

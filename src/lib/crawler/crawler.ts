@@ -10,6 +10,8 @@ import { detectSite } from '../utils/detectSite'
 import { ZitroCrawler } from './sites/zitro'
 import { YaranCrawler } from './sites/yaran'
 import { GreenLionCrawler } from './sites/greenlion'
+import { PlazaDigitalCrawler } from './sites/plazadigital'
+import { ItHomeCrawler } from './sites/ithome'
 
 // Re-export detectSite for backward compatibility
 export { detectSite }
@@ -40,6 +42,10 @@ function getCrawler(site: string): SiteCrawler {
       crawlerInstances.set(site, new YaranCrawler())
     } else if (site === 'greenlion') {
       crawlerInstances.set(site, new GreenLionCrawler())
+    } else if (site === 'plazadigital') {
+      crawlerInstances.set(site, new PlazaDigitalCrawler())
+    } else if (site === 'ithome') {
+      crawlerInstances.set(site, new ItHomeCrawler())
     } else {
       throw new Error(`Unsupported site: ${site}`)
     }
