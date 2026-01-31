@@ -5,23 +5,7 @@ import { formatPrice } from '@/lib/utils/formatPrice'
 import Image from 'next/image'
 import { useState } from 'react'
 import ProductSheet from './ProductSheet'
-
-interface PriceHistoryItem {
-  price: number
-  crawledAt: string | Date
-  site?: string
-  url?: string
-}
-
-interface ProductUrl {
-  url: string
-  site: string
-  currentPrice: number | null
-  lastCrawledAt: Date | string | null
-  crawlStatus: 'pending' | 'success' | 'failed'
-  crawlError?: string | null
-  priceHistory?: PriceHistoryItem[]
-}
+import { ProductUrl } from '@/types/products'
 
 interface ProductRowProps {
   id: string

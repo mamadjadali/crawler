@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+const MAX_PRICE_HISTORY = 10
 export const ProductLinks: CollectionConfig = {
   slug: 'product-links',
   labels: {
@@ -353,6 +354,10 @@ export const ProductLinks: CollectionConfig = {
               } catch {
                 throw new Error(`Invalid URL format: ${urlEntry.url}`)
               }
+              // Enforce price history limit
+              if (urlEntry.priceHistory && Array.isArray(urlEntry.priceHistory)) {
+                urlEntry.priceHistory = urlEntry.priceHistory.slice(-MAX_PRICE_HISTORY)
+              }
             }
           }
         }
@@ -402,7 +407,7 @@ export const ProductLinks: CollectionConfig = {
                           price: result.price,
                           crawledAt: new Date().toISOString(),
                         },
-                      ],
+                      ].slice(-MAX_PRICE_HISTORY),
                     }
                   } else {
                     return {
@@ -420,6 +425,13 @@ export const ProductLinks: CollectionConfig = {
                 }
               }),
             )
+
+            // Ensure trimming again, just in case
+            updatedProductUrls.forEach((urlEntry) => {
+              if (urlEntry.priceHistory) {
+                urlEntry.priceHistory = urlEntry.priceHistory.slice(-MAX_PRICE_HISTORY)
+              }
+            })
 
             // Update the document with crawl results for all URLs
             await req.payload.update({

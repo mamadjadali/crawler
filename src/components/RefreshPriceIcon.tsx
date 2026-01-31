@@ -2,16 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-
-interface ProductUrl {
-  url: string
-  site: string
-  currentPrice: number | null
-  lastCrawledAt: string | Date | null
-  crawlStatus: 'pending' | 'success' | 'failed'
-  crawlError?: string | null
-  priceHistory?: Array<{ price: number; crawledAt: string | Date }>
-}
+import { ProductUrl } from '@/types/products'
 
 interface RefreshPriceIconProps {
   productId: string

@@ -10,19 +10,7 @@ import ProductList from './ProductList'
 import RefreshCategoryButton from './RefreshCategoryButton'
 import SearchInput from './SearchInput'
 import { Button } from './ui/button'
-
-interface ProductUrl {
-  url: string
-  site: string
-  currentPrice: number | null
-  lastCrawledAt: Date | string | null
-  crawlStatus: 'pending' | 'success' | 'failed'
-  crawlError?: string | null
-  priceHistory?: Array<{
-    price: number
-    crawledAt: string | Date
-  }>
-}
+import { ProductUrl } from '@/types/products'
 
 interface Product {
   id: string
@@ -45,6 +33,13 @@ interface Product {
 
 interface ProductsPageClientProps {
   initialProducts: Product[]
+}
+
+interface Brand {
+  id: string
+  name: string
+  categoryId: string // <-- add this
+  count?: number
 }
 
 type ViewMode = 'grid' | 'list' | 'detail'

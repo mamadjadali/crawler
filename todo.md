@@ -2,9 +2,10 @@
 
 Hands On Priority -----------------------------------------------------------------------------
 
+- [] add do not crawl
 - [] Auth Check on Api
-- [] Refactor Case Match in Code base
-- [] Export Unified Interface And Types
+- [x] Refactor Case Match in Code base
+- [x] Export Unified Interface And Types
 - [x] sync state between sheet and hamid layout
 - [x] Row Detail Mobile view
 - [x] Badge Sheet color change

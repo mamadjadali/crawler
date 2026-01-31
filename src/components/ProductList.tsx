@@ -4,23 +4,7 @@ import { useEffect } from 'react'
 import ProductCard from './ProductCard'
 import ProductRow from './ProductRow'
 import ProductRowDetail from './ProductRowDetail'
-
-interface PriceHistoryItem {
-  price: number
-  crawledAt: string | Date
-  site?: string
-  url?: string
-}
-
-interface ProductUrl {
-  url: string
-  site: string
-  currentPrice: number | null
-  lastCrawledAt: Date | string | null
-  crawlStatus: 'pending' | 'success' | 'failed'
-  crawlError?: string | null
-  priceHistory?: PriceHistoryItem[]
-}
+import { PriceHistoryItem, ProductUrl } from '@/types/products'
 
 interface Product {
   id: string

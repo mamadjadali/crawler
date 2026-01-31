@@ -9,8 +9,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { SITES } from '@/constants/sites'
 import { formatDate, formatPrice } from '@/lib/utils/formatPrice'
+import { getSiteClass, getSiteLabel, toSiteKey } from '@/lib/utils/site'
 import { cn } from '@/lib/utils/utils'
+import { PriceHistoryItem, ProductUrl } from '@/types/products'
+import { SiteKey } from '@/types/site'
 import {
   Check,
   ChevronsLeft,
@@ -24,23 +28,6 @@ import {
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import RefreshPriceIcon from './RefreshPriceIcon'
-
-interface PriceHistoryItem {
-  price: number
-  crawledAt: string | Date
-  site?: string
-  url?: string
-}
-
-interface ProductUrl {
-  url: string
-  site: string
-  currentPrice: number | null
-  lastCrawledAt: Date | string | null
-  crawlStatus: 'pending' | 'success' | 'failed'
-  crawlError?: string | null
-  priceHistory?: PriceHistoryItem[]
-}
 
 interface ProductSheetProps {
   open: boolean
@@ -154,39 +141,26 @@ export default function ProductSheet({
   const lowestPriceInfo = useMemo(() => {
     const pricesWithSites = refreshedProductUrls
       .filter((urlEntry) => urlEntry.currentPrice !== null && !urlEntry.crawlError)
-      .map((urlEntry) => ({
-        price: urlEntry.currentPrice,
-        site: urlEntry.site,
-        siteName:
-          urlEntry.site === 'torob'
-            ? 'تربـــ'
-            : urlEntry.site === 'technolife'
-              ? 'تکنولایفــ'
-              : urlEntry.site === 'mobile140'
-                ? 'موبایل۱۴۰'
-                : urlEntry.site === 'zitro'
-                  ? 'زیــتـرو'
-                  : urlEntry.site === 'greenlion'
-                    ? 'گرین لاین'
-                    : urlEntry.site === 'plazadigital'
-                      ? 'پـلازا دیجیتال'
-                      : urlEntry.site === 'ithome'
-                        ? 'آی تی هوم'
-                        : urlEntry.site,
-      }))
-      .filter((item) => item.price !== null && item.price !== undefined)
+      .map((urlEntry) => {
+        const siteKey = toSiteKey(urlEntry.site)
+
+        return siteKey
+          ? {
+              price: urlEntry.currentPrice as number,
+              site: siteKey,
+              siteName: getSiteLabel(siteKey),
+            }
+          : null
+      })
+      .filter((item): item is { price: number; site: SiteKey; siteName: string } => item !== null)
 
     if (pricesWithSites.length === 0) return null
 
     const lowest = pricesWithSites.reduce((min, current) =>
-      (current.price as number) < (min.price as number) ? current : min,
+      current.price < min.price ? current : min,
     )
 
-    return {
-      price: lowest.price as number,
-      site: lowest.site,
-      siteName: lowest.siteName,
-    }
+    return lowest
   }, [refreshedProductUrls])
 
   const sortedCurrentPrices = useMemo(() => {
@@ -317,7 +291,6 @@ export default function ProductSheet({
           <div className="flex items-center justify-between gap-4">
             {/* Lowest Price Indicator Section */}
             {lowestPriceInfo && (
-              // <div className="bg-transparent rounded-lg p-4 border border-gray-400">
               <div
                 className={cn(
                   'bg-transparent rounded-lg p-4 border transition-colors',
@@ -328,29 +301,7 @@ export default function ProductSheet({
                   <span className="text-sm font-medium text-neutral-700 flex items-center gap-2">
                     پایین ترین قیمت
                     <ChevronsLeft className="size-4 text-green-400" />
-                    {lowestPriceInfo.siteName === 'technolife'
-                      ? 'تکنولایفــ'
-                      : lowestPriceInfo.siteName === 'torob'
-                        ? 'تربـــ'
-                        : lowestPriceInfo.siteName === 'mobile140'
-                          ? 'موبایل۱۴۰'
-                          : lowestPriceInfo.siteName === 'gooshionline'
-                            ? 'گوشی آنلاین'
-                            : lowestPriceInfo.siteName === 'kasrapars'
-                              ? 'کسری پلاس'
-                              : lowestPriceInfo.siteName === 'faarna'
-                                ? 'فــرنا'
-                                : lowestPriceInfo.siteName === 'zitro'
-                                  ? 'زیـتـرو'
-                                  : lowestPriceInfo.siteName === 'yaran'
-                                    ? 'یــاران'
-                                    : lowestPriceInfo.siteName === 'greenlion'
-                                      ? 'گرین لاین'
-                                      : lowestPriceInfo.siteName === 'plazadigital'
-                                        ? 'پـلازا دیجیتال'
-                                        : lowestPriceInfo.siteName === 'ithome'
-                                          ? 'آی تی هوم'
-                                          : lowestPriceInfo.siteName}
+                    {getSiteLabel(toSiteKey(lowestPriceInfo.site))}
                   </span>
                   {isRecentlyUpdated && (
                     <Badge
@@ -390,75 +341,44 @@ export default function ProductSheet({
             </div>
             <div className="space-y-2">
               {sortedCurrentPrices.map((urlEntry, index) => {
-                const siteName =
-                  urlEntry.site === 'torob'
-                    ? 'تربـــ'
-                    : urlEntry.site === 'technolife'
-                      ? 'تکنولایفــ'
-                      : urlEntry.site === 'mobile140'
-                        ? 'موبایل۱۴۰'
-                        : urlEntry.site === 'gooshionline'
-                          ? 'گوشی آنلاین'
-                          : urlEntry.site === 'kasrapars'
-                            ? 'کسری پلاس'
-                            : urlEntry.site === 'farnaa'
-                              ? 'فرنا'
-                              : urlEntry.site === 'zitro'
-                                ? 'زیــتـرو'
-                                : urlEntry.site === 'yaran'
-                                  ? 'یــاران'
-                                  : urlEntry.site === 'greenlion'
-                                    ? 'گرین لاین'
-                                    : urlEntry.site === 'plazadigital'
-                                      ? 'پـلازا دیجیتال'
-                                      : urlEntry.site === 'ithome'
-                                        ? 'آی تی هوم'
-                                        : urlEntry.site
-                const siteColorClass =
-                  urlEntry.site === 'technolife'
-                    ? 'text-blue-700'
-                    : urlEntry.site === 'mobile140'
-                      ? 'text-sky-600'
-                      : urlEntry.site === 'gooshionline'
-                        ? 'text-gray-400'
-                        : urlEntry.site === 'kasrapars'
-                          ? 'text-yellow-400'
-                          : urlEntry.site === 'farnaa'
-                            ? 'text-[#d90268]'
-                            : urlEntry.site === 'zitro'
-                              ? 'text-[#ff6000]'
-                              : urlEntry.site === 'yaran'
-                                ? 'text-[#9b0505]'
-                                : urlEntry.site === 'greenlion'
-                                  ? 'text-[#0d452b]'
-                                  : urlEntry.site === 'plazadigital'
-                                    ? 'text-[#069f49]'
-                                    : urlEntry.site === 'ithome'
-                                      ? 'text-[#124bb2]'
-                                      : 'text-rose-400'
+                const siteKey = toSiteKey(urlEntry.site)
+
+                // Determine crawl status once
+                const isUnavailable = urlEntry.crawlError === 'Product not available'
+                const isPriceNotFound = urlEntry.crawlError === 'Price not found'
+
+                // Extract price safely
+                const price = urlEntry.currentPrice
+
                 return (
                   <div key={index} className="flex items-center justify-between">
-                    <span className={`text-sm font-medium ${siteColorClass}`}>
+                    {/* Site label */}
+                    <span
+                      className={`px-2 py-1 rounded text-xs ${SITES[siteKey ?? 'torob']?.className || 'bg-gray-200 text-black'}`}
+                    >
                       <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">
-                        {siteName} :
+                        {getSiteLabel(siteKey)}
                       </a>
                     </span>
-                    {urlEntry.crawlError === 'Product not available' ? (
+                    {/* <ArrowLeft className="inline-block size-3 text-gray-400" /> */}
+                    {/* Price / status display */}
+                    {isUnavailable ? (
                       <span className="text-base text-orange-400">ناموجود</span>
-                    ) : urlEntry.crawlError === 'Price not found' ? (
+                    ) : isPriceNotFound || price == null ? (
                       <span className="text-sm text-gray-500 dark:text-gray-400">
                         قیمت نامشخص (احتمالا ناموجود)
                       </span>
-                    ) : urlEntry.currentPrice !== null && urlEntry.currentPrice !== undefined ? (
+                    ) : (
                       <div className="flex items-center gap-2">
                         <span className="text-lg font-semibold text-neutral-700">
-                          {formatPrice(urlEntry.currentPrice, true)}
+                          {formatPrice(price, true)}
                         </span>
+
                         <Button
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 cursor-pointer"
-                          onClick={() => handleCopyPrice(urlEntry.currentPrice!, index)}
+                          onClick={() => handleCopyPrice(price, index)}
                           title="کپی قیمت"
                         >
                           {copiedIndex === index ? (
@@ -467,6 +387,7 @@ export default function ProductSheet({
                             <Copy className="h-4 w-4 text-gray-400" />
                           )}
                         </Button>
+
                         <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">
                           <Button
                             variant="ghost"
@@ -477,12 +398,7 @@ export default function ProductSheet({
                           </Button>
                         </a>
                       </div>
-                    ) : (
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        قیمت نامشخص (احتمالا ناموجود)
-                      </span>
                     )}
-                    {/* <Separator className="my-2 border-gray-400 border-b" /> */}
                   </div>
                 )
               })}
@@ -491,30 +407,11 @@ export default function ProductSheet({
 
           {/* Per-Site Sections */}
           {sortedCurrentPrices.map((urlEntry, index) => {
-            const siteName =
-              urlEntry.site === 'torob'
-                ? 'تربـــ'
-                : urlEntry.site === 'technolife'
-                  ? 'تکنولایفــ'
-                  : urlEntry.site === 'mobile140'
-                    ? 'موبایل۱۴۰'
-                    : urlEntry.site === 'gooshionline'
-                      ? 'گوشی آنلاین'
-                      : urlEntry.site === 'kasrapars'
-                        ? 'کسری پلاس'
-                        : urlEntry.site === 'farnaa'
-                          ? 'فرنا'
-                          : urlEntry.site === 'zitro'
-                            ? 'زیــتـرو'
-                            : urlEntry.site === 'yaran'
-                              ? 'یــاران'
-                              : urlEntry.site === 'greenlion'
-                                ? 'گرین لاین'
-                                : urlEntry.site === 'plazadigital'
-                                  ? 'پـلازا دیجیتال'
-                                  : urlEntry.site === 'ithome'
-                                    ? 'آی تی هوم'
-                                    : urlEntry.site
+            const siteKey = toSiteKey(urlEntry.site)
+
+            const siteLabel = getSiteLabel(siteKey)
+            const siteClass = getSiteClass(siteKey) // includes bg + text classes
+
             const priceChange = calculatePriceChange(urlEntry.priceHistory || [])
 
             return (
@@ -523,36 +420,12 @@ export default function ProductSheet({
                 <div className="bg-transparent rounded-lg p-4 border border-gray-400">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <Badge
-                        variant="outline"
-                        className={`rounded-lg px-4 py-1 ${
-                          urlEntry.site === 'technolife'
-                            ? 'border-none bg-[#223266] text-white'
-                            : urlEntry.site === 'mobile140'
-                              ? 'border-none bg-sky-600 text-white'
-                              : urlEntry.site === 'gooshionline'
-                                ? 'border-none bg-gray-400 text-white'
-                                : urlEntry.site === 'kasrapars'
-                                  ? 'border-none bg-yellow-400 text-white'
-                                  : urlEntry.site === 'farnaa'
-                                    ? 'border-none bg-pink-600 text-white'
-                                    : urlEntry.site === 'zitro'
-                                      ? 'border-none bg-orange-600 text-white'
-                                      : urlEntry.site === 'yaran'
-                                        ? 'border-none bg-[#9b0505] text-white'
-                                        : urlEntry.site === 'greenlion'
-                                          ? 'border-none bg-[#0d452b] text-white'
-                                          : urlEntry.site === 'plazadigital'
-                                            ? 'border-none bg-[#069f49] text-white'
-                                            : urlEntry.site === 'ithome'
-                                              ? 'border-none bg-[#124bb2] text-white'
-                                              : 'border-none bg-rose-400 text-white'
-                        }`}
-                      >
+                      <Badge variant="outline" className={`rounded-lg px-4 py-1 ${siteClass}`}>
                         <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">
-                          {siteName}
+                          {siteLabel}
                         </a>
                       </Badge>
+
                       <Badge
                         variant={
                           urlEntry.crawlStatus === 'success'
@@ -570,6 +443,7 @@ export default function ProductSheet({
                             : 'در انتظار'}
                       </Badge>
                     </div>
+
                     <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">
                       <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer">
                         <ExternalLink className="size-4" />
@@ -587,7 +461,7 @@ export default function ProductSheet({
                   {/* Error message */}
                   {urlEntry.crawlError && (
                     <div className="bg-red-50 dark:bg-red-900/20 border border-red-800 rounded-lg p-2 mb-3">
-                      <p className="text-xs text-red-800 ">
+                      <p className="text-xs text-red-800">
                         {urlEntry.crawlError === 'Product not available'
                           ? 'ناموجود'
                           : urlEntry.crawlError}
@@ -599,7 +473,8 @@ export default function ProductSheet({
                   {priceChange && (
                     <div className="mb-4">
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-neutral-700">تغییر قیمت ({siteName}):</span>
+                        <span className="text-neutral-700">تغییر قیمت ({siteLabel}):</span>
+
                         {priceChange.isIncrease && (
                           <div className="flex items-center gap-1 text-green-500">
                             <span>
@@ -613,6 +488,7 @@ export default function ProductSheet({
                             <TrendingUp className="h-4 w-4" />
                           </div>
                         )}
+
                         {priceChange.isDecrease && (
                           <div className="flex items-center gap-1 text-red-500">
                             <span>
@@ -626,6 +502,7 @@ export default function ProductSheet({
                             <TrendingUp className="h-4 w-4 rotate-180" />
                           </div>
                         )}
+
                         {!priceChange.isIncrease && !priceChange.isDecrease && (
                           <span className="text-gray-400">بدون تغییر</span>
                         )}
@@ -638,7 +515,7 @@ export default function ProductSheet({
                 {urlEntry.priceHistory && urlEntry.priceHistory.length > 0 && (
                   <div className="bg-transparent rounded-lg p-4 border border-gray-400">
                     <h4 className="text-sm font-medium text-neutral-700 mb-4">
-                      تاریخچه قیمت ({siteName})
+                      تاریخچه قیمت ({siteLabel})
                     </h4>
                     <div className="space-y-2 max-h-64 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                       {urlEntry.priceHistory
@@ -648,7 +525,7 @@ export default function ProductSheet({
                             typeof a.crawledAt === 'string' ? new Date(a.crawledAt) : a.crawledAt
                           const dateB =
                             typeof b.crawledAt === 'string' ? new Date(b.crawledAt) : b.crawledAt
-                          return dateB.getTime() - dateA.getTime() // Newest first
+                          return dateB.getTime() - dateA.getTime()
                         })
                         .map((item, itemIndex) => (
                           <div

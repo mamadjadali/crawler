@@ -4,28 +4,13 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
 import { Sheet, SheetTrigger } from '@/components/ui/sheet'
 import { formatDate, formatPrice } from '@/lib/utils/formatPrice'
-import { ClockAlert, ClockFadingIcon, TriangleAlert } from 'lucide-react'
+import { getSiteClass, getSiteLabel, toSiteKey } from '@/lib/utils/site'
+import { PriceHistoryItem, ProductUrl } from '@/types/products'
+import { ClockFadingIcon } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import ProductSheet from './ProductSheet'
 import { Separator } from './ui/separator'
-
-interface PriceHistoryItem {
-  price: number
-  crawledAt: string | Date
-  site?: string
-  url?: string
-}
-
-interface ProductUrl {
-  url: string
-  site: string
-  currentPrice: number | null
-  lastCrawledAt: Date | string | null
-  crawlStatus: 'pending' | 'success' | 'failed'
-  crawlError?: string | null
-  priceHistory?: PriceHistoryItem[]
-}
 
 interface ProductCardProps {
   id: string
@@ -145,36 +130,16 @@ export default function ProductCard({
                     <div className="text-xs flex gap-1 text-gray-500 mb-2">
                       {urlsState.length > 1 ? 'کمترین قیمت' : 'قیمت فعلی'}
                       {lowestPriceSite && (
-                        <div className="text-xs text-green-600 font-bold">
-                          {lowestPriceSite === 'torob'
-                            ? 'تربـــ'
-                            : lowestPriceSite === 'technolife'
-                              ? 'تکنولایفــ'
-                              : lowestPriceSite === 'mobile140'
-                                ? 'موبایل۱۴۰'
-                                : lowestPriceSite === 'gooshionline'
-                                  ? 'گوشی آنلاین'
-                                  : lowestPriceSite === 'kasrapars'
-                                    ? 'کسری پلاس'
-                                    : lowestPriceSite === 'farnaa'
-                                      ? 'فرنا'
-                                      : lowestPriceSite === 'zitro'
-                                        ? 'زیــتـرو'
-                                        : lowestPriceSite === 'yaran'
-                                          ? 'یــاران'
-                                          : lowestPriceSite === 'greenlion'
-                                            ? 'گرین لاین'
-                                            : lowestPriceSite === 'plazadigital'
-                                              ? 'پـلازا دیجیتال'
-                                              : lowestPriceSite === 'ithome'
-                                                ? 'آی تی هوم'
-                                                : lowestPriceSite}
+                        <div className="text-xs font-bold text-green-600">
+                          {getSiteLabel(toSiteKey(lowestPriceSite))}
                         </div>
                       )}
                     </div>
+
                     <div className="text-xl font-bold text-neutral-700">
                       {formatPrice(displayPrice, true)}
                     </div>
+
                     {urlsState.length > 1 && (
                       <div className="text-xs text-gray-500 mt-1">
                         از {new Intl.NumberFormat('fa-IR').format(urlsState.length)} منبع
@@ -186,8 +151,6 @@ export default function ProductCard({
                 ) : (
                   <div className="text-sm text-gray-500">قیمت نامشخص</div>
                 )}
-
-                {/* {brand && <div className="text-xs text-gray-500 mt-1">برند: {brand}</div>} */}
               </div>
 
               {/* Product Image */}
@@ -206,67 +169,27 @@ export default function ProductCard({
 
             {/* Bottom Section: Name, URL, Badges */}
             <div className="space-y-2">
-              {/* <CardTitle className="leading-6">{name}</CardTitle> */}
               <CardDescription className="text-xs">
                 {/* {url} */}
                 <Separator className="my-4 border-gray-400 border-b" />
               </CardDescription>
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <div className="flex items-center gap-2 flex-wrap">
-                  {sites.map((siteName) => (
-                    <Badge
-                      key={siteName}
-                      variant="outline"
-                      className={`text-[10px] rounded-lg px-2 py-0 ${
-                        siteName === 'technolife'
-                          ? ' bg-blue-900 border-none text-white'
-                          : siteName === 'mobile140'
-                            ? 'border-none bg-sky-400 text-white'
-                            : siteName === 'gooshionline'
-                              ? 'border-none bg-gray-400 text-white'
-                              : siteName === 'kasrapars'
-                                ? 'border-none bg-yellow-400 text-white'
-                                : siteName === 'farnaa'
-                                  ? 'border-none bg-pink-600 text-white'
-                                  : siteName === 'zitro'
-                                    ? 'border-none bg-orange-600 text-white'
-                                    : siteName === 'yaran'
-                                      ? 'border-none bg-[#9b0505] text-white'
-                                      : siteName === 'greenlion'
-                                        ? 'border-none bg-[#0d452b] text-white'
-                                        : siteName === 'plazadigital'
-                                          ? 'border-none bg-[#069f49] text-white'
-                                          : siteName === 'ithome'
-                                            ? 'border-none bg-[#124bb2] text-white'
-                                            : 'border-none bg-rose-400 text-white'
-                      }`}
-                    >
-                      {siteName === 'torob'
-                        ? 'تربـــ'
-                        : siteName === 'technolife'
-                          ? 'تکنولایفــ'
-                          : siteName === 'mobile140'
-                            ? 'موبایل۱۴۰'
-                            : siteName === 'gooshionline'
-                              ? 'گوشی آنلاین'
-                              : siteName === 'kasrapars'
-                                ? 'کسری پلاس'
-                                : siteName === 'farnaa'
-                                  ? 'فــرنا'
-                                  : siteName === 'zitro'
-                                    ? 'زیــتـرو'
-                                    : siteName === 'yaran'
-                                      ? 'یــاران'
-                                      : siteName === 'greenlion'
-                                        ? 'گرین لاین'
-                                        : siteName === 'plazadigital'
-                                          ? 'پـلازا دیجیتال'
-                                          : siteName === 'ithome'
-                                            ? 'آی تی هوم'
-                                            : siteName}
-                    </Badge>
-                  ))}
+                  {sites.map((site) => {
+                    const siteKey = toSiteKey(site)
+
+                    return (
+                      <Badge
+                        key={site}
+                        variant="outline"
+                        className={`text-[10px] rounded-lg px-2 py-0 ${getSiteClass(siteKey)}`}
+                      >
+                        {getSiteLabel(siteKey)}
+                      </Badge>
+                    )
+                  })}
                 </div>
+
                 <div className="mt-4 text-sm w-full text-neutral-700 flex justify-between items-center-safe">
                   <ClockFadingIcon className="size-4" />
                   {displayLastCrawledAt ? formatDate(displayLastCrawledAt) : 'هنوز بروزرسانی نشده'}

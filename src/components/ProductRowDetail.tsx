@@ -5,23 +5,8 @@ import { formatPricev2 } from '@/lib/utils/formatPrice'
 import { MoveDown } from 'lucide-react'
 import { useState } from 'react'
 import ProductSheet from './ProductSheet'
-
-interface PriceHistoryItem {
-  price: number
-  crawledAt: string | Date
-  site?: string
-  url?: string
-}
-
-interface ProductUrl {
-  url: string
-  site: string
-  currentPrice: number | null
-  lastCrawledAt: Date | string | null
-  crawlStatus: 'pending' | 'success' | 'failed'
-  crawlError?: string | null
-  priceHistory?: PriceHistoryItem[]
-}
+import { ProductUrl } from '@/types/products'
+import { getSiteClass, getSiteLabel, toSiteKey } from '@/lib/utils/site'
 
 interface ProductRowProps {
   id: string
@@ -95,29 +80,7 @@ export default function ProductRowDetail({
             <div className="font-medium text-neutral-700">{name}</div>
             <div className="font-medium text-green-500">
               <span className="ml-2 text-sm text-neutral-400">پایین‌ترین قیمتــ :</span>
-              {lowestPriceSite === 'torob'
-                ? 'تربـــ'
-                : lowestPriceSite === 'technolife'
-                  ? 'تکنولایفــ'
-                  : lowestPriceSite === 'mobile140'
-                    ? 'موبایل۱۴۰'
-                    : lowestPriceSite === 'gooshionline'
-                      ? 'گوشی آنلاین'
-                      : lowestPriceSite === 'kasrapars'
-                        ? 'کسری پلاس'
-                        : lowestPriceSite === 'farnaa'
-                          ? 'فرنا'
-                          : lowestPriceSite === 'zitro'
-                            ? 'زیــتـرو'
-                            : lowestPriceSite === 'yaran'
-                              ? 'یــاران'
-                              : lowestPriceSite === 'greenlion'
-                                ? 'گرین لاین'
-                                : lowestPriceSite === 'plazadigital'
-                                  ? 'پـلازا دیجیتال'
-                                  : lowestPriceSite === 'ithome'
-                                    ? 'آی تی هوم'
-                                    : (lowestPriceSite ?? '-')}
+              {getSiteLabel(toSiteKey(lowestPriceSite))}
             </div>
             <div className="w-auto">
               {displayLastCrawledAt &&
@@ -184,61 +147,17 @@ export default function ProductRowDetail({
             <div className="flex  items-center gap-2">
               <div className="flex flex-col md:flex-row gap-4">
                 {sortedCurrentPrices.map((urlEntry, index) => {
-                  const siteName =
-                    urlEntry.site === 'torob'
-                      ? 'تربـــ'
-                      : urlEntry.site === 'technolife'
-                        ? 'تکنولایفــ'
-                        : urlEntry.site === 'mobile140'
-                          ? 'موبایل۱۴۰'
-                          : urlEntry.site === 'gooshionline'
-                            ? 'گوشی آنلاین'
-                            : urlEntry.site === 'kasrapars'
-                              ? 'کسری پلاس'
-                              : urlEntry.site === 'farnaa'
-                                ? 'فرنا'
-                                : urlEntry.site === 'zitro'
-                                  ? 'زیــتـرو'
-                                  : urlEntry.site === 'yaran'
-                                    ? 'یــاران'
-                                    : urlEntry.site === 'greenlion'
-                                      ? 'گرین لاین'
-                                      : urlEntry.site === 'plazadigital'
-                                        ? 'پـلازا دیجیتال'
-                                        : urlEntry.site === 'ithome'
-                                          ? 'آی تی هوم'
-                                          : urlEntry.site
-
-                  const siteColorClass =
-                    urlEntry.site === 'technolife'
-                      ? 'text-white bg-blue-700 px-3 py-1 rounded-lg text-xs'
-                      : urlEntry.site === 'mobile140'
-                        ? 'bg-sky-600 text-white px-3 py-1 rounded-lg text-xs'
-                        : urlEntry.site === 'gooshionline'
-                          ? 'bg-gray-400 text-white px-3 py-1 rounded-lg text-xs'
-                          : urlEntry.site === 'kasrapars'
-                            ? 'bg-yellow-400 text-white px-3 py-1 rounded-lg text-xs'
-                            : urlEntry.site === 'farnaa'
-                              ? 'bg-[#d90268] text-white px-3 py-1 rounded-lg text-xs'
-                              : urlEntry.site === 'zitro'
-                                ? 'bg-[#ff6000] text-white px-3 py-1 rounded-lg text-xs'
-                                : urlEntry.site === 'yaran'
-                                  ? 'bg-[#9b0505] text-white px-3 py-1 rounded-lg text-xs'
-                                  : urlEntry.site === 'greenlion'
-                                    ? 'bg-[#0d452b] text-white px-3 py-1 rounded-lg text-xs'
-                                    : urlEntry.site === 'plazadigital'
-                                      ? 'bg-[#069f49] text-white px-3 py-1 rounded-lg text-xs'
-                                      : urlEntry.site === 'ithome'
-                                        ? 'bg-[#124bb2] text-white px-3 py-1 rounded-lg text-xs'
-                                        : 'bg-rose-400 text-white px-3 py-1 rounded-lg text-xs' // torob as default
+                  const siteKey = toSiteKey(urlEntry.site)
 
                   return (
                     <div
                       key={index}
                       className="flex flex-col mx-4 gap-1 justify-between items-center font-medium"
                     >
-                      <span className={siteColorClass}>{siteName}</span>
+                      <span className={getSiteClass(siteKey)}>{getSiteLabel(siteKey)}</span>
+
                       <MoveDown className="size-2 text-gray-400" />
+
                       {urlEntry.crawlError === 'Product not available' ? (
                         <span className="text-orange-400">ناموجود</span>
                       ) : urlEntry.crawlError === 'Price not found' ? (
