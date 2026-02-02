@@ -79,6 +79,13 @@ export const ProductLinks: CollectionConfig = {
       admin: { description: 'Select a brand for this product' },
     },
     {
+      name: 'usd',
+      label: 'Usd Price',
+      type: 'number',
+      required: false,
+      admin: { description: 'usd price for this product' },
+    },
+    {
       name: 'productUrls',
       label: {
         en: 'Product URLs',

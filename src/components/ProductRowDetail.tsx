@@ -2,17 +2,21 @@
 
 import { Sheet, SheetTrigger } from '@/components/ui/sheet'
 import { formatPricev2 } from '@/lib/utils/formatPrice'
-import { MoveDown } from 'lucide-react'
+import { getSiteClass, getSiteLabel, toSiteKey } from '@/lib/utils/site'
+import { Setting } from '@/payload-types'
+import { ProductUrl } from '@/types/products'
+import { DollarSign, MoveDown } from 'lucide-react'
+import Image from 'next/image'
 import { useState } from 'react'
 import ProductSheet from './ProductSheet'
-import { ProductUrl } from '@/types/products'
-import { getSiteClass, getSiteLabel, toSiteKey } from '@/lib/utils/site'
 
 interface ProductRowProps {
   id: string
   name: string
   productId?: string | null
   productImageUrl?: string | null
+  usd?: number | null
+  settings?: Setting
   productUrls: ProductUrl[]
 }
 
@@ -21,10 +25,15 @@ export default function ProductRowDetail({
   name,
   productId,
   productImageUrl,
+  usd,
+  settings,
   productUrls = [],
 }: ProductRowProps) {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [urlsState, setUrlsState] = useState<ProductUrl[]>(productUrls)
+  const [usdValue, setUsdValue] = useState(usd ?? 0)
+
+  console.log('ProductRowDetail rendered → id:', id, 'usd prop:', usd, 'local usdValue:', usdValue)
 
   // Compute lowest price and site
   const lowestPriceEntry = urlsState
@@ -51,7 +60,22 @@ export default function ProductRowDetail({
   // Unique sites
   const sites = [...new Set(urlsState.map((u) => u.site))]
 
-  const sortedCurrentPrices = [...urlsState].sort((a, b) => {
+  const mobile140Entry = urlsState.find(
+    (u) => toSiteKey(u.site) === 'mobile140',
+    // u.crawlError !== 'Product not available' &&
+    // u.currentPrice !== null,
+  )
+
+  const otherEntries = urlsState.filter((u) => toSiteKey(u.site) !== 'mobile140')
+
+  const sortedCurrentPrices = [...otherEntries].sort((a, b) => {
+    // const aIsMobile140 = toSiteKey(a.site) === 'mobile140'
+    // const bIsMobile140 = toSiteKey(b.site) === 'mobile140'
+
+    // 0. mobile140 always first
+    // if (aIsMobile140 && !bIsMobile140) return -1
+    // if (!aIsMobile140 && bIsMobile140) return 1
+
     const aUnavailable =
       a.currentPrice == null ||
       a.crawlError === 'Product not available' ||
@@ -70,6 +94,8 @@ export default function ProductRowDetail({
     // Both have valid prices, sort lowest first
     return a.currentPrice! - b.currentPrice!
   })
+
+  console.log('Rendering row with displayed USD:', usdValue)
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -143,7 +169,27 @@ export default function ProductRowDetail({
                 })()}
             </div>
           </div>
-          <div className="w-full items-center flex justify-center">
+          <div className="w-full items-center flex justify-between">
+            <div className=" flex flex-col gap-4 items-start text-neutral-700">
+              <div className="ml-2 flex items-center">
+                <span className="text-sm text-neutral-500">
+                  قیمت دلاری: <b className="">{usd?.toLocaleString('fa-IR')}</b>
+                </span>
+                <DollarSign className="text-green-700 size-3" />
+              </div>
+              <div className=" flex items-center text-neutral-700">
+                <span className="text-sm text-neutral-500">
+                  قیمت تمام شده:{' '}
+                  <b className="">
+                    {usd && settings?.importFee && settings?.usdprice
+                      ? (usd * (1 + settings.importFee / 100) * settings.usdprice).toLocaleString(
+                          'fa-IR',
+                        )
+                      : '-'}
+                  </b>
+                </span>
+              </div>
+            </div>
             <div className="flex  items-center gap-2">
               <div className="flex flex-col md:flex-row gap-4">
                 {sortedCurrentPrices.map((urlEntry, index) => {
@@ -178,6 +224,26 @@ export default function ProductRowDetail({
 
               {/* Last crawled */}
             </div>
+
+            {mobile140Entry && (
+              <div className="flex flex-col items-center justify-center gap-2 rounded-lg p-2">
+                <Image src="/icon/140-blue.svg" alt="Mobile140" width={70} height={70} />
+
+                <MoveDown className="size-2 text-sky-800" />
+
+                {mobile140Entry.crawlError === 'Product not available' ? (
+                  <span className="text-sky-800 text-sm">ناموجود</span>
+                ) : mobile140Entry.crawlError === 'Price not found' ? (
+                  <span className="text-sky-800 text-sm">قیمت نامشخص (احتمالا ناموجود)</span>
+                ) : mobile140Entry.currentPrice !== null ? (
+                  <span className="font-semibold text-sky-700">
+                    {formatPricev2(mobile140Entry.currentPrice, true)}
+                  </span>
+                ) : (
+                  <span className="text-sky-800 text-sm">قیمت نامشخص</span>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </SheetTrigger>
@@ -189,6 +255,8 @@ export default function ProductRowDetail({
         collectionProductId={productId}
         name={name}
         productImageUrl={productImageUrl}
+        usd={usdValue}
+        onUsdChange={setUsdValue}
         productUrls={urlsState}
         onUrlsUpdate={setUrlsState}
       />

@@ -11,12 +11,14 @@ import RefreshCategoryButton from './RefreshCategoryButton'
 import SearchInput from './SearchInput'
 import { Button } from './ui/button'
 import { ProductUrl } from '@/types/products'
+import { Setting } from '@/payload-types'
 
 interface Product {
   id: string
   name: string
   productId?: string | null
   productImageUrl?: string | null
+  usd?: number | null
   productUrls: ProductUrl[]
   // Legacy fields for backward compatibility
   url: string
@@ -33,19 +35,20 @@ interface Product {
 
 interface ProductsPageClientProps {
   initialProducts: Product[]
+  settings: Setting
 }
 
-interface Brand {
-  id: string
-  name: string
-  categoryId: string // <-- add this
-  count?: number
-}
+// interface Brand {
+//   id: string
+//   name: string
+//   categoryId: string // <-- add this
+//   count?: number
+// }
 
 type ViewMode = 'grid' | 'list' | 'detail'
 const VIEW_KEY = 'products:view'
 
-export default function ProductsPageClient({ initialProducts }: ProductsPageClientProps) {
+export default function ProductsPageClient({ initialProducts, settings }: ProductsPageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [products, setProducts] = useState<Product[]>(initialProducts)
@@ -161,6 +164,7 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
               name: product.name || 'بدون نام',
               productId: product.productId || null,
               productImageUrl,
+              usd: product.usd,
               productUrls: productUrls.map((urlEntry: any) => {
                 // Always verify site matches URL to ensure correctness
                 let site = urlEntry.site
@@ -340,7 +344,7 @@ export default function ProductsPageClient({ initialProducts }: ProductsPageClie
           <p className="mt-4 text-gray-400">در حال جستجو...</p>
         </div>
       ) : (
-        <ProductList products={products} view={view} />
+        <ProductList products={products} view={view} settings={settings} />
       )}
     </>
   )

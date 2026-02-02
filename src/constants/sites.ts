@@ -6,7 +6,7 @@ export const SITES = {
   },
   technolife: {
     label: 'تکنولایفــ',
-    className: 'bg-blue-700 text-white px-3 py-1 rounded-lg text-xs border-none',
+    className: 'bg-[#223266] text-white px-3 py-1 rounded-lg text-xs border-none',
   },
   mobile140: {
     label: 'موبایل۱۴۰',

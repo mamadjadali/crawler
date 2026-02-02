@@ -5,12 +5,14 @@ import ProductCard from './ProductCard'
 import ProductRow from './ProductRow'
 import ProductRowDetail from './ProductRowDetail'
 import { PriceHistoryItem, ProductUrl } from '@/types/products'
+import { Setting } from '@/payload-types'
 
 interface Product {
   id: string
   name: string
   productId?: string | null
   productImageUrl?: string | null
+  usd?: number | null
   productUrls: ProductUrl[]
   url: string
   site: string
@@ -25,11 +27,12 @@ interface ProductListProps {
   products: Product[]
   view: 'grid' | 'list' | 'detail'
   onViewChange?: (view: 'grid' | 'list' | 'detail') => void
+  settings?: Setting
 }
 
 const VIEW_KEY = 'products:view'
 
-export default function ProductList({ products, view, onViewChange }: ProductListProps) {
+export default function ProductList({ products, view, onViewChange, settings }: ProductListProps) {
   useEffect(() => {
     localStorage.setItem(VIEW_KEY, view)
   }, [view])
@@ -107,6 +110,8 @@ export default function ProductList({ products, view, onViewChange }: ProductLis
               name={product.name}
               productId={product.productId}
               productImageUrl={product.productImageUrl}
+              usd={product.usd}
+              settings={settings}
               productUrls={product.productUrls}
             />
           ))}

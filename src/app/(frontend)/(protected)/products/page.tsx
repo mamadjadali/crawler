@@ -1,8 +1,11 @@
-import { Suspense } from 'react'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import EditableFee from '@/components/FeeGlobal'
 import ProductsPageClient from '@/components/ProductsPageClient'
+import EditableUSD from '@/components/UsdGlobal'
 import { detectSite } from '@/lib/utils/detectSite'
+import { getSettings } from '@/lib/utils/getSettings'
+import config from '@/payload.config'
+import { getPayload } from 'payload'
+import { Suspense } from 'react'
 
 export const metadata = {
   title: 'Products - Price Tracker',
@@ -12,7 +15,6 @@ export const metadata = {
 export default async function ProductsPage() {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-
   // Fetch all product links with media relationship
   const { docs: products } = await payload.find({
     collection: 'product-links',
@@ -20,6 +22,8 @@ export default async function ProductsPage() {
     limit: 100,
     depth: 1, // Populate media relationship
   })
+
+  const settings = await getSettings()
 
   // Transform products to match component props
   const transformedProducts = products.map((product: any) => {
@@ -77,6 +81,7 @@ export default async function ProductsPage() {
       name: product.name || 'بدون نام',
       productId: product.productId || null,
       productImageUrl,
+      usd: product.usd,
       productUrls: productUrls.map((urlEntry: any) => {
         // Always verify site matches URL to ensure correctness
         let site = urlEntry.site
@@ -148,34 +153,10 @@ export default async function ProductsPage() {
     <div className="min-h-screen bg-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Stats */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-transparent border border-gray-400 rounded-xl  p-6">
-            <div className="text-sm font-medium text-gray-400">کل محصولات</div>
-            <div className="mt-2 text-3xl font-bold text-neutral-700">
-              {new Intl.NumberFormat('fa-IR').format(products.length)}
-            </div>
-          </div>
-          <div className="bg-green-500/20 border border-green-400 rounded-xl  p-6">
-            <div className="text-sm font-medium text-gray-400">🇺🇸 دلار</div>
-            <div className="mt-2 text-left text-3xl font-bold text-neutral-700">
-              
-              ...
-            </div>
-          </div>
-          <div className="bg-gray-500/20 border border-gray-400 rounded-xl  p-6">
-            <div className="text-sm font-medium text-gray-400">🇦🇪 درهم</div>
-            <div className="mt-2 text-left text-3xl font-bold text-neutral-700">
-              
-              ...
-            </div>
-          </div>
-          <div className="bg-yellow-500/20 border border-yellow-400 rounded-xl  p-6">
-            <div className="text-sm font-medium text-gray-400">طــلا</div>
-            <div className="mt-2 text-3xl text-left font-bold text-neutral-700">
-              ...
-            </div>
-          </div>
-        </div> */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <EditableUSD settings={settings} />
+          <EditableFee settings={settings} />
+        </div>
 
         {/* Products Page Client Component with Search */}
         <Suspense
@@ -186,7 +167,7 @@ export default async function ProductsPage() {
             </div>
           }
         >
-          <ProductsPageClient initialProducts={transformedProducts} />
+          <ProductsPageClient initialProducts={transformedProducts} settings={settings} />
         </Suspense>
       </div>
     </div>

@@ -2,6 +2,8 @@
 
 Hands On Priority -----------------------------------------------------------------------------
 
+- [] Script To log , Every 20 min run by inputed category (defualt)
+- [] Add response to Api
 - [] add do not crawl
 - [] Auth Check on Api
 - [x] Refactor Case Match in Code base

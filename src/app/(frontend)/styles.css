@@ -155,6 +155,17 @@ body,
   height: 100%;
 }
 
+/* Remove number input arrows */
+.no-spin::-webkit-outer-spin-button,
+.no-spin::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spin {
+  -moz-appearance: textfield; /* Firefox */
+}
+
 body {
   font-family: 'Dana', sans-serif;
   font-size: 18px;

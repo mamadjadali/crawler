@@ -27,6 +27,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
+import EditableUSDProduct from './ProductUsd'
 import RefreshPriceIcon from './RefreshPriceIcon'
 
 interface ProductSheetProps {
@@ -36,6 +37,8 @@ interface ProductSheetProps {
   collectionProductId?: string | null
   name: string
   productImageUrl?: string | null
+  usd?: number
+  onUsdChange?: (value: number) => void
   productUrls: ProductUrl[]
   onUrlsUpdate?: React.Dispatch<React.SetStateAction<ProductUrl[]>> //
 }
@@ -47,12 +50,13 @@ export default function ProductSheet({
   collectionProductId,
   name,
   productImageUrl,
+  usd,
+  onUsdChange,
   productUrls = [],
   onUrlsUpdate,
 }: ProductSheetProps) {
   const [refreshedProductUrls, setRefreshedProductUrls] = useState<ProductUrl[]>(productUrls)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
-
   // Sync state when props change (e.g., when opening sheet with different product)
   useEffect(() => {
     setRefreshedProductUrls(productUrls)
@@ -276,6 +280,7 @@ export default function ProductSheet({
                   </Button>
                 </a>
               )}
+              <EditableUSDProduct id={productId} usd={usd ?? 0} onUsdChange={onUsdChange} />
             </div>
           </div>
           <SheetDescription>

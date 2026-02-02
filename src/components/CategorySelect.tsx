@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { SlidersHorizontal } from 'lucide-react'
+import { useAuth } from '@/context/AuthProvider'
 
 interface Category {
   id: string
@@ -22,8 +23,12 @@ interface CategorySelectProps {
 }
 
 export default function CategorySelect({ value = '', onChange }: CategorySelectProps) {
+  const { user } = useAuth()
   const [categories, setCategories] = useState<Category[]>([])
   const [selected, setSelected] = useState<string>(value || '__all__')
+
+  const allowedCategoryIds = user.visibleCategories?.map((c: any) => c.id)
+
   useEffect(() => {
     fetch('/api/custom/category')
       .then((res) => res.json())
@@ -34,6 +39,18 @@ export default function CategorySelect({ value = '', onChange }: CategorySelectP
   useEffect(() => {
     setSelected(value && value !== '' ? value : '__all__')
   }, [value])
+
+  const visibleCategories = categories.filter((cat) => {
+    // keep selected to avoid broken state
+    if (cat.id === selected) return true
+
+    // no preference set → show all
+    if (!allowedCategoryIds || allowedCategoryIds.length === 0) {
+      return true
+    }
+
+    return allowedCategoryIds.includes(cat.id)
+  })
 
   return (
     <Select
@@ -57,7 +74,7 @@ export default function CategorySelect({ value = '', onChange }: CategorySelectP
           <SlidersHorizontal />
           همه دسته‌بندی‌ها
         </SelectItem>
-        {categories.map((cat) => (
+        {visibleCategories.map((cat) => (
           <SelectItem className="hover:text-blue-400 cursor-pointer" key={cat.id} value={cat.id}>
             {cat.name}
             <span className="text-gray-400 text-xs">

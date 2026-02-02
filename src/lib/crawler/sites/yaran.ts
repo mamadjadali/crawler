@@ -158,7 +158,7 @@ export class YaranCrawler implements SiteCrawler {
         return {
           success: false,
           price: null,
-          error: 'Product unavailable',
+          error: 'Product not available',
         }
       }
 

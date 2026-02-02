@@ -96,8 +96,12 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    settings: Setting;
+  };
+  globalsSelect: {
+    settings: SettingsSelect<false> | SettingsSelect<true>;
+  };
   locale: null;
   user:
     | (User & {
@@ -177,6 +181,7 @@ export interface User {
 export interface Client {
   id: string;
   fullname?: string | null;
+  visibleCategories?: (string | Category)[] | null;
   role: 'god' | 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn';
   updatedAt: string;
   createdAt: string;
@@ -196,6 +201,17 @@ export interface Client {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -242,6 +258,10 @@ export interface ProductLink {
    * Select a brand for this product
    */
   brand?: (string | null) | Brand;
+  /**
+   * usd price for this product
+   */
+  usd?: number | null;
   /**
    * Product URLs to crawl (can add multiple URLs from different sites)
    */
@@ -293,17 +313,6 @@ export interface ProductLink {
       | null;
     id?: string | null;
   }[];
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -446,6 +455,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface ClientsSelect<T extends boolean = true> {
   fullname?: T;
+  visibleCategories?: T;
   role?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -493,6 +503,7 @@ export interface ProductLinksSelect<T extends boolean = true> {
   productImage?: T;
   category?: T;
   brand?: T;
+  usd?: T;
   productUrls?:
     | T
     | {
@@ -573,6 +584,28 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: string;
+  usdprice?: number | null;
+  importFee?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  usdprice?: T;
+  importFee?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

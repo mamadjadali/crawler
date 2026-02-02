@@ -13,6 +13,7 @@ import { en } from '@payloadcms/translations/languages/en'
 import { fa } from '@payloadcms/translations/languages/fa'
 import { Categories } from './collections/Categories'
 import { Brands } from './collections/Brands'
+import { Settings } from './globals/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -29,6 +30,7 @@ export default buildConfig({
     supportedLanguages: { en, fa }, // default
   },
   collections: [Users, Clients, Media, ProductLinks, Categories, Brands],
+  globals: [Settings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -5,6 +5,7 @@ import { getClient } from '@/actions/getClient'
 import { redirect } from 'next/navigation'
 import { UserProfile } from '@/components/UserProfile'
 import { AuthProvider } from '@/context/AuthProvider'
+import { Category } from '@/payload-types'
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const client = await getClient()
@@ -19,7 +20,8 @@ export default async function ProtectedLayout({ children }: { children: React.Re
         id: client.id,
         email: client.email,
         username: client.username,
-        role: client.role, // ← comes from clients collection
+        role: client.role,
+        visibleCategories: client.visibleCategories as Category[] | undefined,
       }}
     >
       <header className="flex items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,6 +35,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
           name={client.username}
           fullname={client.fullname}
           role={client.role}
+          // visibleCategories={client.visibleCategories as Category[] | undefined}
         />
       </header>
       {children}

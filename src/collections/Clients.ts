@@ -30,6 +30,16 @@ export const Clients: CollectionConfig = {
       },
     },
     {
+      name: 'visibleCategories',
+      type: 'relationship',
+      relationTo: 'categories',
+      hasMany: true,
+      label: {
+        en: 'Visible Categories',
+        fa: 'دسته‌بندی‌های قابل نمایش',
+      },
+    },
+    {
       name: 'role',
       label: {
         en: 'role',

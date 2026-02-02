@@ -1,5 +1,6 @@
 'use client'
 
+import { Category } from '@/payload-types'
 import { createContext, useContext } from 'react'
 
 type Role = 'god' | 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn'
@@ -9,6 +10,7 @@ type AuthUser = {
   email: string
   username: string
   role: Role
+  visibleCategories?: Category[]
 }
 
 type AuthContextType = {
