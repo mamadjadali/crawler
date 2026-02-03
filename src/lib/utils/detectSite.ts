@@ -50,6 +50,10 @@ export function detectSite(url: string): string {
       return 'ithome'
     }
 
+    if (hostname.includes('zangooleh.com')) {
+      return 'zangooleh'
+    }
+
     // Default fallback
     return 'torob'
   } catch {

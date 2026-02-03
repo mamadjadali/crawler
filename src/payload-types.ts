@@ -286,6 +286,7 @@ export interface ProductLink {
           | 'greenlion'
           | 'plazadigital'
           | 'ithome'
+          | 'zangooleh'
         )
       | null;
     /**

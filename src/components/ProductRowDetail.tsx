@@ -208,7 +208,7 @@ export default function ProductRowDetail({
                         <span className="text-orange-400">ناموجود</span>
                       ) : urlEntry.crawlError === 'Price not found' ? (
                         <span className="text-sm text-gray-500 dark:text-gray-400">
-                          قیمت نامشخص (احتمالا ناموجود)
+                          (احتمالا ناموجود)
                         </span>
                       ) : urlEntry.currentPrice !== null ? (
                         <span className="text-neutral-700 text-base font-semibold">
@@ -234,7 +234,7 @@ export default function ProductRowDetail({
                 {mobile140Entry.crawlError === 'Product not available' ? (
                   <span className="text-sky-800 text-sm">ناموجود</span>
                 ) : mobile140Entry.crawlError === 'Price not found' ? (
-                  <span className="text-sky-800 text-sm">قیمت نامشخص (احتمالا ناموجود)</span>
+                  <span className="text-sky-800 text-sm">(احتمالا ناموجود)</span>
                 ) : mobile140Entry.currentPrice !== null ? (
                   <span className="font-semibold text-sky-700">
                     {formatPricev2(mobile140Entry.currentPrice, true)}

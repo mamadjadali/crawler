@@ -44,4 +44,8 @@ export const SITES = {
     label: 'آی تی هوم',
     className: 'bg-[#124bb2] text-white px-3 py-1 rounded-lg text-xs border-none',
   },
+  zangooleh: {
+    label: 'زنــگوله',
+    className: 'bg-[#f3ae26] text-white px-3 py-1 rounded-lg text-xs border-none',
+  },
 } as const

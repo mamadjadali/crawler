@@ -2,10 +2,16 @@
 
 Hands On Priority -----------------------------------------------------------------------------
 
-- [] Script To log , Every 20 min run by inputed category (defualt)
-- [] Add response to Api
-- [] add do not crawl
+- [] Add do not crawl Hide (Hide & do not crawl)
+- [] Add Availible Sites for crawl Bottom drawer (Global Colection)
+- [] Add AED Both Global And Per Product
 - [] Auth Check on Api
+- [x] Add Usd Global and Product
+- [x] Add ImportFee and its calculation
+- [x] fix Price not found Price Per Site Section
+- [x] fix Price not found text
+- [x] fix unavalible color
+- [x] Script To log , Every 20 min run by inputed category (defualt)
 - [x] Refactor Case Match in Code base
 - [x] Export Unified Interface And Types
 - [x] sync state between sheet and hamid layout
@@ -29,7 +35,7 @@ Feature ------------------------------------------------------------------------
 - [] Impelment AED Price Crawle
 - [] Handel Persian Navigation Err
 - [] Impelment Gold Price Crawle
-- [] Limitation On Price History
+- [x] Limitation On Price History
 - [] Filter Options in Product list : lowest , highest ,...
 - [] Filter for products that are not upadeted in 1 day (نیاز به بروز رسانی)
 - [] in app notification system for updates and products changes (relation with users)
@@ -46,10 +52,10 @@ Crawlers------------------------------------------------------------------------
 - [x] Yaran --> Puppeteer
 - [x] Green Lion --> Cheerio
 - [x] PlazaDigital --> Cheerio
-- [] it home --> Cheerio
+- [x] zangoleh --> Cheerio
 - [] Hamrah Tel
+- [] it home --> Cheerio
 - [] kalatik
-- [] zangoleh
 - [] Faraco
 - [] Shahr Computer
 - [] Tarhan it

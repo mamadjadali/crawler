@@ -183,6 +183,7 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
                       site !== 'zitro' &&
                       site !== 'greenlion' &&
                       site !== 'plazadigital' &&
+                      site !== 'zangooleh' &&
                       site !== 'ithome') ||
                     site !== detectedSite
                   ) {
@@ -202,6 +203,7 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
                       site !== 'zitro' &&
                       site !== 'greenlion' &&
                       site !== 'plazadigital' &&
+                      site !== 'zangooleh' &&
                       site !== 'ithome')
                   ) {
                     site = 'torob'

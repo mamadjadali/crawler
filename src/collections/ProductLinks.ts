@@ -135,6 +135,7 @@ export const ProductLinks: CollectionConfig = {
             { label: { en: 'Green Lion', fa: 'گرین لاین' }, value: 'greenlion' },
             { label: { en: 'Plaza Digital', fa: 'پـلازا دیجیتال' }, value: 'plazadigital' },
             { label: { en: 'It Home', fa: 'آی تی هوم' }, value: 'ithome' },
+            { label: { en: 'Zangooleh', fa: 'زنــگوله' }, value: 'zangooleh' },
           ],
           admin: {
             description: {
@@ -274,7 +275,8 @@ export const ProductLinks: CollectionConfig = {
             | 'yaran'
             | 'greenlion'
             | 'plazadigital'
-            | 'ithome' = 'torob'
+            | 'ithome'
+            | 'zangooleh' = 'torob'
 
           if (hostname.includes('torob.com')) {
             detectedSite = 'torob'
@@ -298,6 +300,8 @@ export const ProductLinks: CollectionConfig = {
             detectedSite = 'plazadigital'
           } else if (hostname.includes('ithome.ir')) {
             detectedSite = 'ithome'
+          } else if (hostname.includes('zangooleh.com')) {
+            detectedSite = 'zangooleh'
           }
 
           data.productUrls = [
@@ -346,6 +350,8 @@ export const ProductLinks: CollectionConfig = {
                   urlEntry.site = 'plazadigital'
                 } else if (hostname.includes('ithome.ir')) {
                   urlEntry.site = 'ithome'
+                } else if (hostname.includes('zangooleh.com')) {
+                  urlEntry.site = 'zangooleh'
                 } else {
                   urlEntry.site = 'torob' // Default fallback
                 }

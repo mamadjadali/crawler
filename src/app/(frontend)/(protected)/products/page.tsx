@@ -100,6 +100,7 @@ export default async function ProductsPage() {
               site !== 'zitro' &&
               site !== 'greenlion' &&
               site !== 'plazadigital' &&
+              site !== 'zangooleh' &&
               site !== 'ithome') ||
             site !== detectedSite
           ) {
@@ -119,6 +120,7 @@ export default async function ProductsPage() {
               site !== 'zitro' &&
               site !== 'greenlion' &&
               site !== 'plazadigital' &&
+              site !== 'zangooleh' &&
               site !== 'ithome')
           ) {
             site = 'torob'

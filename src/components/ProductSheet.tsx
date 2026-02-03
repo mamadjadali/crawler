@@ -469,7 +469,9 @@ export default function ProductSheet({
                       <p className="text-xs text-red-800">
                         {urlEntry.crawlError === 'Product not available'
                           ? 'ناموجود'
-                          : urlEntry.crawlError}
+                          : urlEntry.crawlError === 'Price not found'
+                            ? 'احتمالا ناموجود'
+                            : urlEntry.crawlError}
                       </p>
                     </div>
                   )}
