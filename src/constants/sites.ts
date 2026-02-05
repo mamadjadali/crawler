@@ -52,4 +52,8 @@ export const SITES = {
     label: 'فـراکـو',
     className: 'bg-[#51b848] text-white px-3 py-1 rounded-lg text-xs border-none',
   },
+  xiaomi360: {
+    label: 'شیـائـومی 360',
+    className: 'bg-[#fe4903] text-white px-3 py-1 rounded-lg text-xs border-none',
+  },
 } as const

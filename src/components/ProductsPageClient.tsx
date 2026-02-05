@@ -187,6 +187,7 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
                       site !== 'plazadigital' &&
                       site !== 'zangooleh' &&
                       site !== 'ithome' &&
+                      site !== 'xiaomi360' &&
                       site !== 'farako') ||
                     site !== detectedSite
                   ) {
@@ -208,6 +209,7 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
                       site !== 'plazadigital' &&
                       site !== 'zangooleh' &&
                       site !== 'ithome' &&
+                      site !== 'xiaomi360' &&
                       site !== 'farako')
                   ) {
                     site = 'torob'

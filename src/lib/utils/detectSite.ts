@@ -58,6 +58,10 @@ export function detectSite(url: string): string {
       return 'farako'
     }
 
+    if (hostname.includes('xiaomi360.ir')) {
+      return 'xiaomi360'
+    }
+
     // Default fallback
     return 'torob'
   } catch {

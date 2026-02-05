@@ -177,6 +177,7 @@ export const ProductLinks: CollectionConfig = {
             { label: { en: 'It Home', fa: 'آی تی هوم' }, value: 'ithome' },
             { label: { en: 'Zangooleh', fa: 'زنــگوله' }, value: 'zangooleh' },
             { label: { en: 'Farako', fa: 'فـراکـو' }, value: 'farako' },
+            { label: { en: 'Xiaomi360', fa: 'شیـائـومی 360' }, value: 'xiaomi360' },
           ],
           admin: {
             description: {
@@ -318,7 +319,8 @@ export const ProductLinks: CollectionConfig = {
             | 'plazadigital'
             | 'ithome'
             | 'zangooleh'
-            | 'farako' = 'torob'
+            | 'farako'
+            | 'xiaomi360' = 'torob'
 
           if (hostname.includes('torob.com')) {
             detectedSite = 'torob'
@@ -346,6 +348,8 @@ export const ProductLinks: CollectionConfig = {
             detectedSite = 'zangooleh'
           } else if (hostname.includes('farako.com')) {
             detectedSite = 'farako'
+          } else if (hostname.includes('xiaomi360.ir')) {
+            detectedSite = 'xiaomi360'
           }
 
           data.productUrls = [
@@ -398,6 +402,8 @@ export const ProductLinks: CollectionConfig = {
                   urlEntry.site = 'zangooleh'
                 } else if (hostname.includes('farako.com')) {
                   urlEntry.site = 'farako'
+                } else if (hostname.includes('xiaomi360.ir')) {
+                  urlEntry.site = 'xiaomi360'
                 } else {
                   urlEntry.site = 'torob' // Default fallback
                 }

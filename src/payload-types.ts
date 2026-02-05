@@ -296,6 +296,7 @@ export interface ProductLink {
           | 'ithome'
           | 'zangooleh'
           | 'farako'
+          | 'xiaomi360'
         )
       | null;
     /**

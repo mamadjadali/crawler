@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio'
 import type { SiteCrawler, CrawlResult } from './base'
 
-export class ItHomeCrawler implements SiteCrawler {
+export class Xiaomi360Crawler implements SiteCrawler {
   async crawl(url: string): Promise<CrawlResult> {
     try {
       const response = await fetch(url, {

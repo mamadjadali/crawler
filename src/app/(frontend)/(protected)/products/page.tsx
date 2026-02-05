@@ -104,6 +104,7 @@ export default async function ProductsPage() {
               site !== 'plazadigital' &&
               site !== 'zangooleh' &&
               site !== 'ithome' &&
+              site !== 'xiaomi360' &&
               site !== 'farako') ||
             site !== detectedSite
           ) {
@@ -125,6 +126,7 @@ export default async function ProductsPage() {
               site !== 'plazadigital' &&
               site !== 'zangooleh' &&
               site !== 'ithome' &&
+              site !== 'xiaomi360' &&
               site !== 'farako')
           ) {
             site = 'torob'

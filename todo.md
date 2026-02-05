@@ -58,9 +58,11 @@ Crawlers------------------------------------------------------------------------
 - [x] Green Lion --> Cheerio
 - [x] PlazaDigital --> Cheerio
 - [x] zangoleh --> Cheerio
-- [x] Faraco
+- [x] Faraco --> Cheerio
+- [x] it home --> Cheerio
+- [x] Xiaomi 360 --> Cheerio
+- [] Positron
 - [] Hamrah Tel
-- [] it home --> Cheerio
 - [] kalatik
 - [] Shahr Computer
 - [] Tarhan it

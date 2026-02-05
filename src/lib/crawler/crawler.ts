@@ -14,6 +14,7 @@ import { PlazaDigitalCrawler } from './sites/plazadigital'
 import { ItHomeCrawler } from './sites/ithome'
 import { ZangoolehCrawler } from './sites/zangooleh'
 import { FrakoCrawler } from './sites/farako'
+import { Xiaomi360Crawler } from './sites/xiaomi360'
 
 // Re-export detectSite for backward compatibility
 export { detectSite }
@@ -52,6 +53,8 @@ function getCrawler(site: string): SiteCrawler {
       crawlerInstances.set(site, new ZangoolehCrawler())
     } else if (site === 'farako') {
       crawlerInstances.set(site, new FrakoCrawler())
+    } else if (site === 'xiaomi360') {
+      crawlerInstances.set(site, new Xiaomi360Crawler())
     } else {
       throw new Error(`Unsupported site: ${site}`)
     }
