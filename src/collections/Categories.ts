@@ -13,8 +13,24 @@ export const Categories: CollectionConfig = {
     },
   },
   fields: [
-    { name: 'name', type: 'text', required: true },
-    { name: 'slug', type: 'text', required: true },
+    {
+      name: 'name',
+      label: {
+        en: 'Name',
+        fa: 'نام دسته بندی',
+      },
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'slug',
+      label: {
+        en: 'Slug',
+        fa: 'اسلاگ (به انگلیسی)',
+      },
+      type: 'text',
+      required: true,
+    },
   ],
   admin: {
     useAsTitle: 'name',

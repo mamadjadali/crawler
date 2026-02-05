@@ -54,6 +54,10 @@ export function detectSite(url: string): string {
       return 'zangooleh'
     }
 
+    if (hostname.includes('farako.com')) {
+      return 'farako'
+    }
+
     // Default fallback
     return 'torob'
   } catch {

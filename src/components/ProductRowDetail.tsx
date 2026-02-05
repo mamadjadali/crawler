@@ -9,6 +9,7 @@ import { DollarSign, MoveDown } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import ProductSheet from './ProductSheet'
+import { Dirham } from './icons'
 
 interface ProductRowProps {
   id: string
@@ -16,6 +17,7 @@ interface ProductRowProps {
   productId?: string | null
   productImageUrl?: string | null
   usd?: number | null
+  aed?: number | null
   settings?: Setting
   productUrls: ProductUrl[]
 }
@@ -26,25 +28,42 @@ export default function ProductRowDetail({
   productId,
   productImageUrl,
   usd,
+  aed,
   settings,
   productUrls = [],
 }: ProductRowProps) {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [urlsState, setUrlsState] = useState<ProductUrl[]>(productUrls)
   const [usdValue, setUsdValue] = useState(usd ?? 0)
+  const [aedValue, setAedValue] = useState(aed ?? 0)
 
   console.log('ProductRowDetail rendered → id:', id, 'usd prop:', usd, 'local usdValue:', usdValue)
 
-  // Compute lowest price and site
-  const lowestPriceEntry = urlsState
-    .filter(
-      (u): u is ProductUrl & { currentPrice: number } =>
-        u.crawlError !== 'Product not available' && u.currentPrice !== null,
-    )
-    .reduce<(ProductUrl & { currentPrice: number }) | null>((lowest, current) => {
-      if (!lowest) return current
-      return current.currentPrice < lowest.currentPrice ? current : lowest
-    }, null)
+  // // Compute lowest price and site
+  // const lowestPriceEntry = urlsState
+  //   .filter(
+  //     (u): u is ProductUrl & { currentPrice: number } =>
+  //       u.crawlError !== 'Product not available' && u.currentPrice !== null,
+  //   )
+  //   .reduce<(ProductUrl & { currentPrice: number }) | null>((lowest, current) => {
+  //     if (!lowest) return current
+  //     return current.currentPrice < lowest.currentPrice ? current : lowest
+  //   }, null)
+
+  // Filter out sites with errors or missing prices
+  const validPriceEntries = urlsState.filter(
+    (u): u is ProductUrl & { currentPrice: number } =>
+      u.currentPrice != null &&
+      !['Product not available', 'Price not found'].includes(u.crawlError ?? ''),
+  )
+
+  // 2️⃣ Pick the lowest price from the valid entries
+  const lowestPriceEntry: (ProductUrl & { currentPrice: number }) | null =
+    validPriceEntries.length > 0
+      ? validPriceEntries.reduce((lowest, current) =>
+          current.currentPrice < lowest.currentPrice ? current : lowest,
+        )
+      : null
 
   const displayPrice = lowestPriceEntry?.currentPrice ?? null
   const lowestPriceSite = lowestPriceEntry?.site ?? null
@@ -170,26 +189,45 @@ export default function ProductRowDetail({
             </div>
           </div>
           <div className="w-full items-center flex justify-between">
-            <div className=" flex flex-col gap-4 items-start text-neutral-700">
-              <div className="ml-2 flex items-center">
-                <span className="text-sm text-neutral-500">
-                  قیمت دلاری: <b className="">{usd?.toLocaleString('fa-IR')}</b>
-                </span>
-                <DollarSign className="text-green-700 size-3" />
-              </div>
-              <div className=" flex items-center text-neutral-700">
+            <div className="flex flex-col gap-4 items-start text-neutral-700">
+              {usd != null ? (
+                <div className="ml-2 flex items-center">
+                  <span className="text-sm text-neutral-500">
+                    قیمت دلاری: <b>{usd.toLocaleString('fa-IR')}</b>
+                  </span>
+                  <DollarSign className="text-green-700 size-3" />
+                </div>
+              ) : aed != null ? (
+                <div className="ml-2 flex items-center">
+                  <span className="text-sm text-neutral-500">
+                    قیمت درهـمی: <b>{aed.toLocaleString('fa-IR')}</b>
+                  </span>
+                  <Dirham className="text-pink-700 size-4" />
+                </div>
+              ) : null}
+
+              <div className="flex items-center text-neutral-700">
                 <span className="text-sm text-neutral-500">
                   قیمت تمام شده:{' '}
-                  <b className="">
-                    {usd && settings?.importFee && settings?.usdprice
-                      ? (usd * (1 + settings.importFee / 100) * settings.usdprice).toLocaleString(
-                          'fa-IR',
-                        )
+                  <b>
+                    {settings && settings.importFee != null
+                      ? usd != null && settings.usdprice != null
+                        ? (usd * settings.usdprice * (1 + settings.importFee / 100)).toLocaleString(
+                            'fa-IR',
+                          )
+                        : aed != null && settings.aedprice != null
+                          ? (
+                              aed *
+                              settings.aedprice *
+                              (1 + settings.importFee / 100)
+                            ).toLocaleString('fa-IR')
+                          : '-'
                       : '-'}
                   </b>
                 </span>
               </div>
             </div>
+
             <div className="flex  items-center gap-2">
               <div className="flex flex-col md:flex-row gap-4">
                 {sortedCurrentPrices.map((urlEntry, index) => {
@@ -256,6 +294,7 @@ export default function ProductRowDetail({
         name={name}
         productImageUrl={productImageUrl}
         usd={usdValue}
+        aed={aedValue}
         onUsdChange={setUsdValue}
         productUrls={urlsState}
         onUrlsUpdate={setUrlsState}

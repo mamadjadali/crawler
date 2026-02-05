@@ -2,10 +2,13 @@
 
 Hands On Priority -----------------------------------------------------------------------------
 
+- [] Responsive Design on Row Detail
 - [] Add do not crawl Hide (Hide & do not crawl)
-- [] Add Availible Sites for crawl Bottom drawer (Global Colection)
-- [] Add AED Both Global And Per Product
 - [] Auth Check on Api
+- [x] Add Availible Sites for crawl Bottom drawer (Global Colection)
+- [x] Add AED Both Global And Per Product
+- [x] initCollapsed On product urls in admin panel
+- [x] Full Persian Admin Panel
 - [x] Add Usd Global and Product
 - [x] Add ImportFee and its calculation
 - [x] fix Price not found Price Per Site Section
@@ -18,7 +21,7 @@ Hands On Priority --------------------------------------------------------------
 - [x] Row Detail Mobile view
 - [x] Badge Sheet color change
 - [x] Lock the same category refresh by other users
-- [x] Hamid View Shhet like
+- [x] Hamid View Sheet like
 - [x] Access Control With Perimisions | Chess
 - [x] Show Ping Green animate if the product is less than 5 min from last crawl
 - [x] On how much past the crawl badge
@@ -29,6 +32,8 @@ Hands On Priority --------------------------------------------------------------
 
 Feature ---------------------------------------------------------------------------------------
 
+- [] Reduce Category Update by -5min
+- [] API Call By Go for Every Category
 - [] Each user has view perferences ( clients collection add on)
 - [] Watch List (Each User!!!)
 - [] Impelment Dollor Price Crawle
@@ -38,7 +43,7 @@ Feature ------------------------------------------------------------------------
 - [x] Limitation On Price History
 - [] Filter Options in Product list : lowest , highest ,...
 - [] Filter for products that are not upadeted in 1 day (نیاز به بروز رسانی)
-- [] in app notification system for updates and products changes (relation with users)
+- [x] in app changelog system for updates and products changes (relation with users)
 
 Crawlers---------------------------------------------------------------------------------------
 
@@ -53,10 +58,10 @@ Crawlers------------------------------------------------------------------------
 - [x] Green Lion --> Cheerio
 - [x] PlazaDigital --> Cheerio
 - [x] zangoleh --> Cheerio
+- [x] Faraco
 - [] Hamrah Tel
 - [] it home --> Cheerio
 - [] kalatik
-- [] Faraco
 - [] Shahr Computer
 - [] Tarhan it
 - [] emprator store

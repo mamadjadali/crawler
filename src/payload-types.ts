@@ -98,9 +98,13 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     settings: Setting;
+    changelog: Changelog;
+    resources: Resource;
   };
   globalsSelect: {
     settings: SettingsSelect<false> | SettingsSelect<true>;
+    changelog: ChangelogSelect<false> | ChangelogSelect<true>;
+    resources: ResourcesSelect<false> | ResourcesSelect<true>;
   };
   locale: null;
   user:
@@ -263,6 +267,10 @@ export interface ProductLink {
    */
   usd?: number | null;
   /**
+   * aed price for this product
+   */
+  aed?: number | null;
+  /**
    * Product URLs to crawl (can add multiple URLs from different sites)
    */
   productUrls: {
@@ -287,6 +295,7 @@ export interface ProductLink {
           | 'plazadigital'
           | 'ithome'
           | 'zangooleh'
+          | 'farako'
         )
       | null;
     /**
@@ -505,6 +514,7 @@ export interface ProductLinksSelect<T extends boolean = true> {
   category?: T;
   brand?: T;
   usd?: T;
+  aed?: T;
   productUrls?:
     | T
     | {
@@ -593,7 +603,39 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Setting {
   id: string;
   usdprice?: number | null;
+  aedprice?: number | null;
   importFee?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "changelog".
+ */
+export interface Changelog {
+  id: string;
+  log?:
+    | {
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources".
+ */
+export interface Resource {
+  id: string;
+  site?:
+    | {
+        title: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -603,7 +645,39 @@ export interface Setting {
  */
 export interface SettingsSelect<T extends boolean = true> {
   usdprice?: T;
+  aedprice?: T;
   importFee?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "changelog_select".
+ */
+export interface ChangelogSelect<T extends boolean = true> {
+  log?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources_select".
+ */
+export interface ResourcesSelect<T extends boolean = true> {
+  site?:
+    | T
+    | {
+        title?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

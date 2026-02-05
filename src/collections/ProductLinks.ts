@@ -64,26 +64,65 @@ export const ProductLinks: CollectionConfig = {
     },
     {
       name: 'category',
-      label: 'Category',
+      label: {
+        en: 'Category',
+        fa: 'دسته بندی',
+      },
       type: 'relationship',
       relationTo: 'categories',
       required: false,
-      admin: { description: 'Select a category for this product' },
+      admin: {
+        description: {
+          en: 'Select a category for this product',
+          fa: 'دسته بندی محصول را انتخاب کنید',
+        },
+      },
     },
     {
       name: 'brand',
-      label: 'Brand',
+      label: {
+        en: 'Brand',
+        fa: 'برند',
+      },
       type: 'relationship',
       relationTo: 'brands',
       required: false,
-      admin: { description: 'Select a brand for this product' },
+      admin: {
+        description: {
+          en: 'Select a brand for this product',
+          fa: 'برند محصول را انتخاب کنید',
+        },
+      },
     },
     {
       name: 'usd',
-      label: 'Usd Price',
+      label: {
+        en: 'Usd Price',
+        fa: 'قیمت دلاری محصول',
+      },
       type: 'number',
       required: false,
-      admin: { description: 'usd price for this product' },
+      admin: {
+        description: {
+          en: 'usd price for this product',
+          fa: 'قیمت دلاری محصول برای محاسبه قیمت تمام شده',
+        },
+      },
+    },
+    {
+      name: 'aed',
+      label: {
+        en: 'aed Price',
+        fa: 'قیمت درهمی محصول',
+      },
+      type: 'number',
+      required: false,
+      admin: {
+        description: {
+          en: 'aed price for this product',
+          fa: 'قیمت درهمی محصول برای محاسبه قیمت تمام شده',
+        },
+      },
     },
     {
       name: 'productUrls',
@@ -95,6 +134,7 @@ export const ProductLinks: CollectionConfig = {
       required: true,
       minRows: 1,
       admin: {
+        initCollapsed: true,
         description: {
           en: 'Product URLs to crawl (can add multiple URLs from different sites)',
           fa: 'لینک‌های محصول برای دریافت (می‌توانید چندین لینک برای محصولات متفاوت اضافه کنید)',
@@ -136,6 +176,7 @@ export const ProductLinks: CollectionConfig = {
             { label: { en: 'Plaza Digital', fa: 'پـلازا دیجیتال' }, value: 'plazadigital' },
             { label: { en: 'It Home', fa: 'آی تی هوم' }, value: 'ithome' },
             { label: { en: 'Zangooleh', fa: 'زنــگوله' }, value: 'zangooleh' },
+            { label: { en: 'Farako', fa: 'فـراکـو' }, value: 'farako' },
           ],
           admin: {
             description: {
@@ -276,7 +317,8 @@ export const ProductLinks: CollectionConfig = {
             | 'greenlion'
             | 'plazadigital'
             | 'ithome'
-            | 'zangooleh' = 'torob'
+            | 'zangooleh'
+            | 'farako' = 'torob'
 
           if (hostname.includes('torob.com')) {
             detectedSite = 'torob'
@@ -302,6 +344,8 @@ export const ProductLinks: CollectionConfig = {
             detectedSite = 'ithome'
           } else if (hostname.includes('zangooleh.com')) {
             detectedSite = 'zangooleh'
+          } else if (hostname.includes('farako.com')) {
+            detectedSite = 'farako'
           }
 
           data.productUrls = [
@@ -352,6 +396,8 @@ export const ProductLinks: CollectionConfig = {
                   urlEntry.site = 'ithome'
                 } else if (hostname.includes('zangooleh.com')) {
                   urlEntry.site = 'zangooleh'
+                } else if (hostname.includes('farako.com')) {
+                  urlEntry.site = 'farako'
                 } else {
                   urlEntry.site = 'torob' // Default fallback
                 }

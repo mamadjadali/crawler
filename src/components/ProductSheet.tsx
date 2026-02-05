@@ -29,6 +29,7 @@ import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import EditableUSDProduct from './ProductUsd'
 import RefreshPriceIcon from './RefreshPriceIcon'
+import EditableAedProduct from './ProductAed'
 
 interface ProductSheetProps {
   open: boolean
@@ -38,7 +39,9 @@ interface ProductSheetProps {
   name: string
   productImageUrl?: string | null
   usd?: number
+  aed?: number
   onUsdChange?: (value: number) => void
+  onAedChange?: (value: number) => void
   productUrls: ProductUrl[]
   onUrlsUpdate?: React.Dispatch<React.SetStateAction<ProductUrl[]>> //
 }
@@ -51,7 +54,9 @@ export default function ProductSheet({
   name,
   productImageUrl,
   usd,
+  aed,
   onUsdChange,
+  onAedChange,
   productUrls = [],
   onUrlsUpdate,
 }: ProductSheetProps) {
@@ -280,7 +285,10 @@ export default function ProductSheet({
                   </Button>
                 </a>
               )}
-              <EditableUSDProduct id={productId} usd={usd ?? 0} onUsdChange={onUsdChange} />
+              <div className="w-full flex flex-col md:flex-row gap-2">
+                <EditableUSDProduct id={productId} usd={usd ?? 0} onUsdChange={onUsdChange} />
+                <EditableAedProduct id={productId} aed={aed ?? 0} onAedChange={onAedChange} />
+              </div>
             </div>
           </div>
           <SheetDescription>
@@ -371,7 +379,7 @@ export default function ProductSheet({
                       <span className="text-base text-orange-400">ناموجود</span>
                     ) : isPriceNotFound || price == null ? (
                       <span className="text-sm text-gray-500 dark:text-gray-400">
-                        قیمت نامشخص (احتمالا ناموجود)
+                        قیمت نامشخص (احتمالا ناموجود یا بلاک IP)
                       </span>
                     ) : (
                       <div className="flex items-center gap-2">

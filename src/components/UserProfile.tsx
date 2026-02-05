@@ -56,7 +56,7 @@ export function UserProfile({ email, name, fullname, role, visibleCategories }: 
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="border-gray-400 cursor-pointer text-neutral-700 rounded-lg"
+          className="border-gray-400 w-full shadow-none cursor-pointer text-neutral-700 rounded-lg"
         >
           {ROLE_ICON[role]}
           {fullname}

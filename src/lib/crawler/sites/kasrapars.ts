@@ -68,7 +68,7 @@ export class KasraParsCrawler implements SiteCrawler {
     page.setDefaultNavigationTimeout(20000) // Reduced from 30000
     page.setDefaultTimeout(20000) // Reduced from 30000
     await page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     )
 
     return page
@@ -113,7 +113,7 @@ export class KasraParsCrawler implements SiteCrawler {
           // Page was closed, get a new one
           page = await this.getPage()
         }
-        
+
         await page.goto(url, {
           waitUntil: 'domcontentloaded', // Changed from networkidle0 for faster loading
           timeout: 20000, // Reduced from 30000
@@ -121,7 +121,7 @@ export class KasraParsCrawler implements SiteCrawler {
       } catch (navError) {
         const errorMsg = navError instanceof Error ? navError.message : String(navError)
         console.error(`[KasraParsCrawler] Navigation failed for ${url}:`, errorMsg)
-        
+
         // If page is closed or target error, get a new page and retry once
         if (errorMsg.includes('Target closed') || errorMsg.includes('Protocol error')) {
           try {
@@ -180,10 +180,7 @@ export class KasraParsCrawler implements SiteCrawler {
           '٩': '9',
         }
 
-        cleanedPrice = cleanedPrice.replace(
-          /[۰-۹٠-٩]/g,
-          (char) => persianToEnglish[char] || char
-        )
+        cleanedPrice = cleanedPrice.replace(/[۰-۹٠-٩]/g, (char) => persianToEnglish[char] || char)
 
         // Remove dots that are used as thousands separators in Persian format
         // But keep decimal points if any
@@ -200,11 +197,7 @@ export class KasraParsCrawler implements SiteCrawler {
 
         const parsedPrice = parseFloat(cleanedPrice)
         // Check if it's a reasonable price (between 1000 and 1 billion)
-        if (
-          !isNaN(parsedPrice) &&
-          parsedPrice >= 1000 &&
-          parsedPrice <= 1000000000
-        ) {
+        if (!isNaN(parsedPrice) && parsedPrice >= 1000 && parsedPrice <= 1000000000) {
           return parsedPrice
         }
         return null
@@ -216,27 +209,43 @@ export class KasraParsCrawler implements SiteCrawler {
       try {
         const directPrices = await page.evaluate(() => {
           const prices: number[] = []
-          
+
           // Helper to parse price text
           const parsePriceText = (text: string): number | null => {
             if (!text) return null
-            
+
             // Clean and convert Persian numerals
             let cleaned = text
               .replace(/[^\d.,\u0660-\u0669\u06F0-\u06F9]/g, '')
               .replace(/,/g, '')
               .trim()
-            
+
             // Convert Persian/Arabic numerals
             const persianToEnglish: { [key: string]: string } = {
-              '۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4',
-              '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9',
-              '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
-              '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9',
+              '۰': '0',
+              '۱': '1',
+              '۲': '2',
+              '۳': '3',
+              '۴': '4',
+              '۵': '5',
+              '۶': '6',
+              '۷': '7',
+              '۸': '8',
+              '۹': '9',
+              '٠': '0',
+              '١': '1',
+              '٢': '2',
+              '٣': '3',
+              '٤': '4',
+              '٥': '5',
+              '٦': '6',
+              '٧': '7',
+              '٨': '8',
+              '٩': '9',
             }
-            
+
             cleaned = cleaned.replace(/[۰-۹٠-٩]/g, (char) => persianToEnglish[char] || char)
-            
+
             // Handle dots (thousands separators)
             const parts = cleaned.split('.')
             if (parts.length > 1 && parts[parts.length - 1].length === 3) {
@@ -244,19 +253,19 @@ export class KasraParsCrawler implements SiteCrawler {
             } else if (parts.length > 1) {
               cleaned = parts[0]
             }
-            
+
             const parsed = parseFloat(cleaned)
             if (!isNaN(parsed) && parsed >= 1000 && parsed <= 1000000000) {
               return parsed
             }
             return null
           }
-          
+
           // Find all spans and check their text content
           const allSpans = document.querySelectorAll('span')
           for (const span of allSpans) {
             const text = span.textContent?.trim() || ''
-            
+
             // Check if text looks like a price (only digits, commas, spaces)
             if (/^[\d,\s\u0660-\u0669\u06F0-\u06F9]+$/.test(text) && text.length >= 6) {
               const price = parsePriceText(text)
@@ -265,10 +274,10 @@ export class KasraParsCrawler implements SiteCrawler {
               }
             }
           }
-          
+
           return prices
         })
-        
+
         foundPrices.push(...directPrices)
       } catch {
         // Continue to other strategies
@@ -288,41 +297,30 @@ export class KasraParsCrawler implements SiteCrawler {
 
         const priceRangeSections = await page.$$('section[class*="t-row"]')
         for (const section of priceRangeSections) {
-          const sectionText = await page.evaluate(
-            (el) => el.textContent || '',
-            section
-          )
+          const sectionText = await page.evaluate((el) => el.textContent || '', section)
           if (sectionText.includes('از')) {
             // Find all spans within this section, including nested ones
             const spans = await section.$$('span')
             for (const span of spans) {
-              const spanText = await page.evaluate(
-                (el) => {
-                  // Get direct text content (not from children)
-                  let text = ''
-                  for (const node of el.childNodes) {
-                    if (node.nodeType === 3) {
-                      // Text node
-                      text += node.textContent || ''
-                    }
+              const spanText = await page.evaluate((el) => {
+                // Get direct text content (not from children)
+                let text = ''
+                for (const node of el.childNodes) {
+                  if (node.nodeType === 3) {
+                    // Text node
+                    text += node.textContent || ''
                   }
-                  return text.trim()
-                },
-                span
-              )
-              
+                }
+                return text.trim()
+              }, span)
+
               // Also try full text content if direct text is empty
-              const fullText = spanText || (await page.evaluate(
-                (el) => el.textContent?.trim() || '',
-                span
-              ))
-              
+              const fullText =
+                spanText || (await page.evaluate((el) => el.textContent?.trim() || '', span))
+
               // Check if span contains only price-like numbers (no text, just digits and commas)
               // Prices are typically 6+ digits
-              if (
-                /^[\d,\s\u0660-\u0669\u06F0-\u06F9]+$/.test(fullText) &&
-                fullText.length >= 6
-              ) {
+              if (/^[\d,\s\u0660-\u0669\u06F0-\u06F9]+$/.test(fullText) && fullText.length >= 6) {
                 const price = parsePrice(fullText)
                 if (price !== null) {
                   foundPrices.push(price)
@@ -360,16 +358,10 @@ export class KasraParsCrawler implements SiteCrawler {
 
           const elements = await page.$$(selector)
           for (const element of elements) {
-            const priceText = await page.evaluate(
-              (el) => el.textContent?.trim() || '',
-              element
-            )
+            const priceText = await page.evaluate((el) => el.textContent?.trim() || '', element)
             // Only process if it looks like a price (digits with commas, no other text)
             // Must be at least 6 characters (prices are usually in millions)
-            if (
-              /^[\d,\s\u0660-\u0669\u06F0-\u06F9]+$/.test(priceText) &&
-              priceText.length >= 6
-            ) {
+            if (/^[\d,\s\u0660-\u0669\u06F0-\u06F9]+$/.test(priceText) && priceText.length >= 6) {
               const price = parsePrice(priceText)
               if (price !== null) {
                 foundPrices.push(price)
@@ -389,11 +381,11 @@ export class KasraParsCrawler implements SiteCrawler {
         const priceSpans = await page.evaluate(() => {
           const spans: string[] = []
           const allSpans = document.querySelectorAll('span')
-          
+
           for (const span of allSpans) {
             const className = span.getAttribute('class')
             const text = span.textContent?.trim() || ''
-            
+
             // Check if span has empty class or no class, and contains only price-like numbers
             if (
               (className === '' || className === null) &&
@@ -403,7 +395,7 @@ export class KasraParsCrawler implements SiteCrawler {
               spans.push(text)
             }
           }
-          
+
           return spans
         })
 
@@ -425,7 +417,7 @@ export class KasraParsCrawler implements SiteCrawler {
           if (text.includes('از') && text.includes('تا')) {
             // Extract all numbers from this section (both Western and Persian numerals)
             const matches = text.match(
-              /[\d\u0660-\u0669\u06F0-\u06F9]{1,3}(?:[,\s][\d\u0660-\u0669\u06F0-\u06F9]{3})*(?:[,\s][\d\u0660-\u0669\u06F0-\u06F9]{3})*/g
+              /[\d\u0660-\u0669\u06F0-\u06F9]{1,3}(?:[,\s][\d\u0660-\u0669\u06F0-\u06F9]{3})*(?:[,\s][\d\u0660-\u0669\u06F0-\u06F9]{3})*/g,
             )
             if (matches) {
               for (const match of matches) {
@@ -439,15 +431,9 @@ export class KasraParsCrawler implements SiteCrawler {
             // Also look for nested spans with prices in this section
             const spans = await section.$$('span')
             for (const span of spans) {
-              const spanText = await page.evaluate(
-                (el) => el.textContent?.trim() || '',
-                span
-              )
+              const spanText = await page.evaluate((el) => el.textContent?.trim() || '', span)
               // Check if it's a price-like number (6+ digits)
-              if (
-                /^[\d,\s\u0660-\u0669\u06F0-\u06F9]+$/.test(spanText) &&
-                spanText.length >= 6
-              ) {
+              if (/^[\d,\s\u0660-\u0669\u06F0-\u06F9]+$/.test(spanText) && spanText.length >= 6) {
                 const price = parsePrice(spanText)
                 if (price !== null) {
                   foundPrices.push(price)
@@ -463,9 +449,7 @@ export class KasraParsCrawler implements SiteCrawler {
       // Strategy 5: Fallback - search for price patterns in body text
       if (foundPrices.length === 0) {
         try {
-          const bodyText = await page.evaluate(
-            () => document.body.textContent || ''
-          )
+          const bodyText = await page.evaluate(() => document.body.textContent || '')
           if (bodyText) {
             // Look for price patterns like: 22,450,000 تومان or 22450000 تومان
             // Also handle Persian numerals
@@ -500,26 +484,26 @@ export class KasraParsCrawler implements SiteCrawler {
           // Use evaluate to search all text content for price patterns
           const allPrices = await page.evaluate(() => {
             const prices: string[] = []
-            
+
             // Search all spans
             const allSpans = document.querySelectorAll('span')
             for (const span of allSpans) {
               const text = span.textContent?.trim() || ''
               // Match price patterns: numbers with commas (e.g., 22,450,000)
               const priceMatch = text.match(
-                /^([\d\u0660-\u0669\u06F0-\u06F9]{1,3}(?:[,\s][\d\u0660-\u0669\u06F0-\u06F9]{3}){1,3})$/
+                /^([\d\u0660-\u0669\u06F0-\u06F9]{1,3}(?:[,\s][\d\u0660-\u0669\u06F0-\u06F9]{3}){1,3})$/,
               )
               if (priceMatch && priceMatch[1].length >= 6) {
                 prices.push(priceMatch[1])
               }
             }
-            
+
             // If no prices in spans, search body text
             if (prices.length === 0) {
               const bodyText = document.body.textContent || ''
               // Match numbers with at least 6 digits (prices are usually in millions)
               const allNumbers = bodyText.match(
-                /[\d\u0660-\u0669\u06F0-\u06F9]{1,3}(?:[,\s][\d\u0660-\u0669\u06F0-\u06F9]{3})+/g
+                /[\d\u0660-\u0669\u06F0-\u06F9]{1,3}(?:[,\s][\d\u0660-\u0669\u06F0-\u06F9]{3})+/g,
               )
               if (allNumbers) {
                 for (const numStr of allNumbers) {
@@ -531,7 +515,7 @@ export class KasraParsCrawler implements SiteCrawler {
                 }
               }
             }
-            
+
             return prices
           })
 
@@ -560,13 +544,10 @@ export class KasraParsCrawler implements SiteCrawler {
       // Only check if NO prices are found at all
       try {
         const errorElements = await page.$$(
-          '[class*="error"], [class*="unavailable"], [class*="outofstock"]'
+          '[class*="error"], [class*="unavailable"], [class*="outofstock"]',
         )
         for (const element of errorElements) {
-          const text = await page.evaluate(
-            (el) => el.textContent?.trim() || '',
-            element
-          )
+          const text = await page.evaluate((el) => el.textContent?.trim() || '', element)
           // Check for the "not available" message in Persian
           if (
             text.includes('موجود نمی‌باشد') ||
@@ -590,7 +571,7 @@ export class KasraParsCrawler implements SiteCrawler {
       return {
         success: false,
         price: null,
-        error: 'Could not find price on page',
+        error: 'Price not found',
       }
     } catch (error) {
       if (page) {

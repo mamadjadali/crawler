@@ -48,4 +48,8 @@ export const SITES = {
     label: 'زنــگوله',
     className: 'bg-[#f3ae26] text-white px-3 py-1 rounded-lg text-xs border-none',
   },
+  farako: {
+    label: 'فـراکـو',
+    className: 'bg-[#51b848] text-white px-3 py-1 rounded-lg text-xs border-none',
+  },
 } as const

@@ -19,6 +19,7 @@ interface Product {
   productId?: string | null
   productImageUrl?: string | null
   usd?: number | null
+  aed?: number | null
   productUrls: ProductUrl[]
   // Legacy fields for backward compatibility
   url: string
@@ -165,6 +166,7 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
               productId: product.productId || null,
               productImageUrl,
               usd: product.usd,
+              aed: product.aed,
               productUrls: productUrls.map((urlEntry: any) => {
                 // Always verify site matches URL to ensure correctness
                 let site = urlEntry.site
@@ -184,7 +186,8 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
                       site !== 'greenlion' &&
                       site !== 'plazadigital' &&
                       site !== 'zangooleh' &&
-                      site !== 'ithome') ||
+                      site !== 'ithome' &&
+                      site !== 'farako') ||
                     site !== detectedSite
                   ) {
                     site = detectedSite
@@ -204,7 +207,8 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
                       site !== 'greenlion' &&
                       site !== 'plazadigital' &&
                       site !== 'zangooleh' &&
-                      site !== 'ithome')
+                      site !== 'ithome' &&
+                      site !== 'farako')
                   ) {
                     site = 'torob'
                   }

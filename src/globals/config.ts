@@ -16,6 +16,14 @@ export const Settings: GlobalConfig = {
       },
     },
     {
+      name: 'aedprice',
+      type: 'number',
+      label: {
+        en: 'AED Price',
+        fa: 'قیمت درهم',
+      },
+    },
+    {
       name: 'importFee',
       type: 'number',
       label: {

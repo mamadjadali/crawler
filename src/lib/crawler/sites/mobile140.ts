@@ -226,7 +226,7 @@ export class Mobile140Crawler implements SiteCrawler {
         return {
           success: false,
           price: null,
-          error: 'Could not find price on page',
+          error: 'Price not found',
         }
       }
 

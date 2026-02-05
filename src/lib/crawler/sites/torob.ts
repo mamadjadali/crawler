@@ -68,7 +68,7 @@ export class TorobCrawler implements SiteCrawler {
     page.setDefaultNavigationTimeout(20000) // Reduced from 30000
     page.setDefaultTimeout(20000) // Reduced from 30000
     await page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     )
 
     return page
@@ -113,7 +113,7 @@ export class TorobCrawler implements SiteCrawler {
           // Page was closed, get a new one
           page = await this.getPage()
         }
-        
+
         await page.goto(url, {
           waitUntil: 'domcontentloaded',
           timeout: 20000, // Reduced from 30000
@@ -121,7 +121,7 @@ export class TorobCrawler implements SiteCrawler {
       } catch (navError) {
         const errorMsg = navError instanceof Error ? navError.message : String(navError)
         console.error(`[TorobCrawler] Navigation failed for ${url}:`, errorMsg)
-        
+
         // If page is closed or target error, get a new page and retry once
         if (errorMsg.includes('Target closed') || errorMsg.includes('Protocol error')) {
           try {
@@ -186,9 +186,9 @@ export class TorobCrawler implements SiteCrawler {
 
           // Try to get all matching elements and check each one
           const elements = await page.$$(selector)
-          
+
           const foundPrices: number[] = []
-          
+
           for (const element of elements) {
             try {
               const priceText = await page.evaluate((el) => el.textContent, element)
@@ -204,14 +204,33 @@ export class TorobCrawler implements SiteCrawler {
 
                 // Convert Persian/Arabic numerals to Western numerals if needed
                 const persianToEnglish: { [key: string]: string } = {
-                  '۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4',
-                  '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9',
-                  '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
-                  '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9',
+                  '۰': '0',
+                  '۱': '1',
+                  '۲': '2',
+                  '۳': '3',
+                  '۴': '4',
+                  '۵': '5',
+                  '۶': '6',
+                  '۷': '7',
+                  '۸': '8',
+                  '۹': '9',
+                  '٠': '0',
+                  '١': '1',
+                  '٢': '2',
+                  '٣': '3',
+                  '٤': '4',
+                  '٥': '5',
+                  '٦': '6',
+                  '٧': '7',
+                  '٨': '8',
+                  '٩': '9',
                 }
-                
-                cleanedPrice = cleanedPrice.replace(/[۰-۹٠-٩]/g, (char) => persianToEnglish[char] || char)
-                
+
+                cleanedPrice = cleanedPrice.replace(
+                  /[۰-۹٠-٩]/g,
+                  (char) => persianToEnglish[char] || char,
+                )
+
                 // Remove dots that are used as thousands separators in Persian format
                 // But keep decimal points if any
                 const parts = cleanedPrice.split('.')
@@ -300,7 +319,7 @@ export class TorobCrawler implements SiteCrawler {
         return {
           success: false,
           price: null,
-          error: 'Could not find price on page',
+          error: 'Price not found',
         }
       }
 
@@ -335,4 +354,3 @@ export class TorobCrawler implements SiteCrawler {
     }
   }
 }
-

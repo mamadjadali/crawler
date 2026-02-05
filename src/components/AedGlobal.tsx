@@ -1,30 +1,31 @@
 'use client'
 
-import { updateProductUsd } from '@/actions/updateProductUsd' // <-- new action
-import { Check, DollarSign, Pencil } from 'lucide-react'
+import { updateSettingsAed } from '@/actions/usdUpdate'
+import { Setting } from '@/payload-types'
+import { Check, Pencil } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { Dirham } from './icons'
 import { Input } from './ui/input'
 
-interface EditableUSDProductProps {
-  id: string
-  usd: number
-  onUsdChange?: (value: number) => void
+interface EditableAEDProps {
+  settings: Setting
 }
 
-export default function EditableUSDProduct({ id, usd, onUsdChange }: EditableUSDProductProps) {
+export default function EditableAED({ settings }: EditableAEDProps) {
+  const router = useRouter()
   const [editing, setEditing] = useState(false)
-  const [value, setValue] = useState(usd ?? 0)
-  const [displayValue, setDisplayValue] = useState(usd ?? 0)
+  const [value, setValue] = useState(settings.aedprice ?? 0)
+  const [displayValue, setDisplayValue] = useState(settings.aedprice ?? 0)
   const [loading, setLoading] = useState(false)
 
   const handleSave = async () => {
     setLoading(true)
     try {
-      await updateProductUsd({ productId: id, usd: value }) // <-- update product
+      await updateSettingsAed({ aedprice: value })
       setDisplayValue(value)
       setEditing(false)
-      onUsdChange?.(value)
-      window.location.reload()
+      router.refresh()
     } catch (err) {
       console.error(err)
     } finally {
@@ -33,42 +34,44 @@ export default function EditableUSDProduct({ id, usd, onUsdChange }: EditableUSD
   }
 
   return (
-    <div className="w-full flex items-center justify-between bg-transparent border border-green-700 rounded-[10px] px-2 py-1">
-      <div className="text-sm flex items-center gap-2 font-medium text-gray-400">
-        <DollarSign className="size-4 text-green-700" />
-        قیمت دلاری
+    <div className="flex items-center justify-between bg-transparent border border-pink-700 rounded-[10px] p-2">
+      <div className="text-base flex items-center gap-2 font-medium text-gray-400">
+        <Dirham className="size-5 text-pink-700" />
+        درهــم
       </div>
 
-      <div className="text-base flex items-center justify-center gap-2 font-bold text-neutral-700">
+      <div className="text-xl flex items-center justify-center gap-2 font-bold text-neutral-700">
         {editing ? (
           <div className="flex items-center gap-2">
             <Input
               type="text"
               value={new Intl.NumberFormat('fa-IR').format(value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSave() // save on Enter
+                if (e.key === 'Enter') {
+                  handleSave()
+                }
               }}
               onChange={(e) => {
-                // Remove non-digit chars and convert Persian digits to English
+                // Remove any non-digit characters (including Persian digits)
                 const digitsOnly = e.target.value.replace(/[^\d۰-۹]/g, '')
+                // Convert Persian digits to English
                 const normalized = digitsOnly.replace(/[۰-۹]/g, (d) =>
                   String(d.charCodeAt(0) - 1776),
                 )
                 setValue(Number(normalized))
               }}
               className="border border-gray-400 px-2 rounded-lg text-left text-neutral-700 w-30 no-spin"
-              autoFocus
             />
             <button onClick={handleSave} disabled={loading} className="text-green-600">
               <Check className="size-4" />
             </button>
           </div>
         ) : (
-          new Intl.NumberFormat('fa-IR').format(displayValue ?? 0)
+          new Intl.NumberFormat('fa-IR').format(settings.aedprice ?? 0)
         )}
         {!editing && (
           <Pencil
-            className="size-3.5 text-gray-500 cursor-pointer"
+            className="size-4 text-gray-500 cursor-pointer"
             onClick={() => setEditing(true)}
           />
         )}

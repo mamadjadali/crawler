@@ -13,6 +13,7 @@ import { GreenLionCrawler } from './sites/greenlion'
 import { PlazaDigitalCrawler } from './sites/plazadigital'
 import { ItHomeCrawler } from './sites/ithome'
 import { ZangoolehCrawler } from './sites/zangooleh'
+import { FrakoCrawler } from './sites/farako'
 
 // Re-export detectSite for backward compatibility
 export { detectSite }
@@ -49,6 +50,8 @@ function getCrawler(site: string): SiteCrawler {
       crawlerInstances.set(site, new ItHomeCrawler())
     } else if (site === 'zangooleh') {
       crawlerInstances.set(site, new ZangoolehCrawler())
+    } else if (site === 'farako') {
+      crawlerInstances.set(site, new FrakoCrawler())
     } else {
       throw new Error(`Unsupported site: ${site}`)
     }

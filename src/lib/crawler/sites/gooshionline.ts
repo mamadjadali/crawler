@@ -221,7 +221,7 @@ export class GooshiOnlineCrawler implements SiteCrawler {
         return {
           success: false,
           price: null,
-          error: 'Could not find price on page',
+          error: 'Price not found',
         }
       }
 

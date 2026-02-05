@@ -1,3 +1,4 @@
+import EditableAED from '@/components/AedGlobal'
 import EditableFee from '@/components/FeeGlobal'
 import ProductsPageClient from '@/components/ProductsPageClient'
 import EditableUSD from '@/components/UsdGlobal'
@@ -19,7 +20,7 @@ export default async function ProductsPage() {
   const { docs: products } = await payload.find({
     collection: 'product-links',
     sort: '-createdAt',
-    limit: 100,
+    limit: 200,
     depth: 1, // Populate media relationship
   })
 
@@ -82,6 +83,7 @@ export default async function ProductsPage() {
       productId: product.productId || null,
       productImageUrl,
       usd: product.usd,
+      aed: product.aed,
       productUrls: productUrls.map((urlEntry: any) => {
         // Always verify site matches URL to ensure correctness
         let site = urlEntry.site
@@ -101,7 +103,8 @@ export default async function ProductsPage() {
               site !== 'greenlion' &&
               site !== 'plazadigital' &&
               site !== 'zangooleh' &&
-              site !== 'ithome') ||
+              site !== 'ithome' &&
+              site !== 'farako') ||
             site !== detectedSite
           ) {
             site = detectedSite
@@ -121,7 +124,8 @@ export default async function ProductsPage() {
               site !== 'greenlion' &&
               site !== 'plazadigital' &&
               site !== 'zangooleh' &&
-              site !== 'ithome')
+              site !== 'ithome' &&
+              site !== 'farako')
           ) {
             site = 'torob'
           }
@@ -155,9 +159,16 @@ export default async function ProductsPage() {
     <div className="min-h-screen bg-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           <EditableUSD settings={settings} />
+          <EditableAED settings={settings} />
           <EditableFee settings={settings} />
+          <div className="flex items-center text-base text-gray-400 justify-between border border-gray-300 rounded-[10px] p-2">
+            کل محصولاتـ
+            <span className="font-semibold text-xl text-neutral-700">
+              {new Intl.NumberFormat('fa-IR').format(products.length)}
+            </span>
+          </div>
         </div>
 
         {/* Products Page Client Component with Search */}

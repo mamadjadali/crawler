@@ -1,29 +1,30 @@
 'use client'
 
-import { updateProductUsd } from '@/actions/updateProductUsd' // <-- new action
+import { updateProductAed, updateProductUsd } from '@/actions/updateProductUsd' // <-- new action
 import { Check, DollarSign, Pencil } from 'lucide-react'
 import { useState } from 'react'
 import { Input } from './ui/input'
+import { Dirham } from './icons'
 
-interface EditableUSDProductProps {
+interface EditableAEDProductProps {
   id: string
-  usd: number
-  onUsdChange?: (value: number) => void
+  aed: number
+  onAedChange?: (value: number) => void
 }
 
-export default function EditableUSDProduct({ id, usd, onUsdChange }: EditableUSDProductProps) {
+export default function EditableAedProduct({ id, aed, onAedChange }: EditableAEDProductProps) {
   const [editing, setEditing] = useState(false)
-  const [value, setValue] = useState(usd ?? 0)
-  const [displayValue, setDisplayValue] = useState(usd ?? 0)
+  const [value, setValue] = useState(aed ?? 0)
+  const [displayValue, setDisplayValue] = useState(aed ?? 0)
   const [loading, setLoading] = useState(false)
 
   const handleSave = async () => {
     setLoading(true)
     try {
-      await updateProductUsd({ productId: id, usd: value }) // <-- update product
+      await updateProductAed({ productId: id, aed: value }) // <-- update product
       setDisplayValue(value)
       setEditing(false)
-      onUsdChange?.(value)
+      onAedChange?.(value)
       window.location.reload()
     } catch (err) {
       console.error(err)
@@ -33,10 +34,10 @@ export default function EditableUSDProduct({ id, usd, onUsdChange }: EditableUSD
   }
 
   return (
-    <div className="w-full flex items-center justify-between bg-transparent border border-green-700 rounded-[10px] px-2 py-1">
+    <div className="w-full flex items-center justify-between bg-transparent border border-pink-700 rounded-[10px] px-2 py-1">
       <div className="text-sm flex items-center gap-2 font-medium text-gray-400">
-        <DollarSign className="size-4 text-green-700" />
-        قیمت دلاری
+        <Dirham className="size-4 text-pink-700" />
+        قیمت درهـمی
       </div>
 
       <div className="text-base flex items-center justify-center gap-2 font-bold text-neutral-700">

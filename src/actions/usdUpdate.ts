@@ -9,7 +9,21 @@ export async function updateSettingsUsd(data: { usdprice: number }) {
   try {
     const updated = await payload.updateGlobal({
       slug: 'settings',
-      data, // expects { usdprice: number }
+      data,
+    })
+    return { success: true, data: updated }
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Unknown error' }
+  }
+}
+
+export async function updateSettingsAed(data: { aedprice: number }) {
+  const payload = await getPayload({ config })
+
+  try {
+    const updated = await payload.updateGlobal({
+      slug: 'settings',
+      data,
     })
     return { success: true, data: updated }
   } catch (err: any) {

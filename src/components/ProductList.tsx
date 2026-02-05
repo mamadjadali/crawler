@@ -13,6 +13,7 @@ interface Product {
   productId?: string | null
   productImageUrl?: string | null
   usd?: number | null
+  aed?: number | null
   productUrls: ProductUrl[]
   url: string
   site: string
@@ -111,6 +112,7 @@ export default function ProductList({ products, view, onViewChange, settings }: 
               productId={product.productId}
               productImageUrl={product.productImageUrl}
               usd={product.usd}
+              aed={product.aed}
               settings={settings}
               productUrls={product.productUrls}
             />
