@@ -1,11 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import ProductCard from './ProductCard'
 import ProductRow from './ProductRow'
 import ProductRowDetail from './ProductRowDetail'
 import { PriceHistoryItem, ProductUrl } from '@/types/products'
 import { Setting } from '@/payload-types'
+import { isMobile140Unavailable } from '@/lib/utils/sort'
+import { Button } from './ui/button'
 
 interface Product {
   id: string
@@ -34,6 +36,22 @@ interface ProductListProps {
 const VIEW_KEY = 'products:view'
 
 export default function ProductList({ products, view, onViewChange, settings }: ProductListProps) {
+  const [sortByMobile140, setSortByMobile140] = useState(true)
+  const [isPending, startTransition] = useTransition()
+  const sortedProducts = useMemo(() => {
+    if (!sortByMobile140) return products
+
+    return [...products].sort((a, b) => {
+      const aUnavailable = isMobile140Unavailable(a.productUrls)
+      const bUnavailable = isMobile140Unavailable(b.productUrls)
+
+      // available first
+      if (aUnavailable && !bUnavailable) return 1
+      if (!aUnavailable && bUnavailable) return -1
+      return 0
+    })
+  }, [products, sortByMobile140])
+
   useEffect(() => {
     localStorage.setItem(VIEW_KEY, view)
   }, [view])
@@ -69,9 +87,28 @@ export default function ProductList({ products, view, onViewChange, settings }: 
 
   return (
     <div>
+      <div className="flex gap-2 mb-4">
+        <Button
+          onClick={() => {
+            startTransition(() => {
+              setSortByMobile140((v) => !v)
+            })
+          }}
+          disabled={isPending}
+          className={`border cursor-pointer px-3 py-1 rounded-lg text-xs flex items-center gap-2
+  ${sortByMobile140 ? 'bg-sky-600 border-none text-white' : 'border-gray-400 text-gray-500'}
+  ${isPending ? 'opacity-60 cursor-not-allowed' : ''}
+`}
+        >
+          {isPending && (
+            <span className="size-3 rounded-full border-2 border-gray-400 border-t-transparent animate-spin" />
+          )}
+          مرتب‌سازی بر اساس موجودی موبایل ۱۴۰
+        </Button>
+      </div>
       {view === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
+          {sortedProducts.map((product) => (
             <ProductCard
               key={product.id}
               id={product.id}
@@ -91,7 +128,7 @@ export default function ProductList({ products, view, onViewChange, settings }: 
         </div>
       ) : view === 'list' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {products.map((product) => (
+          {sortedProducts.map((product) => (
             <ProductRow
               key={product.id}
               id={product.id}
@@ -104,7 +141,7 @@ export default function ProductList({ products, view, onViewChange, settings }: 
         </div>
       ) : view === 'detail' ? (
         <div className="flex flex-col gap-4">
-          {products.map((product) => (
+          {sortedProducts.map((product) => (
             <ProductRowDetail
               key={product.id}
               id={product.id}
