@@ -3,8 +3,10 @@
 Hands On Priority -----------------------------------------------------------------------------
 
 - [] Responsive Design on Row Detail
-- [] Add do not crawl Hide (Hide & do not crawl)
 - [] Auth Check on Api
+- [x] Fix Scroll Area on ChangeLog
+- [x] Add do not crawl Hide (Hide & do not crawl)
+- [x] Add Client Side Hide
 - [x] Add Availible Sites for crawl Bottom drawer (Global Colection)
 - [x] Add AED Both Global And Per Product
 - [x] initCollapsed On product urls in admin panel
@@ -61,16 +63,18 @@ Crawlers------------------------------------------------------------------------
 - [x] Faraco --> Cheerio
 - [x] it home --> Cheerio
 - [x] Xiaomi 360 --> Cheerio
-- [] Positron
-- [] Hamrah Tel
-- [] kalatik
+- [x] Positron
+- [] Janeby.com
 - [] Shahr Computer
+- [] kalatik
+- [] GSM
+- [] pspro
+- [] Hamrah Tel
 - [] Tarhan it
 - [] emprator store
 - [] item sara
 - [] fartak
 - [] gooshi plaza
-- [] pspro
 - [] digi center
 - [] cook mobile
 - [] taamirat 118

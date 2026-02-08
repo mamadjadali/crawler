@@ -39,6 +39,9 @@ export async function POST(req: Request) {
     const products = await payload.find({
       collection: 'product-links',
       where: {
+        disable: {
+          not_equals: true,
+        },
         ...(category && { category: { equals: category } }),
         ...(brand && { brand: { equals: brand } }),
       },
@@ -56,6 +59,11 @@ export async function POST(req: Request) {
     await Promise.all(
       products.docs.map((product) =>
         productLimit(async () => {
+          if (product.disable === true) {
+            skipped++
+            console.log(`[Skip - Disabled] Product ${product.id} - Disabled`)
+            return
+          }
           if (
             (product.updatedAt &&
               Date.now() - new Date(product.updatedAt).getTime() < MIN_REFRESH_INTERVAL_MS) ||

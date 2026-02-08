@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Card } from './ui/card'
 import { Changelog } from '@/payload-types'
 import { BellDot } from 'lucide-react'
+import { ScrollArea } from './ui/scroll-area'
 
 interface ChangelogSheetProps {
   changelog: Changelog
@@ -29,19 +30,19 @@ export default function ChangelogSheet({ changelog }: ChangelogSheetProps) {
           <SheetTitle>تغییراتــ</SheetTitle>
         </SheetHeader>
 
-        <Card className=" border-none shadow-none">
+        <ScrollArea dir="rtl" className="border-none shadow-none h-[70vh] sm:h-[80vh]">
           {logs.length === 0 && (
             <p className="text-sm text-muted-foreground">تغییراتــی وجود ندارد.</p>
           )}
 
           {logs.map((item) => (
-            <div key={item.id ?? item.title} className="p-3 border border-gray-300 rounded-xl">
+            <div key={item.id ?? item.title} className="p-3 mb-2 border border-gray-300 rounded-xl">
               <h4 className="text-sm text-neutral-700 font-semibold ">{item.title}</h4>
 
               {item.description && <p className="text-sm text-gray-500">{item.description}</p>}
             </div>
           ))}
-        </Card>
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   )

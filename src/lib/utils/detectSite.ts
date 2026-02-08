@@ -61,6 +61,21 @@ export function detectSite(url: string): string {
     if (hostname.includes('xiaomi360.ir')) {
       return 'xiaomi360'
     }
+    if (hostname.includes('positron-shop.com')) {
+      return 'positron'
+    }
+    if (hostname.includes('empratour.com')) {
+      return 'empratour'
+    }
+    if (hostname.includes('royalpart.co')) {
+      return 'royalpart'
+    }
+    if (hostname.includes('parts.parhantech.com')) {
+      return 'parhantech'
+    }
+    if (hostname.includes('mobopart.com')) {
+      return 'mobopart'
+    }
 
     // Default fallback
     return 'torob'

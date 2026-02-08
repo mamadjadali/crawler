@@ -56,4 +56,24 @@ export const SITES = {
     label: 'شیـائـومی 360',
     className: 'bg-[#fe4903] text-white px-3 py-1 rounded-lg text-xs border-none',
   },
+  positron: {
+    label: 'پوزیترون',
+    className: 'bg-[#7864ff] text-white px-3 py-1 rounded-lg text-xs border-none',
+  },
+  empratour: {
+    label: 'امپراطور',
+    className: 'bg-[#ffd021] text-white px-3 py-1 rounded-lg text-xs border-none',
+  },
+  royalpart: {
+    label: 'رویال پارتــ',
+    className: 'bg-[#16354d] text-white px-3 py-1 rounded-lg text-xs border-none',
+  },
+  parhantech: {
+    label: 'پرهان تکـ',
+    className: 'bg-[#0058fb] text-white px-3 py-1 rounded-lg text-xs border-none',
+  },
+  mobopart: {
+    label: 'موبو پارتـــ',
+    className: 'bg-[#a50044] text-white px-3 py-1 rounded-lg text-xs border-none',
+  },
 } as const

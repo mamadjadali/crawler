@@ -17,7 +17,10 @@ export async function GET() {
       results.docs.map(async (cat: any) => {
         const countResult = await payload.find({
           collection: 'product-links', // your product collection
-          where: { category: { equals: cat.id } },
+          where: {
+            category: { equals: cat.id },
+            or: [{ disable: { equals: false } }, { disable: { exists: false } }],
+          },
           limit: 0, // we just need the totalDocs
         })
 

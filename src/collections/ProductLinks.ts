@@ -125,6 +125,21 @@ export const ProductLinks: CollectionConfig = {
       },
     },
     {
+      name: 'disable',
+      label: {
+        en: 'Disable',
+        fa: 'غیر‌فعال',
+      },
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: {
+          en: 'Disable the Product From Crawl and Display',
+          fa: 'غیر فعال کردن محصول برای کرال و نمایش',
+        },
+      },
+    },
+    {
       name: 'productUrls',
       label: {
         en: 'Product URLs',
@@ -178,6 +193,11 @@ export const ProductLinks: CollectionConfig = {
             { label: { en: 'Zangooleh', fa: 'زنــگوله' }, value: 'zangooleh' },
             { label: { en: 'Farako', fa: 'فـراکـو' }, value: 'farako' },
             { label: { en: 'Xiaomi360', fa: 'شیـائـومی 360' }, value: 'xiaomi360' },
+            { label: { en: 'Positron', fa: 'پوزیترون' }, value: 'positron' },
+            { label: { en: 'Empratour', fa: 'امپراطور' }, value: 'empratour' },
+            { label: { en: 'Royal part', fa: 'رویال پارت' }, value: 'royalpart' },
+            { label: { en: 'Parhan tech', fa: 'پرهان تکـ' }, value: 'parhantech' },
+            { label: { en: 'Mobo Part', fa: 'موبو پارت' }, value: 'mobopart' },
           ],
           admin: {
             description: {
@@ -320,6 +340,11 @@ export const ProductLinks: CollectionConfig = {
             | 'ithome'
             | 'zangooleh'
             | 'farako'
+            | 'positron'
+            | 'empratour'
+            | 'royalpart'
+            | 'parhantech'
+            | 'mobopart'
             | 'xiaomi360' = 'torob'
 
           if (hostname.includes('torob.com')) {
@@ -350,6 +375,16 @@ export const ProductLinks: CollectionConfig = {
             detectedSite = 'farako'
           } else if (hostname.includes('xiaomi360.ir')) {
             detectedSite = 'xiaomi360'
+          } else if (hostname.includes('positron-shop.com')) {
+            detectedSite = 'positron'
+          } else if (hostname.includes('empratour.com')) {
+            detectedSite = 'empratour'
+          } else if (hostname.includes('royalpart.co')) {
+            detectedSite = 'royalpart'
+          } else if (hostname.includes('parts.parhantech.com')) {
+            detectedSite = 'parhantech'
+          } else if (hostname.includes('mobopart.com')) {
+            detectedSite = 'mobopart'
           }
 
           data.productUrls = [
@@ -404,6 +439,16 @@ export const ProductLinks: CollectionConfig = {
                   urlEntry.site = 'farako'
                 } else if (hostname.includes('xiaomi360.ir')) {
                   urlEntry.site = 'xiaomi360'
+                } else if (hostname.includes('positron-shop.com')) {
+                  urlEntry.site = 'positron'
+                } else if (hostname.includes('empratour.com')) {
+                  urlEntry.site = 'empratour'
+                } else if (hostname.includes('royalpart.co')) {
+                  urlEntry.site = 'royalpart'
+                } else if (hostname.includes('parts.parhantech.com')) {
+                  urlEntry.site = 'parhantech'
+                } else if (hostname.includes('mobopart.com')) {
+                  urlEntry.site = 'mobopart'
                 } else {
                   urlEntry.site = 'torob' // Default fallback
                 }
@@ -432,6 +477,10 @@ export const ProductLinks: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc, req, operation, previousDoc }) => {
+        // ❌ Do nothing if product is disabled
+        if (doc.disable === true) {
+          return doc
+        }
         // Skip crawl if context flag is set (prevents infinite loops)
         if (req.context?.skipCrawl) {
           return doc

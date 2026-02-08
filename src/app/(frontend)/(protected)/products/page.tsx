@@ -19,6 +19,9 @@ export default async function ProductsPage() {
   // Fetch all product links with media relationship
   const { docs: products } = await payload.find({
     collection: 'product-links',
+    where: {
+      or: [{ disable: { equals: false } }, { disable: { exists: false } }],
+    },
     sort: '-createdAt',
     limit: 200,
     depth: 1, // Populate media relationship
@@ -79,6 +82,7 @@ export default async function ProductsPage() {
 
     return {
       id: product.id,
+      disable: product.disable ?? false,
       name: product.name || 'بدون نام',
       productId: product.productId || null,
       productImageUrl,
@@ -105,6 +109,11 @@ export default async function ProductsPage() {
               site !== 'zangooleh' &&
               site !== 'ithome' &&
               site !== 'xiaomi360' &&
+              site !== 'positron' &&
+              site !== 'empratour' &&
+              site !== 'royalpart' &&
+              site !== 'parhantech' &&
+              site !== 'mobopart' &&
               site !== 'farako') ||
             site !== detectedSite
           ) {
@@ -127,6 +136,11 @@ export default async function ProductsPage() {
               site !== 'zangooleh' &&
               site !== 'ithome' &&
               site !== 'xiaomi360' &&
+              site !== 'positron' &&
+              site !== 'empratour' &&
+              site !== 'royalpart' &&
+              site !== 'parhantech' &&
+              site !== 'mobopart' &&
               site !== 'farako')
           ) {
             site = 'torob'
@@ -157,6 +171,8 @@ export default async function ProductsPage() {
     }
   })
 
+  const visibleProducts = transformedProducts.filter((p) => p.disable !== true)
+
   return (
     <div className="min-h-screen bg-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -182,7 +198,7 @@ export default async function ProductsPage() {
             </div>
           }
         >
-          <ProductsPageClient initialProducts={transformedProducts} settings={settings} />
+          <ProductsPageClient initialProducts={visibleProducts} settings={settings} />
         </Suspense>
       </div>
     </div>

@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import ProductSheet from './ProductSheet'
 import { Dirham } from './icons'
+import DisableProductButton from './DisableProduct'
 
 interface ProductRowProps {
   id: string
@@ -36,6 +37,9 @@ export default function ProductRowDetail({
   const [urlsState, setUrlsState] = useState<ProductUrl[]>(productUrls)
   const [usdValue, setUsdValue] = useState(usd ?? 0)
   const [aedValue, setAedValue] = useState(aed ?? 0)
+  const [visible, setVisible] = useState(true)
+
+  if (!visible) return null
 
   console.log('ProductRowDetail rendered → id:', id, 'usd prop:', usd, 'local usdValue:', usdValue)
 
@@ -127,65 +131,75 @@ export default function ProductRowDetail({
               <span className="ml-2 text-sm text-neutral-400">پایین‌ترین قیمتــ :</span>
               {getSiteLabel(toSiteKey(lowestPriceSite))}
             </div>
-            <div className="w-auto">
-              {displayLastCrawledAt &&
-                (() => {
-                  const now = Date.now()
-                  const last = new Date(displayLastCrawledAt).getTime()
-                  const diffMs = now - last
-                  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-                  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-                  const diffMinutes = Math.floor(diffMs / (1000 * 60))
 
-                  // Determine color & icon
-                  let className =
-                    'border py-1 text-center px-4 rounded-lg text-xs flex items-center border-gray-400 text-neutral-700'
-                  let icon: React.ReactNode = null
+            <div className="flex gap-4 items-center">
+              {productId && (
+                <DisableProductButton
+                  productId={id} // TypeScript knows this is string now
+                  initialDisabled={false}
+                  onHide={() => setVisible(false)} // hide row immediately
+                />
+              )}
+              <div className="w-auto">
+                {displayLastCrawledAt &&
+                  (() => {
+                    const now = Date.now()
+                    const last = new Date(displayLastCrawledAt).getTime()
+                    const diffMs = now - last
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+                    const diffMinutes = Math.floor(diffMs / (1000 * 60))
 
-                  if (diffMinutes <= 10) {
-                    className =
-                      'border-green-500 text-center text-green-600 border py-2 px-4 rounded-lg text-xs flex items-center gap-2'
-                    icon = (
-                      <span className="relative flex size-3">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
+                    // Determine color & icon
+                    let className =
+                      'border py-1 text-center px-4 rounded-lg text-xs flex items-center border-gray-400 text-neutral-700'
+                    let icon: React.ReactNode = null
+
+                    if (diffMinutes <= 10) {
+                      className =
+                        'border-green-500 text-center text-green-600 border py-2 px-4 rounded-lg text-xs flex items-center gap-2'
+                      icon = (
+                        <span className="relative flex size-3">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
+                        </span>
+                      )
+                    } else if (diffDays >= 2) {
+                      className =
+                        'border-red-500 text-center text-red-600 border py-2 px-4 rounded-lg text-xs flex items-center gap-2'
+                      icon = (
+                        <span className="relative flex size-3">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                          <span className="relative inline-flex size-3 rounded-full bg-red-500"></span>
+                        </span>
+                      )
+                    } else if (diffDays >= 1) {
+                      className =
+                        'border-yellow-400 text-center text-yellow-700 border justify-center py-2 px-4 rounded-lg text-xs flex items-center gap-2'
+                      icon = (
+                        <span className="relative flex size-3">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-400 opacity-75"></span>
+                          <span className="relative inline-flex size-3 rounded-full bg-yellow-500"></span>
+                        </span>
+                      )
+                    }
+
+                    // Determine display text
+                    let text = ''
+                    if (diffDays >= 1)
+                      text = `${new Intl.NumberFormat('fa-IR').format(diffDays)} روز قبل`
+                    else if (diffHours >= 1)
+                      text = `${new Intl.NumberFormat('fa-IR').format(diffHours)} ساعت قبل`
+                    else text = `${new Intl.NumberFormat('fa-IR').format(diffMinutes)} دقیقه قبل`
+
+                    return (
+                      <span className={className}>
+                        {icon}
+                        {text}
                       </span>
                     )
-                  } else if (diffDays >= 2) {
-                    className =
-                      'border-red-500 text-center text-red-600 border py-2 px-4 rounded-lg text-xs flex items-center gap-2'
-                    icon = (
-                      <span className="relative flex size-3">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-                        <span className="relative inline-flex size-3 rounded-full bg-red-500"></span>
-                      </span>
-                    )
-                  } else if (diffDays >= 1) {
-                    className =
-                      'border-yellow-400 text-center text-yellow-700 border justify-center py-2 px-4 rounded-lg text-xs flex items-center gap-2'
-                    icon = (
-                      <span className="relative flex size-3">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-400 opacity-75"></span>
-                        <span className="relative inline-flex size-3 rounded-full bg-yellow-500"></span>
-                      </span>
-                    )
-                  }
-
-                  // Determine display text
-                  let text = ''
-                  if (diffDays >= 1)
-                    text = `${new Intl.NumberFormat('fa-IR').format(diffDays)} روز قبل`
-                  else if (diffHours >= 1)
-                    text = `${new Intl.NumberFormat('fa-IR').format(diffHours)} ساعت قبل`
-                  else text = `${new Intl.NumberFormat('fa-IR').format(diffMinutes)} دقیقه قبل`
-
-                  return (
-                    <span className={className}>
-                      {icon}
-                      {text}
-                    </span>
-                  )
-                })()}
+                  })()}
+              </div>
             </div>
           </div>
           <div className="w-full items-center flex justify-between">

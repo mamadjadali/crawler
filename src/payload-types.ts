@@ -271,6 +271,10 @@ export interface ProductLink {
    */
   aed?: number | null;
   /**
+   * Disable the Product From Crawl and Display
+   */
+  disable?: boolean | null;
+  /**
    * Product URLs to crawl (can add multiple URLs from different sites)
    */
   productUrls: {
@@ -297,6 +301,11 @@ export interface ProductLink {
           | 'zangooleh'
           | 'farako'
           | 'xiaomi360'
+          | 'positron'
+          | 'empratour'
+          | 'royalpart'
+          | 'parhantech'
+          | 'mobopart'
         )
       | null;
     /**
@@ -516,6 +525,7 @@ export interface ProductLinksSelect<T extends boolean = true> {
   brand?: T;
   usd?: T;
   aed?: T;
+  disable?: T;
   productUrls?:
     | T
     | {

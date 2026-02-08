@@ -15,6 +15,11 @@ import { ItHomeCrawler } from './sites/ithome'
 import { ZangoolehCrawler } from './sites/zangooleh'
 import { FrakoCrawler } from './sites/farako'
 import { Xiaomi360Crawler } from './sites/xiaomi360'
+import { PositronCrawler } from './sites/positron'
+import { EmpratourCrawler } from './sites/empratour'
+import { RoyalPartCrawler } from './sites/royalpart'
+import { ParhanTechCrawler } from './sites/parhantech'
+import { MoboPartCrawler } from './sites/mobopart'
 
 // Re-export detectSite for backward compatibility
 export { detectSite }
@@ -55,6 +60,16 @@ function getCrawler(site: string): SiteCrawler {
       crawlerInstances.set(site, new FrakoCrawler())
     } else if (site === 'xiaomi360') {
       crawlerInstances.set(site, new Xiaomi360Crawler())
+    } else if (site === 'positron') {
+      crawlerInstances.set(site, new PositronCrawler())
+    } else if (site === 'empratour') {
+      crawlerInstances.set(site, new EmpratourCrawler())
+    } else if (site === 'royalpart') {
+      crawlerInstances.set(site, new RoyalPartCrawler())
+    } else if (site === 'parhantech') {
+      crawlerInstances.set(site, new ParhanTechCrawler())
+    } else if (site === 'mobopart') {
+      crawlerInstances.set(site, new MoboPartCrawler())
     } else {
       throw new Error(`Unsupported site: ${site}`)
     }

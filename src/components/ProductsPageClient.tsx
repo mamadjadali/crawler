@@ -188,6 +188,11 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
                       site !== 'zangooleh' &&
                       site !== 'ithome' &&
                       site !== 'xiaomi360' &&
+                      site !== 'positron' &&
+                      site !== 'empratour' &&
+                      site !== 'royalpart' &&
+                      site !== 'parhantech' &&
+                      site !== 'mobopart' &&
                       site !== 'farako') ||
                     site !== detectedSite
                   ) {
@@ -210,6 +215,11 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
                       site !== 'zangooleh' &&
                       site !== 'ithome' &&
                       site !== 'xiaomi360' &&
+                      site !== 'positron' &&
+                      site !== 'empratour' &&
+                      site !== 'royalpart' &&
+                      site !== 'parhantech' &&
+                      site !== 'mobopart' &&
                       site !== 'farako')
                   ) {
                     site = 'torob'
