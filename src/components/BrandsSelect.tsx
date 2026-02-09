@@ -23,7 +23,7 @@ interface BrandsSelectProps {
 
 export default function BrandsSelect({ value = '', onChange }: BrandsSelectProps) {
   const [brands, setBrands] = useState<Brands[]>([])
-  const [selected, setSelected] = useState<string>(value || '__all__')
+  // const [selected, setSelected] = useState<string>(value || '__all__')
   useEffect(() => {
     fetch('/api/custom/brands')
       .then((res) => res.json())
@@ -31,22 +31,16 @@ export default function BrandsSelect({ value = '', onChange }: BrandsSelectProps
       .catch((err) => console.error('Failed to fetch brands', err))
   }, [])
 
-  useEffect(() => {
-    setSelected(value && value !== '' ? value : '__all__')
-  }, [value])
+  // useEffect(() => {
+  //   setSelected(value && value !== '' ? value : '__all__')
+  // }, [value])
 
   return (
     <Select
       dir="rtl"
-      value={selected}
+      value={value}
       onValueChange={(next) => {
-        if (next === '__all__') {
-          setSelected('__all__')
-          onChange('')
-          return
-        }
-        setSelected(next)
-        onChange(next)
+        onChange(next === '__all__' ? '' : next)
       }}
     >
       <SelectTrigger className="w-full rounded-lg border border-gray-400 bg-transparent text-neutral-700">

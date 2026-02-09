@@ -3,16 +3,16 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ProductUrl } from '@/types/products'
+import { ProductLink } from '@/payload-types'
 
 interface RefreshPriceIconProps {
   productId: string
-  onRefreshComplete?: (data: { productUrls?: ProductUrl[] }) => void
+  onRefreshComplete?: (data: { productUrls?: ProductLink['productUrls'] }) => void
 }
 
 export default function RefreshPriceIcon({ productId, onRefreshComplete }: RefreshPriceIconProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
   const handleRefresh = async () => {
     if (!productId || loading) return
 

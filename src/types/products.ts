@@ -1,7 +1,7 @@
 export interface ProductUrl {
   url: string
   site: string
-  currentPrice: number | null
+  currentPrice?: number | null | undefined
   lastCrawledAt: Date | string | null
   crawlStatus: 'pending' | 'success' | 'failed'
   crawlError?: string | null

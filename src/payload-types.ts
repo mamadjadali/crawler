@@ -285,29 +285,26 @@ export interface ProductLink {
     /**
      * Site will be auto-detected from URL if not provided
      */
-    site?:
-      | (
-          | 'torob'
-          | 'technolife'
-          | 'mobile140'
-          | 'gooshionline'
-          | 'kasrapars'
-          | 'farnaa'
-          | 'zitro'
-          | 'yaran'
-          | 'greenlion'
-          | 'plazadigital'
-          | 'ithome'
-          | 'zangooleh'
-          | 'farako'
-          | 'xiaomi360'
-          | 'positron'
-          | 'empratour'
-          | 'royalpart'
-          | 'parhantech'
-          | 'mobopart'
-        )
-      | null;
+    site:
+      | 'torob'
+      | 'technolife'
+      | 'mobile140'
+      | 'gooshionline'
+      | 'kasrapars'
+      | 'farnaa'
+      | 'zitro'
+      | 'yaran'
+      | 'greenlion'
+      | 'plazadigital'
+      | 'ithome'
+      | 'zangooleh'
+      | 'farako'
+      | 'xiaomi360'
+      | 'positron'
+      | 'empratour'
+      | 'royalpart'
+      | 'parhantech'
+      | 'mobopart';
     /**
      * Latest crawled price from this URL
      */
@@ -333,6 +330,9 @@ export interface ProductLink {
       | null;
     id?: string | null;
   }[];
+  lowestPrice?: number | null;
+  lastCrawledAt?: string | null;
+  crawlStatus?: ('pending' | 'success' | 'failed') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -544,6 +544,9 @@ export interface ProductLinksSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  lowestPrice?: T;
+  lastCrawledAt?: T;
+  crawlStatus?: T;
   updatedAt?: T;
   createdAt?: T;
 }

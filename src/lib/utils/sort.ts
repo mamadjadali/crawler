@@ -1,7 +1,7 @@
 import { toSiteKey } from '@/lib/utils/site'
-import { ProductUrl } from '@/types/products'
+import { ProductLink } from '@/payload-types'
 
-export function isMobile140Unavailable(urls: ProductUrl[]) {
+export function isMobile140Unavailable(urls: ProductLink['productUrls']) {
   const entry = urls.find((u) => toSiteKey(u.site) === 'mobile140')
 
   if (!entry) return true

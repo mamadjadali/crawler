@@ -1,4 +1,25 @@
+import { detectSiteFromUrl } from '@/domain/product/site'
+import { ProductLink } from '@/payload-types'
 import type { CollectionConfig } from 'payload'
+
+type ProductUrlEntry = ProductLink['productUrls'][number]
+function computeAggregates(productUrls: ProductUrlEntry[]) {
+  const prices = productUrls.map((u) => u.currentPrice).filter((p) => p != null)
+
+  const dates = productUrls
+    .map((u) => u.lastCrawledAt)
+    .filter(Boolean)
+    .map((d) => new Date(d!).getTime())
+
+  const hasSuccess = productUrls.some((u) => u.crawlStatus === 'success')
+  const hasFailed = productUrls.some((u) => u.crawlStatus === 'failed')
+
+  return {
+    lowestPrice: prices.length ? Math.min(...prices) : null,
+    lastCrawledAt: dates.length ? new Date(Math.max(...dates)).toISOString() : null,
+    crawlStatus: hasSuccess ? 'success' : hasFailed ? 'failed' : 'pending',
+  } as const
+}
 
 const MAX_PRICE_HISTORY = 10
 export const ProductLinks: CollectionConfig = {
@@ -178,6 +199,8 @@ export const ProductLinks: CollectionConfig = {
             fa: 'سایت',
           },
           type: 'select',
+          required: true,
+          defaultValue: 'torob',
           options: [
             { label: { en: 'Torob', fa: 'ترب' }, value: 'torob' },
             { label: { en: 'Technolife', fa: 'تکنولایف' }, value: 'technolife' },
@@ -305,6 +328,26 @@ export const ProductLinks: CollectionConfig = {
       ],
     },
     {
+      name: 'lowestPrice',
+      type: 'number',
+      admin: { readOnly: true },
+    },
+    {
+      name: 'lastCrawledAt',
+      type: 'date',
+      admin: { readOnly: true },
+    },
+    {
+      name: 'crawlStatus',
+      type: 'select',
+      options: [
+        { label: 'Pending', value: 'pending' },
+        { label: 'Success', value: 'success' },
+        { label: 'Failed', value: 'failed' },
+      ],
+      admin: { readOnly: true },
+    },
+    {
       name: 'refreshButton',
       label: {
         en: 'Refresh Button',
@@ -321,76 +364,13 @@ export const ProductLinks: CollectionConfig = {
   timestamps: true,
   hooks: {
     beforeChange: [
-      async ({ data, operation, req }) => {
-        // Handle migration: if old single url exists, convert to productUrls array
+      async ({ data }) => {
+        // Migrate old single URL to productUrls array
         if (data.url && !data.productUrls) {
-          const url = new URL(data.url)
-          const hostname = url.hostname.toLowerCase()
-          let detectedSite:
-            | 'torob'
-            | 'technolife'
-            | 'mobile140'
-            | 'gooshionline'
-            | 'kasrapars'
-            | 'farnaa'
-            | 'zitro'
-            | 'yaran'
-            | 'greenlion'
-            | 'plazadigital'
-            | 'ithome'
-            | 'zangooleh'
-            | 'farako'
-            | 'positron'
-            | 'empratour'
-            | 'royalpart'
-            | 'parhantech'
-            | 'mobopart'
-            | 'xiaomi360' = 'torob'
-
-          if (hostname.includes('torob.com')) {
-            detectedSite = 'torob'
-          } else if (hostname.includes('technolife.com')) {
-            detectedSite = 'technolife'
-          } else if (hostname.includes('mobile140.com')) {
-            detectedSite = 'mobile140'
-          } else if (hostname.includes('gooshi.online')) {
-            detectedSite = 'gooshionline'
-          } else if (hostname.includes('kasrapars.ir') || hostname.includes('plus.kasrapars.ir')) {
-            detectedSite = 'kasrapars'
-          } else if (hostname.includes('farnaa.com')) {
-            detectedSite = 'farnaa'
-          } else if (hostname.includes('zitro.ir')) {
-            detectedSite = 'zitro'
-          } else if (hostname.includes('yaranstore.ir')) {
-            detectedSite = 'yaran'
-          } else if (hostname.includes('greenlionofficial.ir')) {
-            detectedSite = 'greenlion'
-          } else if (hostname.includes('plazadigital.ir')) {
-            detectedSite = 'plazadigital'
-          } else if (hostname.includes('ithome.ir')) {
-            detectedSite = 'ithome'
-          } else if (hostname.includes('zangooleh.com')) {
-            detectedSite = 'zangooleh'
-          } else if (hostname.includes('farako.com')) {
-            detectedSite = 'farako'
-          } else if (hostname.includes('xiaomi360.ir')) {
-            detectedSite = 'xiaomi360'
-          } else if (hostname.includes('positron-shop.com')) {
-            detectedSite = 'positron'
-          } else if (hostname.includes('empratour.com')) {
-            detectedSite = 'empratour'
-          } else if (hostname.includes('royalpart.co')) {
-            detectedSite = 'royalpart'
-          } else if (hostname.includes('parts.parhantech.com')) {
-            detectedSite = 'parhantech'
-          } else if (hostname.includes('mobopart.com')) {
-            detectedSite = 'mobopart'
-          }
-
           data.productUrls = [
             {
               url: data.url,
-              site: data.site || detectedSite,
+              site: data.site || detectSiteFromUrl(data.url),
               currentPrice: data.currentPrice || null,
               lastCrawledAt: data.lastCrawledAt || null,
               crawlStatus: data.crawlStatus || 'pending',
@@ -400,61 +380,11 @@ export const ProductLinks: CollectionConfig = {
           ]
         }
 
-        // Auto-detect site for each URL in productUrls array
-        if (data.productUrls && Array.isArray(data.productUrls)) {
-          for (const urlEntry of data.productUrls) {
-            if (urlEntry.url && !urlEntry.site) {
-              try {
-                const url = new URL(urlEntry.url)
-                const hostname = url.hostname.toLowerCase()
-
-                if (hostname.includes('torob.com')) {
-                  urlEntry.site = 'torob'
-                } else if (hostname.includes('technolife.com')) {
-                  urlEntry.site = 'technolife'
-                } else if (hostname.includes('mobile140.com')) {
-                  urlEntry.site = 'mobile140'
-                } else if (hostname.includes('gooshi.online')) {
-                  urlEntry.site = 'gooshionline'
-                } else if (
-                  hostname.includes('kasrapars.ir') ||
-                  hostname.includes('plus.kasrapars.ir')
-                ) {
-                  urlEntry.site = 'kasrapars'
-                } else if (hostname.includes('farnaa.com')) {
-                  urlEntry.site = 'farnaa'
-                } else if (hostname.includes('zitro.ir')) {
-                  urlEntry.site = 'zitro'
-                } else if (hostname.includes('yaranstore.ir')) {
-                  urlEntry.site = 'yaran'
-                } else if (hostname.includes('greenlionofficial.ir')) {
-                  urlEntry.site = 'greenlion'
-                } else if (hostname.includes('plazadigital.ir')) {
-                  urlEntry.site = 'plazadigital'
-                } else if (hostname.includes('ithome.ir')) {
-                  urlEntry.site = 'ithome'
-                } else if (hostname.includes('zangooleh.com')) {
-                  urlEntry.site = 'zangooleh'
-                } else if (hostname.includes('farako.com')) {
-                  urlEntry.site = 'farako'
-                } else if (hostname.includes('xiaomi360.ir')) {
-                  urlEntry.site = 'xiaomi360'
-                } else if (hostname.includes('positron-shop.com')) {
-                  urlEntry.site = 'positron'
-                } else if (hostname.includes('empratour.com')) {
-                  urlEntry.site = 'empratour'
-                } else if (hostname.includes('royalpart.co')) {
-                  urlEntry.site = 'royalpart'
-                } else if (hostname.includes('parts.parhantech.com')) {
-                  urlEntry.site = 'parhantech'
-                } else if (hostname.includes('mobopart.com')) {
-                  urlEntry.site = 'mobopart'
-                } else {
-                  urlEntry.site = 'torob' // Default fallback
-                }
-              } catch {
-                throw new Error(`Invalid URL format: ${urlEntry.url}`)
-              }
+        // Ensure site detection and priceHistory trimming for each entry
+        if (Array.isArray(data.productUrls)) {
+          data.productUrls = data.productUrls.map((urlEntry) => {
+            if (!urlEntry.site && urlEntry.url) {
+              urlEntry.site = detectSiteFromUrl(urlEntry.url)
             }
 
             // Validate URL format
@@ -464,12 +394,15 @@ export const ProductLinks: CollectionConfig = {
               } catch {
                 throw new Error(`Invalid URL format: ${urlEntry.url}`)
               }
-              // Enforce price history limit
-              if (urlEntry.priceHistory && Array.isArray(urlEntry.priceHistory)) {
-                urlEntry.priceHistory = urlEntry.priceHistory.slice(-MAX_PRICE_HISTORY)
-              }
             }
-          }
+
+            // Trim price history
+            if (Array.isArray(urlEntry.priceHistory)) {
+              urlEntry.priceHistory = urlEntry.priceHistory.slice(-MAX_PRICE_HISTORY)
+            }
+
+            return urlEntry
+          })
         }
 
         return data
@@ -477,90 +410,69 @@ export const ProductLinks: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc, req, operation, previousDoc }) => {
-        // ❌ Do nothing if product is disabled
-        if (doc.disable === true) {
-          return doc
-        }
-        // Skip crawl if context flag is set (prevents infinite loops)
-        if (req.context?.skipCrawl) {
-          return doc
-        }
+        if (doc.disable) return doc
+        if (req.context?.skipCrawl) return doc
 
-        // Only crawl on create or when productUrls change
         const shouldCrawl =
           operation === 'create' ||
           (operation === 'update' &&
             JSON.stringify(doc.productUrls) !== JSON.stringify(previousDoc?.productUrls))
 
-        if (shouldCrawl && doc.productUrls && Array.isArray(doc.productUrls)) {
-          try {
-            // Import crawler dynamically to avoid circular dependencies
-            const { crawlProduct } = await import('../lib/crawler/crawler')
+        if (!shouldCrawl || !Array.isArray(doc.productUrls)) return doc
 
-            // Crawl all URLs in the array
-            const updatedProductUrls = await Promise.all(
-              doc.productUrls.map(async (urlEntry: any) => {
-                // Skip if URL is empty
-                if (!urlEntry.url) {
-                  return urlEntry
-                }
+        try {
+          const { crawlProduct } = await import('../lib/crawler/crawler')
 
-                try {
-                  const result = await crawlProduct(urlEntry.url, urlEntry.site || 'torob')
+          const updatedProductUrls: ProductUrlEntry[] = await Promise.all(
+            doc.productUrls.map(async (urlEntry: ProductUrlEntry) => {
+              if (!urlEntry.url) return urlEntry
 
-                  if (result.success && result.price !== null) {
-                    return {
-                      ...urlEntry,
-                      currentPrice: result.price,
-                      lastCrawledAt: new Date().toISOString(),
-                      crawlStatus: 'success',
-                      crawlError: null,
-                      priceHistory: [
-                        ...(urlEntry.priceHistory || []),
-                        {
-                          price: result.price,
-                          crawledAt: new Date().toISOString(),
-                        },
-                      ].slice(-MAX_PRICE_HISTORY),
-                    }
-                  } else {
-                    return {
-                      ...urlEntry,
-                      crawlStatus: 'failed',
-                      crawlError: result.error || 'Unknown error',
-                    }
+              try {
+                const result = await crawlProduct(urlEntry.url, urlEntry.site || 'torob')
+
+                if (result.success && result.price != null) {
+                  return {
+                    ...urlEntry,
+                    currentPrice: result.price,
+                    lastCrawledAt: new Date().toISOString(),
+                    crawlStatus: 'success',
+                    crawlError: null,
+                    priceHistory: [
+                      ...(urlEntry.priceHistory || []),
+                      { price: result.price, crawledAt: new Date().toISOString() },
+                    ].slice(-MAX_PRICE_HISTORY),
                   }
-                } catch (error) {
+                } else {
                   return {
                     ...urlEntry,
                     crawlStatus: 'failed',
-                    crawlError: error instanceof Error ? error.message : 'Unknown error',
+                    crawlError: result.error || 'Unknown error',
                   }
                 }
-              }),
-            )
-
-            // Ensure trimming again, just in case
-            updatedProductUrls.forEach((urlEntry) => {
-              if (urlEntry.priceHistory) {
-                urlEntry.priceHistory = urlEntry.priceHistory.slice(-MAX_PRICE_HISTORY)
+              } catch (err) {
+                return {
+                  ...urlEntry,
+                  crawlStatus: 'failed',
+                  crawlError: err instanceof Error ? err.message : 'Unknown error',
+                }
               }
-            })
+            }),
+          )
 
-            // Update the document with crawl results for all URLs
-            await req.payload.update({
-              collection: 'product-links',
-              id: doc.id,
-              data: {
-                productUrls: updatedProductUrls,
-              },
-              context: { skipCrawl: true }, // Prevent infinite loop
-              req,
-            })
-          } catch (error) {
-            // If there's an error updating, log it but don't fail the operation
-            console.error('Error updating product URLs after crawl:', error)
-          }
+          const aggregates = computeAggregates(updatedProductUrls)
+
+          await req.payload.update({
+            collection: 'product-links',
+            id: doc.id,
+            data: {
+              productUrls: updatedProductUrls,
+              ...aggregates,
+            },
+            context: { skipCrawl: true },
+            req,
+          })
+        } catch (err) {
+          console.error('Error updating product URLs after crawl:', err)
         }
 
         return doc

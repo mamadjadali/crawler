@@ -1,0 +1,47 @@
+export type Site =
+  | 'torob'
+  | 'technolife'
+  | 'mobile140'
+  | 'gooshionline'
+  | 'kasrapars'
+  | 'farnaa'
+  | 'zitro'
+  | 'yaran'
+  | 'greenlion'
+  | 'plazadigital'
+  | 'ithome'
+  | 'zangooleh'
+  | 'farako'
+  | 'xiaomi360'
+  | 'positron'
+  | 'empratour'
+  | 'royalpart'
+  | 'parhantech'
+  | 'mobopart'
+
+export function detectSiteFromUrl(rawUrl: string): Site {
+  const hostname = new URL(rawUrl).hostname.toLowerCase()
+
+  if (hostname.includes('torob.com')) return 'torob'
+  if (hostname.includes('technolife.com')) return 'technolife'
+  if (hostname.includes('mobile140.com')) return 'mobile140'
+  if (hostname.includes('gooshi.online')) return 'gooshionline'
+  if (hostname.includes('kasrapars.ir') || hostname.includes('plus.kasrapars.ir'))
+    return 'kasrapars'
+  if (hostname.includes('farnaa.com')) return 'farnaa'
+  if (hostname.includes('zitro.ir')) return 'zitro'
+  if (hostname.includes('yaranstore.ir')) return 'yaran'
+  if (hostname.includes('greenlionofficial.ir')) return 'greenlion'
+  if (hostname.includes('plazadigital.ir')) return 'plazadigital'
+  if (hostname.includes('ithome.ir')) return 'ithome'
+  if (hostname.includes('zangooleh.com')) return 'zangooleh'
+  if (hostname.includes('farako.com')) return 'farako'
+  if (hostname.includes('xiaomi360.ir')) return 'xiaomi360'
+  if (hostname.includes('positron-shop.com')) return 'positron'
+  if (hostname.includes('empratour.com')) return 'empratour'
+  if (hostname.includes('royalpart.co')) return 'royalpart'
+  if (hostname.includes('parts.parhantech.com')) return 'parhantech'
+  if (hostname.includes('mobopart.com')) return 'mobopart'
+
+  return 'torob'
+}

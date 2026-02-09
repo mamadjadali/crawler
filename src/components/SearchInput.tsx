@@ -43,7 +43,7 @@ export default function SearchInput({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="pr-10 pl-10 bg-transparent rounded-lg border border-gray-400 text-neutral-700 placeholder:text-sm placeholder:text-gray-500"
+        className="pr-10 pl-10 bg-transparent shadow-none rounded-lg border border-gray-400 text-neutral-700 placeholder:text-sm placeholder:text-gray-500"
         dir="rtl"
       />
 

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import RefreshPriceIcon from './RefreshPriceIcon'
 import { formatPrice, formatDate } from '@/lib/utils/formatPrice'
+import { ProductLink } from '@/payload-types'
 
 interface PriceHistoryItem {
   price: number
@@ -29,19 +30,10 @@ export default function PriceDropdown({
   const [isOpen, setIsOpen] = useState(false)
   const [refreshedPrice, setRefreshedPrice] = useState<number | null>(currentPrice)
 
-  const handleRefreshComplete = (data: {
-    productUrls?: Array<{
-      url: string
-      site: string
-      currentPrice: number | null
-      lastCrawledAt: string | Date | null
-      crawlStatus: 'pending' | 'success' | 'failed'
-      crawlError?: string | null
-      priceHistory?: Array<{ price: number; crawledAt: string | Date }>
-    }>
-  }) => {
+  const handleRefreshComplete = (data: { productUrls?: ProductLink['productUrls'] }) => {
     // Extract the first available price from the refreshed URLs
-    const firstPrice = data.productUrls?.find(url => url.currentPrice !== null)?.currentPrice ?? null
+    const firstPrice =
+      data.productUrls?.find((url) => url.currentPrice !== null)?.currentPrice ?? null
     setRefreshedPrice(firstPrice)
     // Refresh the page after a short delay to show updated data
     if (typeof window !== 'undefined') {
@@ -59,21 +51,14 @@ export default function PriceDropdown({
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between text-left py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
       >
-        <span className="font-medium text-gray-700 dark:text-gray-300">
-          جزئیات قیمت
-        </span>
+        <span className="font-medium text-gray-700 dark:text-gray-300">جزئیات قیمت</span>
         <svg
           className={`h-5 w-5 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
@@ -85,28 +70,21 @@ export default function PriceDropdown({
               <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 قیمت فعلی
               </span>
-              <RefreshPriceIcon
-                productId={productId}
-                onRefreshComplete={handleRefreshComplete}
-              />
+              <RefreshPriceIcon productId={productId} onRefreshComplete={handleRefreshComplete} />
             </div>
             {displayPrice !== null ? (
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {formatPrice(displayPrice, true)}
               </div>
             ) : (
-              <div className="text-lg text-gray-500 dark:text-gray-400">
-                قیمت نامشخص
-              </div>
+              <div className="text-lg text-gray-500 dark:text-gray-400">قیمت نامشخص</div>
             )}
           </div>
 
           {/* Status and Last Crawled */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1">
-                وضعیت
-              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1">وضعیت</span>
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   crawlStatus === 'success'
@@ -171,4 +149,3 @@ export default function PriceDropdown({
     </div>
   )
 }
-

@@ -25,7 +25,7 @@ interface CategorySelectProps {
 export default function CategorySelect({ value = '', onChange }: CategorySelectProps) {
   const { user } = useAuth()
   const [categories, setCategories] = useState<Category[]>([])
-  const [selected, setSelected] = useState<string>(value || '__all__')
+  // const [selected, setSelected] = useState<string>(value || '__all__')
 
   const allowedCategoryIds = user.visibleCategories?.map((c: any) => c.id)
 
@@ -36,34 +36,21 @@ export default function CategorySelect({ value = '', onChange }: CategorySelectP
       .catch((err) => console.error('Failed to fetch categories', err))
   }, [])
 
-  useEffect(() => {
-    setSelected(value && value !== '' ? value : '__all__')
-  }, [value])
+  // useEffect(() => {
+  //   setSelected(value && value !== '' ? value : '__all__')
+  // }, [value])
 
   const visibleCategories = categories.filter((cat) => {
-    // keep selected to avoid broken state
-    if (cat.id === selected) return true
-
-    // no preference set → show all
-    if (!allowedCategoryIds || allowedCategoryIds.length === 0) {
-      return true
-    }
-
+    if (!allowedCategoryIds || allowedCategoryIds.length === 0) return true
     return allowedCategoryIds.includes(cat.id)
   })
 
   return (
     <Select
       dir="rtl"
-      value={selected}
+      value={value || '__all__'}
       onValueChange={(next) => {
-        if (next === '__all__') {
-          setSelected('__all__')
-          onChange('')
-          return
-        }
-        setSelected(next)
-        onChange(next)
+        onChange(next === '__all__' ? '' : next)
       }}
     >
       <SelectTrigger className="w-full rounded-lg border border-gray-400 bg-transparent text-neutral-700">
