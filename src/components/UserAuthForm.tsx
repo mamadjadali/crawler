@@ -43,7 +43,6 @@ export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLD
   const toggleVisibility = () => setIsVisible((prevState) => !prevState)
 
   const form = useForm<LoginFormValues>({
-    // @ts-expect-error - Zod v4 compatibility issue with @hookform/resolvers
     resolver: zodResolver(loginSchema),
 
     defaultValues: {
