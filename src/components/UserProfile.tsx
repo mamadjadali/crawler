@@ -20,7 +20,6 @@ import {
   User,
 } from 'lucide-react'
 import { LogoutButton } from './LogoutButton'
-import { Category } from '@/payload-types'
 
 const ROLE_ICON: Record<string, React.ReactNode> = {
   god: <Swords className="ml-1 size-5 text-blue-500" />,
@@ -47,10 +46,10 @@ type Props = {
   name: string
   fullname?: string | null
   role: string
-  visibleCategories?: Category[]
+  // visibleCategories?: Category[]
 }
 
-export function UserProfile({ email, name, fullname, role, visibleCategories }: Props) {
+export function UserProfile({ email, name, fullname, role }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -17,8 +17,6 @@ export default function RefreshCategoryButton({ category, brand }: RefreshCatego
   const [isLoading, setIsLoading] = useState(false)
   const [lastElapsed, setLastElapsed] = useState<number | null>(null)
 
-  if (!permissions.refreshCategory) return null
-
   useEffect(() => {
     // check if elapsed time exists from previous refresh
     const savedElapsed = sessionStorage.getItem('lastElapsed')
@@ -102,6 +100,8 @@ export default function RefreshCategoryButton({ category, brand }: RefreshCatego
       ? `${nf.format(hours)}:${nf.format(minutes)}:${nf.format(seconds)}`
       : `${nf.format(minutes)}:${nf.format(seconds)}`
   }
+
+  if (!permissions.refreshCategory) return <></>
 
   return (
     <div className="flex items-center justify-center gap-2">

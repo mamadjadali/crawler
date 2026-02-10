@@ -37,6 +37,7 @@ export function formatPrice(
     return formatted + ' تومان'
   } catch (error) {
     // Fallback to simple formatting if Intl is not available
+    console.error('formatPrice error:', error)
     return price.toLocaleString() + ' تومان'
   }
 }
@@ -74,6 +75,7 @@ export function formatPricev2(
     return formatted
   } catch (error) {
     // Fallback to simple formatting if Intl is not available
+    console.error('formatPrice error:', error)
     return price.toLocaleString()
   }
 }
@@ -100,6 +102,7 @@ export function formatDate(date: Date | string | null | undefined): string {
     }).format(d)
   } catch (error) {
     // Fallback to simple date formatting
+    console.error('formatPrice error:', error)
     const d = typeof date === 'string' ? new Date(date) : date
     if (isNaN(d.getTime())) return 'نامشخص'
     return d.toLocaleDateString('fa-IR')

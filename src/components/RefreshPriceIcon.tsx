@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { ProductUrl } from '@/types/products'
 import { ProductLink } from '@/payload-types'
+import { useState } from 'react'
 
 interface RefreshPriceIconProps {
   productId: string

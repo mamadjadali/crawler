@@ -35,9 +35,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const router = useRouter()
 
   const [isVisible, setIsVisible] = React.useState<boolean>(false)

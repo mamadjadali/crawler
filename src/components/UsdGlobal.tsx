@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { DollarSign, Edit, Check, Pencil } from 'lucide-react'
-import { Setting } from '@/payload-types'
 import { updateSettingsUsd } from '@/actions/usdUpdate'
+import { Setting } from '@/payload-types'
+import { Check, DollarSign, Pencil } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { Input } from './ui/input'
 
 interface EditableUSDProps {
@@ -66,7 +66,8 @@ export default function EditableUSD({ settings }: EditableUSDProps) {
             </button>
           </div>
         ) : (
-          new Intl.NumberFormat('fa-IR').format(settings.usdprice ?? 0)
+          // new Intl.NumberFormat('fa-IR').format(settings.usdprice ?? 0)
+          new Intl.NumberFormat('fa-IR').format(displayValue)
         )}
         {!editing && (
           <Pencil

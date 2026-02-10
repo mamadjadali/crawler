@@ -154,8 +154,20 @@ export default function ProductSheet({
     .map((u) => u.lastCrawledAt)
     .filter((d) => d != null)
     .map((d) => new Date(d))
-  const mostRecentCrawl =
-    allCrawlDates.length > 0 ? new Date(Math.max(...allCrawlDates.map((d) => d.getTime()))) : null
+
+  const mostRecentCrawl = useMemo(() => {
+    const allCrawlDates = refreshedProductUrls
+      .map((u) => u.lastCrawledAt)
+      .filter((d) => d != null)
+      .map((d) => new Date(d!)) // d is non-null here
+
+    if (allCrawlDates.length === 0) return null
+
+    return new Date(Math.max(...allCrawlDates.map((d) => d.getTime())))
+  }, [refreshedProductUrls])
+
+  // const mostRecentCrawl =
+  //   allCrawlDates.length > 0 ? new Date(Math.max(...allCrawlDates.map((d) => d.getTime()))) : null
 
   const isRecentlyUpdated = useMemo(() => {
     if (!mostRecentCrawl) return false

@@ -27,7 +27,7 @@ export default function CategorySelect({ value = '', onChange }: CategorySelectP
   const [categories, setCategories] = useState<Category[]>([])
   // const [selected, setSelected] = useState<string>(value || '__all__')
 
-  const allowedCategoryIds = user.visibleCategories?.map((c: any) => c.id)
+  const allowedCategoryIds = user.visibleCategories?.map((c: Category) => c.id)
 
   useEffect(() => {
     fetch('/api/custom/category')

@@ -2,10 +2,10 @@
 
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { getSiteClass, getSiteLabel, toSiteKey } from '@/lib/utils/site'
 import { Resource } from '@/payload-types'
-import { AppWindow, BellDot } from 'lucide-react'
+import { AppWindow } from 'lucide-react'
 import { Card } from './ui/card'
-import { toSiteKey, getSiteLabel, getSiteClass } from '@/lib/utils/site'
 
 interface ResourceSheetProps {
   resource: Resource

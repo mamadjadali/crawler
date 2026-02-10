@@ -66,7 +66,8 @@ export default function EditableFee({ settings }: EditableFeeProps) {
             </button>
           </div>
         ) : (
-          new Intl.NumberFormat('fa-IR').format(settings.importFee ?? 0) + ' %'
+          // new Intl.NumberFormat('fa-IR').format(settings.importFee ?? 0) + ' %'
+          new Intl.NumberFormat('fa-IR').format(displayValue) + ' %'
         )}
         {!editing && (
           <Pencil

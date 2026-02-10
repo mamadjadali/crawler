@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { Card } from './ui/card'
 import { Changelog } from '@/payload-types'
 import { BellDot } from 'lucide-react'
 import { ScrollArea } from './ui/scroll-area'

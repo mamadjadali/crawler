@@ -38,7 +38,7 @@ export default function ProductRowDetail({
   productUrls = [],
   lowestPrice = null,
   lastCrawledAt = null,
-  crawlStatus = 'pending',
+  // crawlStatus = 'pending',
   onProductUpdate,
 }: ProductRowProps) {
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -50,7 +50,7 @@ export default function ProductRowDetail({
   if (!visible) return null
 
   // Use DB aggregate for lowest price (no recalculate)
-  const displayPrice = lowestPrice
+  const _displayPrice = lowestPrice
 
   // Find site with lowest price (from urls)
   const lowestPriceSite =
@@ -65,7 +65,7 @@ export default function ProductRowDetail({
   const displayLastCrawledAt = lastCrawledAt ? new Date(lastCrawledAt) : null
 
   // Unique sites
-  const sites = [...new Set(productUrls.map((u) => u.site))]
+  const _sites = [...new Set(productUrls.map((u) => u.site))]
 
   const mobile140Entry = productUrls.find((u) => toSiteKey(u.site) === 'mobile140')
 

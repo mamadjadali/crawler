@@ -48,7 +48,6 @@ export async function POST(request: Request) {
     }
 
     const urlLimit = pLimit(5)
-    const crawlStartTime = Date.now()
 
     const updatedProductUrls: ProductUrlEntry[] = (await Promise.all(
       product.productUrls.map((urlEntry: ProductUrlEntry) =>

@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useEffect, useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
+import { useLayoutEffect, useRef } from 'react'
 
 const CoolLogo = () => {
   const svgRef = useRef<SVGSVGElement | null>(null)

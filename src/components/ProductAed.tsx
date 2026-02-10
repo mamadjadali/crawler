@@ -1,10 +1,10 @@
 'use client'
 
-import { updateProductAed, updateProductUsd } from '@/actions/updateProductUsd' // <-- new action
-import { Check, DollarSign, Pencil } from 'lucide-react'
+import { updateProductAed } from '@/actions/updateProductUsd' // <-- new action
+import { Check, Pencil } from 'lucide-react'
 import { useState } from 'react'
-import { Input } from './ui/input'
 import { Dirham } from './icons'
+import { Input } from './ui/input'
 
 interface EditableAEDProductProps {
   id: string

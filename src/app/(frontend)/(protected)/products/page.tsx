@@ -31,14 +31,6 @@ export default async function ProductsPage() {
   const settings = await getSettings()
 
   const transformedProducts = products.map((product: ProductLink): ProductLink => {
-    // Resolve product image URL
-    const productImageUrl =
-      product.productImage && typeof product.productImage === 'object' && product.productImage.url
-        ? product.productImage.url
-        : typeof product.productImage === 'string'
-          ? product.productImage
-          : null
-
     // Normalize productUrls (keep dates as strings)
     // Normalize productUrls
     const safeProductUrls = (product.productUrls ?? []).map((entry) => {

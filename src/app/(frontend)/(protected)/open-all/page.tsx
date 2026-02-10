@@ -23,7 +23,7 @@ export default function OpenAll() {
     setTimeout(() => {
       window.close()
     }, 300)
-  }, [])
+  }, [params])
 
   return (
     <div className="flex flex-col items-center justify-center h-full w-full md:mt-40">
