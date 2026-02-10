@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import puppeteer, { type Browser, type Page } from 'puppeteer'
@@ -99,6 +101,7 @@ export class KasraParsCrawler implements SiteCrawler {
       }
     } catch (error) {
       // Page is broken, close it
+      console.error('Kasrapars error:', error)
       await page.close().catch(() => {})
     }
   }

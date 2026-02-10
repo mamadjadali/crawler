@@ -150,10 +150,10 @@ export default function ProductSheet({
   }, [refreshedProductUrls])
 
   // Most recent crawl (parse string for comparison)
-  const allCrawlDates = refreshedProductUrls
-    .map((u) => u.lastCrawledAt)
-    .filter((d) => d != null)
-    .map((d) => new Date(d))
+  // const allCrawlDates = refreshedProductUrls
+  //   .map((u) => u.lastCrawledAt)
+  //   .filter((d) => d != null)
+  //   .map((d) => new Date(d))
 
   const mostRecentCrawl = useMemo(() => {
     const allCrawlDates = refreshedProductUrls

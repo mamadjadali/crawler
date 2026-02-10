@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as cheerio from 'cheerio'

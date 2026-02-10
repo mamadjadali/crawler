@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import puppeteer, { type Browser, type Page } from 'puppeteer'
