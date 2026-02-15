@@ -19,6 +19,9 @@ import { Resources } from './globals/sites/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const iconUrl = 'http://localhost:3000/dark-ico.svg'
+const darkIconUrl = 'http://localhost:3000/light-ico.svg'
+const openGraphImageUrl = 'http://localhost:3000/opengraph.png'
 
 export default buildConfig({
   admin: {
@@ -26,9 +29,54 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      graphics: {
+        Logo: {
+          path: '@/components/graphics/Logo.tsx#Logos',
+          exportName: 'Logos',
+        },
+        Icon: {
+          path: '@/components/graphics/Icon.tsx#Icons',
+          exportName: 'Icons',
+        },
+      },
+    },
+    meta: {
+      icons: [
+        {
+          fetchPriority: 'high',
+          sizes: '32x32',
+          type: 'image/png',
+          rel: 'icon',
+          url: iconUrl,
+        },
+        {
+          fetchPriority: 'high',
+          sizes: '32x32',
+          type: 'image/png',
+          rel: 'icon',
+          url: darkIconUrl,
+          media: '(prefers-color-scheme: dark)',
+        },
+      ],
+      // title: 'Example',
+      titleSuffix: ' - ارا',
+      description: 'Ara Admin Panel',
+      applicationName: 'Ara',
+      openGraph: {
+        title: 'Ara Admin Panel',
+        description: 'Ara Admin Panel',
+        siteName: 'Ara',
+        images: [
+          {
+            url: openGraphImageUrl,
+          },
+        ],
+      },
+    },
   },
   i18n: {
-    fallbackLanguage: 'en',
+    fallbackLanguage: 'fa',
     supportedLanguages: { en, fa }, // default
   },
   collections: [Users, Clients, Media, ProductLinks, Categories, Brands],

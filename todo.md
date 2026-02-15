@@ -3,12 +3,12 @@
 Ara v2.0 - v2.9 -------------------------------------------------------------------------------
 
 - [] Add Profit Percentage to AED (Rahimi REQ)
-- [] Add Brandig , Favicon ...
 - [] Modify -> Better Looking Changelog -> Add Persian Date
 - [] Adding Disable Products Page (default state to true)
 - [] Sync State Of Products Detail and Product Sheet
 - [] Deploy Cron To Production
 - [] Auth Check on Api
+- [x] Add Brandig , Favicon ...
 - [x] Responsive Flex Desing on Top Page Client
 - [x] Fix Category default fetch first over url refresh
 - [x] Server Side Query , Boost Improvment And Skeleton

@@ -1,116 +1,124 @@
 html[data-theme='dark'] .light-mode-image {
-    display: none;
-  }
-  
-  html[data-theme='light'] .dark-mode-image {
-    display: none;
-  }
-  
-  #field-email, #field-password, #field-confirmPassword {
-    border-radius: 8px;
-  } 
-  
-  .btn {
-    border-radius: 8px;
-  }
-  
-  /* MUST stay global – cannot be scoped */
-  @font-face {
-    font-family: 'Dana';
-    font-style: normal;
-    font-weight: 200 700;
-    src: url('/fonts/Dana-Bold.woff2') format('woff2');
-  }
-  @font-face {
-    font-family: 'Dana';
-    font-style: normal;
-    font-weight: 600;
-    src: url('/fonts/Dana-DemiBold.woff2') format('woff2');
-  }
-  @font-face {
-    font-family: 'Dana';
-    font-style: normal;
-    font-weight: 500;
-    src: url('/fonts/Dana-Medium.woff2') format('woff2');
-  }
-  @font-face {
-    font-family: 'Dana';
-    font-style: normal;
-    font-weight: 400;
-    src: url('/fonts/Dana-Regular.woff2') format('woff2');
-  }
-  @font-face {
-    font-family: 'Dana';
-    font-style: normal;
-    font-weight: 300;
-    src: url('/fonts/Dana-Light.woff2') format('woff2');
-  }
-  @font-face {
-    font-family: 'Dana';
-    font-style: normal;
-    font-weight: 200;
-    src: url('/fonts/Dana-Thin.woff2') format('woff2');
-  }
-  
-  /* Apply Dana font for Persian content only in Payload admin panel */
-  /* Target html and body when lang is fa */
-  html[lang='fa'],
-  html[lang='fa'] body,
-  body[lang='fa'] {
-    font-family: 'Dana', sans-serif !important;
-  }
-  
-  /* Target all elements within the admin panel when Persian is active */
-  html[lang='fa'] *,
-  html[lang='fa'] body *,
-  body[lang='fa'] * {
-    font-family: 'Dana', sans-serif !important;
-  }
-  
-  /* Specifically target Payload admin panel elements */
-  html[lang='fa'] #app,
-  html[lang='fa'] #app *,
-  html[lang='fa'] .template-default,
-  html[lang='fa'] .template-default *,
-  html[lang='fa'] .payload-admin,
-  html[lang='fa'] .payload-admin * {
-    font-family: 'Dana', sans-serif !important;
-  }
-  
-  /* Target common Payload UI elements */
-  html[lang='fa'] button,
-  html[lang='fa'] input,
-  html[lang='fa'] select,
-  html[lang='fa'] textarea,
-  html[lang='fa'] label,
-  html[lang='fa'] span,
-  html[lang='fa'] div,
-  html[lang='fa'] p,
-  html[lang='fa'] h1,
-  html[lang='fa'] h2,
-  html[lang='fa'] h3,
-  html[lang='fa'] h4,
-  html[lang='fa'] h5,
-  html[lang='fa'] h6,
-  html[lang='fa'] a,
-  html[lang='fa'] li,
-  html[lang='fa'] td,
-  html[lang='fa'] th {
-    font-family: 'Dana', sans-serif !important;
-  }
-  
-  .nav__link-label {
-    font-size: medium !important;
-  }
+  display: none;
+}
 
-  .nav-group__content > * {
-    margin-bottom: 12px;
-  }
+html[data-theme='light'] .dark-mode-image {
+  display: none;
+}
 
-  .nav-group__toggle {
-    margin-bottom: 12px;
-  }
+#field-email,
+#field-password,
+#field-confirmPassword {
+  border-radius: 8px;
+}
 
-  .nav__link-indicator {
-    width: 6px;
-  }
+.btn {
+  border-radius: 8px;
+}
+
+/* MUST stay global – cannot be scoped */
+@font-face {
+  font-family: 'Dana';
+  font-style: normal;
+  font-weight: 200 700;
+  src: url('/fonts/Dana-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Dana';
+  font-style: normal;
+  font-weight: 600;
+  src: url('/fonts/Dana-DemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Dana';
+  font-style: normal;
+  font-weight: 500;
+  src: url('/fonts/Dana-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Dana';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/Dana-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Dana';
+  font-style: normal;
+  font-weight: 300;
+  src: url('/fonts/Dana-Light.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Dana';
+  font-style: normal;
+  font-weight: 200;
+  src: url('/fonts/Dana-Thin.woff2') format('woff2');
+}
+
+/* Apply Dana font for Persian content only in Payload admin panel */
+/* Target html and body when lang is fa */
+html[lang='fa'],
+html[lang='fa'] body,
+body[lang='fa'] {
+  font-family: 'Dana', sans-serif !important;
+}
+
+/* Target all elements within the admin panel when Persian is active */
+html[lang='fa'] *,
+html[lang='fa'] body *,
+body[lang='fa'] * {
+  font-family: 'Dana', sans-serif !important;
+}
+
+/* Specifically target Payload admin panel elements */
+html[lang='fa'] #app,
+html[lang='fa'] #app *,
+html[lang='fa'] .template-default,
+html[lang='fa'] .template-default *,
+html[lang='fa'] .payload-admin,
+html[lang='fa'] .payload-admin * {
+  font-family: 'Dana', sans-serif !important;
+}
+
+/* Target common Payload UI elements */
+html[lang='fa'] button,
+html[lang='fa'] input,
+html[lang='fa'] select,
+html[lang='fa'] textarea,
+html[lang='fa'] label,
+html[lang='fa'] span,
+html[lang='fa'] div,
+html[lang='fa'] p,
+html[lang='fa'] h1,
+html[lang='fa'] h2,
+html[lang='fa'] h3,
+html[lang='fa'] h4,
+html[lang='fa'] h5,
+html[lang='fa'] h6,
+html[lang='fa'] a,
+html[lang='fa'] li,
+html[lang='fa'] td,
+html[lang='fa'] th {
+  font-family: 'Dana', sans-serif !important;
+}
+
+.nav__link-label {
+  font-size: medium !important;
+}
+
+.nav-group__content > * {
+  margin-bottom: 12px;
+}
+
+.nav-group__toggle {
+  margin-bottom: 12px;
+}
+
+.nav__link-indicator {
+  width: 8px;
+  background-color: #00c0fe;
+}
+
+.nav__link:hover {
+  color: #00c0fe;
+  text-decoration: none;
+}
