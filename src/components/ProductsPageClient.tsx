@@ -1,9 +1,8 @@
 'use client'
 
-import { detectSiteFromUrl, type Site } from '@/domain/product/site'
 import type { ProductLink, Setting } from '@/payload-types'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import BrandsSelect from './BrandsSelect'
 import CategorySelect from './CategorySelect'
 import ProductList from './ProductList'
@@ -13,26 +12,32 @@ import SearchInput from './SearchInput'
 interface ProductsPageClientProps {
   initialProducts: ProductLink[]
   settings: Setting
+  // initialFilters?: { q?: string; category?: string; brand?: string } // optional / unused now
 }
 
 export default function ProductsPageClient({ initialProducts, settings }: ProductsPageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const [products, setProducts] = useState<ProductLink[]>(initialProducts)
-  const [isSearching, setIsSearching] = useState(false)
-
   const searchQuery = searchParams.get('q') || ''
-  const selectedCategory = searchParams.get('category') || ''
+  const selectedCategory = searchParams.get('category') ?? undefined
   const selectedBrand = searchParams.get('brand') || ''
+
+  const hasActiveFilters = useMemo(
+    () => !!(searchQuery || selectedCategory || selectedBrand),
+    [searchQuery, selectedCategory, selectedBrand],
+  )
 
   // Helper to update URL params cleanly
   const updateParams = useCallback(
     (updates: Record<string, string | undefined>) => {
       const next = new URLSearchParams(searchParams.toString())
       Object.entries(updates).forEach(([key, value]) => {
-        if (value) next.set(key, value)
-        else next.delete(key)
+        if (value) {
+          next.set(key, value)
+        } else {
+          next.delete(key)
+        }
       })
       router.push(`/products?${next.toString()}`)
     },
@@ -47,74 +52,11 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
     [updateParams, searchQuery],
   )
 
-  // Re-fetch when filters change
-  useEffect(() => {
-    // Reset to initial products when no filters are active
-    if (!searchQuery && !selectedCategory && !selectedBrand) {
-      setProducts(initialProducts)
-      setIsSearching(false)
-      return
-    }
-
-    let isCurrent = true
-
-    const doSearch = async () => {
-      setIsSearching(true)
-      try {
-        const qs = new URLSearchParams({
-          ...(searchQuery && { q: searchQuery }),
-          ...(selectedCategory && { category: selectedCategory }),
-          ...(selectedBrand && { brand: selectedBrand }),
-        })
-
-        const res = await fetch(`/api/search?${qs}`)
-        if (!res.ok) throw new Error(`Search failed: ${res.status}`)
-
-        const data = await res.json()
-        const searchResults = (data.docs || []) as ProductLink[]
-
-        const normalized = searchResults.map((product) => {
-          const fixedUrls = (product.productUrls ?? []).map((entry) => {
-            const normalizedEntry = {
-              ...entry,
-              site: (entry.site ?? detectSiteFromUrl(entry.url ?? '') ?? 'torob') as Site,
-            }
-
-            return {
-              ...normalizedEntry,
-              // No currentPrice here, but if you add other fields later, cast them too
-            }
-          }) satisfies ProductLink['productUrls']
-
-          return {
-            ...product,
-            productUrls: fixedUrls,
-          }
-        })
-
-        if (isCurrent) {
-          setProducts(normalized)
-        }
-      } catch (err) {
-        console.error('Search failed:', err)
-        if (isCurrent) setProducts([])
-      } finally {
-        if (isCurrent) setIsSearching(false)
-      }
-    }
-
-    doSearch()
-
-    return () => {
-      isCurrent = false
-    }
-  }, [searchQuery, selectedCategory, selectedBrand, initialProducts])
-
   return (
     <>
       {/* Filters & Controls */}
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:flex-wrap">
-        <div className="w-full md:max-w-md">
+        <div className="grow-7">
           <SearchInput
             onSearch={handleSearch}
             value={searchQuery}
@@ -122,14 +64,14 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
           />
         </div>
 
-        <div className="w-full md:w-56">
+        <div className="w-full md:w-48 grow-3">
           <CategorySelect
             value={selectedCategory}
             onChange={(cat) => updateParams({ category: cat || undefined })}
           />
         </div>
 
-        <div className="w-full md:w-56">
+        <div className="w-full md:w-48 grow-3">
           <BrandsSelect
             value={selectedBrand}
             onChange={(brand) => updateParams({ brand: brand || undefined })}
@@ -137,22 +79,189 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
         </div>
 
         <div className="flex items-center gap-3">
-          <RefreshCategoryButton category={selectedCategory} brand={selectedBrand} />
+          <RefreshCategoryButton category={selectedCategory ?? ''} brand={selectedBrand} />
         </div>
       </div>
 
-      {/* Content */}
-      {isSearching ? (
-        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-gray-600" />
-          <p className="mt-4">در حال بارگذاری...</p>
+      {/* Content – always use server-provided (filtered) products */}
+      {initialProducts.length === 0 && hasActiveFilters ? (
+        <div className="text-center py-16 text-gray-500">
+          <p className="text-lg">هیچ محصولی با فیلترهای انتخاب‌شده یافت نشد</p>
+          <p className="mt-2 text-sm">فیلترها را تغییر دهید یا همه دسته‌بندی‌ها را انتخاب کنید</p>
         </div>
       ) : (
-        <ProductList products={products} settings={settings} />
+        <ProductList products={initialProducts} settings={settings} />
       )}
     </>
   )
 }
+
+// 'use client'
+
+// import { detectSiteFromUrl, type Site } from '@/domain/product/site'
+// import type { ProductLink, Setting } from '@/payload-types'
+// import { useRouter, useSearchParams } from 'next/navigation'
+// import { useCallback, useEffect, useMemo, useState } from 'react'
+// import BrandsSelect from './BrandsSelect'
+// import CategorySelect from './CategorySelect'
+// import ProductList from './ProductList'
+// import RefreshCategoryButton from './RefreshCategoryButton'
+// import SearchInput from './SearchInput'
+
+// interface ProductsPageClientProps {
+//   initialProducts: ProductLink[]
+//   settings: Setting
+// }
+
+// export default function ProductsPageClient({ initialProducts, settings, initialFilters }: ProductsPageClientProps) {
+//   const router = useRouter()
+//   const searchParams = useSearchParams()
+
+//   const searchQuery = searchParams.get('q') || ''
+//   // const selectedCategory = searchParams.get('category') || ''
+//   const rawCategory = searchParams.get('category')
+//   const selectedCategory = rawCategory === null ? undefined : rawCategory
+//   const selectedBrand = searchParams.get('brand') || ''
+
+//   const hasFilters = useMemo(
+//     () => !!(searchQuery || selectedCategory || selectedBrand),
+//     [searchQuery, selectedCategory, selectedBrand],
+//   )
+
+//   const [products, setProducts] = useState<ProductLink[]>(initialProducts)
+//   const [isSearching, setIsSearching] = useState(false)
+
+//   // Helper to update URL params cleanly
+//   const updateParams = useCallback(
+//     (updates: Record<string, string | undefined>) => {
+//       const next = new URLSearchParams(searchParams.toString())
+//       Object.entries(updates).forEach(([key, value]) => {
+//         if (value) next.set(key, value)
+//         else next.delete(key)
+//       })
+//       router.push(`/products?${next.toString()}`)
+//     },
+//     [router, searchParams],
+//   )
+
+//   const handleSearch = useCallback(
+//     (query: string) => {
+//       if (query.trim() === searchQuery.trim()) return
+//       updateParams({ q: query || undefined })
+//     },
+//     [updateParams, searchQuery],
+//   )
+
+//   // Re-fetch when filters change
+//   useEffect(() => {
+//     // Reset to initial products when no filters are active
+//     if (!searchQuery && !selectedCategory && !selectedBrand) {
+//       setProducts(initialProducts)
+//       setIsSearching(false)
+//       return
+//     }
+
+//     let isCurrent = true
+
+//     const doSearch = async () => {
+//       setIsSearching(true)
+//       try {
+//         const qs = new URLSearchParams({
+//           ...(searchQuery && { q: searchQuery }),
+//           ...(selectedCategory && { category: selectedCategory }),
+//           ...(selectedBrand && { brand: selectedBrand }),
+//         })
+
+//         const res = await fetch(`/api/search?${qs}`)
+//         if (!res.ok) throw new Error(`Search failed: ${res.status}`)
+
+//         const data = await res.json()
+//         const searchResults = (data.docs || []) as ProductLink[]
+
+//         const normalized = searchResults.map((product) => {
+//           const fixedUrls = (product.productUrls ?? []).map((entry) => {
+//             const normalizedEntry = {
+//               ...entry,
+//               site: (entry.site ?? detectSiteFromUrl(entry.url ?? '') ?? 'torob') as Site,
+//             }
+
+//             return {
+//               ...normalizedEntry,
+//               // No currentPrice here, but if you add other fields later, cast them too
+//             }
+//           }) satisfies ProductLink['productUrls']
+
+//           return {
+//             ...product,
+//             productUrls: fixedUrls,
+//           }
+//         })
+
+//         if (isCurrent) {
+//           setProducts(normalized)
+//         }
+//       } catch (err) {
+//         console.error('Search failed:', err)
+//         if (isCurrent) setProducts([])
+//       } finally {
+//         if (isCurrent) setIsSearching(false)
+//       }
+//     }
+
+//     doSearch()
+
+//     return () => {
+//       isCurrent = false
+//     }
+//   }, [hasFilters, searchQuery, selectedCategory, selectedBrand, initialProducts])
+
+//   return (
+//     <>
+//       {/* Filters & Controls */}
+//       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:flex-wrap">
+//         <div className="w-full md:max-w-md">
+//           <SearchInput
+//             onSearch={handleSearch}
+//             value={searchQuery}
+//             placeholder="جستجو بر اساس نام یا شناسه ..."
+//           />
+//         </div>
+
+//         <div className="w-full md:w-56">
+//           <CategorySelect
+//             value={selectedCategory}
+//             onChange={(cat) => updateParams({ category: cat || undefined })}
+//           />
+//         </div>
+
+//         <div className="w-full md:w-56">
+//           <BrandsSelect
+//             value={selectedBrand}
+//             onChange={(brand) => updateParams({ brand: brand || undefined })}
+//           />
+//         </div>
+
+//         <div className="flex items-center gap-3">
+//           <RefreshCategoryButton category={selectedCategory ?? ''} brand={selectedBrand} />
+//         </div>
+//       </div>
+
+//       {/* Content */}
+//       {hasFilters ? (
+//         isSearching ? (
+//           <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+//             <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-gray-600" />
+//             <p className="mt-4">در حال بارگذاری...</p>
+//           </div>
+//         ) : (
+//           <ProductList products={products} settings={settings} />
+//         )
+//       ) : (
+//         <ProductList products={initialProducts} settings={settings} />
+//       )}
+//     </>
+//   )
+// }
 
 // 'use client'
 

@@ -10,7 +10,14 @@ const CoolLogo = () => {
     if (!svgRef.current) return
 
     const ctx = gsap.context(() => {
+      const svg = svgRef.current!
       const paths = svgRef.current!.querySelectorAll<SVGPathElement>('path')
+
+      // 🔹 IMPORTANT: rotate around center
+      gsap.set(svg, {
+        transformOrigin: '50% 50%',
+        transformBox: 'view-box',
+      })
 
       paths.forEach((path) => {
         const length = path.getTotalLength()
@@ -37,6 +44,13 @@ const CoolLogo = () => {
             stagger: 0.05,
           })
         },
+      })
+
+      // 🔹 smooth rotation (independent, clean)
+      gsap.to(svg, {
+        rotation: 360,
+        duration: 2.0,
+        ease: 'power2.inOut',
       })
     }, svgRef)
 

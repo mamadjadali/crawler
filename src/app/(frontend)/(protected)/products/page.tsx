@@ -14,19 +14,58 @@ export const metadata = {
   description: 'View and manage product prices from Torob.com',
 }
 
-export default async function ProductsPage() {
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const params = await searchParams
+
+  const q = typeof params.q === 'string' ? params.q.trim() : ''
+  const category = typeof params.category === 'string' ? params.category : undefined
+  const brand = typeof params.brand === 'string' ? params.brand : undefined
+
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
-  const { docs: products } = await payload.find({
-    collection: 'product-links',
-    where: {
-      or: [{ disable: { equals: false } }, { disable: { exists: false } }],
-    },
-    sort: '-createdAt',
-    limit: 200,
-    depth: 1,
-  })
+  // Decide which query to run
+  let products: ProductLink[] = []
+
+  if (q || category || brand) {
+    // Use your existing /api/search logic — but call it internally
+    // Option A: duplicate logic here (not ideal but works)
+    // Option B: extract shared logic to a function/service
+    // Option C: call fetch('/api/search?...') — but avoid fetch in RSC if possible
+
+    const qs = new URLSearchParams()
+    if (q) qs.set('q', q)
+    if (category) qs.set('category', category)
+    if (brand) qs.set('brand', brand)
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/search?${qs}`,
+      {
+        cache: 'no-store', // or force-dynamic if needed
+      },
+    )
+
+    if (res.ok) {
+      const data = await res.json()
+      products = (data.docs || []) as ProductLink[]
+    }
+  } else {
+    // No filters → get recent products like before
+    const { docs } = await payload.find({
+      collection: 'product-links',
+      where: {
+        or: [{ disable: { equals: false } }, { disable: { exists: false } }],
+      },
+      sort: '-createdAt',
+      limit: 300,
+      depth: 1,
+    })
+    products = docs as ProductLink[]
+  }
 
   const settings = await getSettings()
 
@@ -79,7 +118,7 @@ export default async function ProductsPage() {
           <div className="flex items-center justify-between border border-gray-300 rounded-[10px] p-2 text-base text-gray-400">
             کل محصولات
             <span className="font-semibold text-xl text-neutral-700">
-              {new Intl.NumberFormat('fa-IR').format(products.length)}
+              {new Intl.NumberFormat('fa-IR').format(visibleProducts.length)}
             </span>
           </div>
         </div>
@@ -92,12 +131,151 @@ export default async function ProductsPage() {
             </div>
           }
         >
-          <ProductsPageClient initialProducts={visibleProducts} settings={settings} />
+          <ProductsPageClient
+            initialProducts={visibleProducts}
+            settings={settings}
+            // initialFilters={{ q, category, brand }}
+          />
         </Suspense>
       </div>
     </div>
   )
 }
+
+// import EditableAED from '@/components/AedGlobal'
+// import EditableFee from '@/components/FeeGlobal'
+// import ProductsPageClient from '@/components/ProductsPageClient'
+// import EditableUSD from '@/components/UsdGlobal'
+// import { detectSiteFromUrl, type Site } from '@/domain/product/site'
+// import { getSettings } from '@/lib/utils/getSettings'
+// import { ProductLink } from '@/payload-types'
+// import config from '@/payload.config'
+// import { getPayload } from 'payload'
+// import { Suspense } from 'react'
+
+// export const metadata = {
+//   title: 'Products - Price Tracker',
+//   description: 'View and manage product prices from Torob.com',
+// }
+
+// export default async function ProductsPage({
+//   searchParams,
+// }: {
+//   searchParams: { [key: string]: string | string[] | undefined }
+// }) {
+//   const payloadConfig = await config
+//   const payload = await getPayload({ config: payloadConfig })
+
+//   const q = typeof searchParams.q === 'string' ? searchParams.q.trim() : ''
+//   const category = typeof searchParams.category === 'string' ? searchParams.category : undefined
+//   const brand = typeof searchParams.brand === 'string' ? searchParams.brand : undefined
+
+//   // Decide which query to run
+//   let products: ProductLink[] = []
+
+//   if (q || category || brand) {
+//     // Use your existing /api/search logic — but call it internally
+//     // Option A: duplicate logic here (not ideal but works)
+//     // Option B: extract shared logic to a function/service
+//     // Option C: call fetch('/api/search?...') — but avoid fetch in RSC if possible
+
+//     const qs = new URLSearchParams()
+//     if (q) qs.set('q', q)
+//     if (category) qs.set('category', category)
+//     if (brand) qs.set('brand', brand)
+
+//     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/search?${qs}`, {
+//       cache: 'no-store', // or force-dynamic if needed
+//     })
+
+//     if (res.ok) {
+//       const data = await res.json()
+//       products = (data.docs || []) as ProductLink[]
+//     }
+//   } else {
+//     // No filters → get recent products like before
+//     const { docs } = await payload.find({
+//       collection: 'product-links',
+//       where: {
+//         or: [{ disable: { equals: false } }, { disable: { exists: false } }],
+//       },
+//       sort: '-createdAt',
+//       limit: 300,
+//       depth: 1,
+//     })
+//     products = docs as ProductLink[]
+//   }
+
+//   const settings = await getSettings()
+
+//   const transformedProducts = products.map((product: ProductLink): ProductLink => {
+//     // Normalize productUrls (keep dates as strings)
+//     // Normalize productUrls
+//     const safeProductUrls = (product.productUrls ?? []).map((entry) => {
+//       const normalizedEntry = {
+//         ...entry,
+//         url: entry.url ?? '',
+//         site: (entry.site ?? detectSiteFromUrl(entry.url ?? '') ?? 'torob') as Site,
+//         currentPrice: entry.currentPrice,
+//         lastCrawledAt: entry.lastCrawledAt ?? null,
+//         crawlStatus: (entry.crawlStatus ?? 'pending') as 'pending' | 'success' | 'failed',
+//         crawlError: entry.crawlError ?? null,
+//         priceHistory: (entry.priceHistory ?? []).map((item) => ({
+//           ...item,
+//           price: item.price ?? 0,
+//           crawledAt: item.crawledAt ?? null,
+//         })),
+//       }
+
+//       // Force TS to see currentPrice as number | null (no undefined)
+//       return {
+//         ...normalizedEntry,
+//         currentPrice: normalizedEntry.currentPrice as number | null,
+//       }
+//     }) satisfies ProductLink['productUrls']
+
+//     // Return original + overrides
+//     return {
+//       ...product, // keeps createdAt, updatedAt, etc.
+//       name: product.name || 'بدون نام',
+//       disable: product.disable ?? false,
+//       productUrls: safeProductUrls,
+//     }
+//   })
+
+//   // Filter visible (disable !== true)
+//   const visibleProducts = transformedProducts.filter((p) => p.disable !== true)
+
+//   return (
+//     <div className="min-h-screen bg-white py-8">
+//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+//         {/* Stats */}
+//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+//           <EditableUSD settings={settings} />
+//           <EditableAED settings={settings} />
+//           <EditableFee settings={settings} />
+//           <div className="flex items-center justify-between border border-gray-300 rounded-[10px] p-2 text-base text-gray-400">
+//             کل محصولات
+//             <span className="font-semibold text-xl text-neutral-700">
+//               {new Intl.NumberFormat('fa-IR').format(products.length)}
+//             </span>
+//           </div>
+//         </div>
+
+//         <Suspense
+//           fallback={
+//             <div className="text-center py-12">
+//               <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-gray-700" />
+//               <p className="mt-4 text-gray-700">در حال بارگذاری...</p>
+//             </div>
+//           }
+//         >
+//           <ProductsPageClient initialProducts={visibleProducts} settings={settings} initialFilters={{ q, category, brand }}/>
+//         </Suspense>
+//       </div>
+//     </div>
+//   )
+// }
 
 // import EditableAED from '@/components/AedGlobal'
 // import EditableFee from '@/components/FeeGlobal'

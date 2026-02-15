@@ -85,7 +85,7 @@ export default function ProductRowDetail({
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
-        <div className="flex flex-col justify-center items-center gap-4 p-4 border border-gray-300 rounded-lg cursor-pointer hover:shadow-md transition">
+        <div className="flex flex-col justify-center overflow-hidden items-center gap-4 p-4 border border-gray-300 rounded-lg cursor-pointer hover:shadow-md transition">
           {/* Product Info */}
           <div className="flex w-full justify-between items-center border-b border-gray-200 pb-2">
             <div className="font-medium text-neutral-700">{name}</div>

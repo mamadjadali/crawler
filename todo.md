@@ -1,9 +1,31 @@
 # Todo List
 
+Ara v2.0 - v2.9 -------------------------------------------------------------------------------
+
+- [] Add Profit Percentage to AED (Rahimi REQ)
+- [] Add Brandig , Favicon ...
+- [] Modify -> Better Looking Changelog -> Add Persian Date
+- [] Adding Disable Products Page (default state to true)
+- [] Sync State Of Products Detail and Product Sheet
+- [] Deploy Cron To Production
+- [] Auth Check on Api
+- [x] Responsive Flex Desing on Top Page Client
+- [x] Fix Category default fetch first over url refresh
+- [x] Server Side Query , Boost Improvment And Skeleton
+- [x] overflow hidden on Row detail
+- [x] Increase Total Collection return
+- [x] increase Refresh category limit t0 80
+- [x] Resources MOdification -> md:col-span-4 col-span-2 lg:col-span-6
+- [x] New Logo Motion
+
+Crawlers : - [] Janeby.com - [] Janebi - [] Shahr Computer - [] kalatik - [] GSM - [] pspro - [] Hamrah Tel - [] Tarhan it - [] item sara - [] fartak - [] gooshi plaza - [] digi center - [] cook mobile - [] taamirat 118
+
+- [] Past Versian Cleanups
+- [] Add PWA
+
 Hands On Priority -----------------------------------------------------------------------------
 
-- [] Responsive Design on Row Detail
-- [] Auth Check on Api
+- [x] Responsive Design on Row Detail
 - [x] Fix Scroll Area on ChangeLog
 - [x] Add do not crawl Hide (Hide & do not crawl)
 - [x] Add Client Side Hide
@@ -34,6 +56,7 @@ Hands On Priority --------------------------------------------------------------
 
 Feature ---------------------------------------------------------------------------------------
 
+- [] Fix Pupptier Cold Start On Each Deploy
 - [] Reduce Category Update by -5min
 - [] API Call By Go for Every Category
 - [] Each user has view perferences ( clients collection add on)
@@ -42,9 +65,9 @@ Feature ------------------------------------------------------------------------
 - [] Impelment AED Price Crawle
 - [] Handel Persian Navigation Err
 - [] Impelment Gold Price Crawle
-- [x] Limitation On Price History
 - [] Filter Options in Product list : lowest , highest ,...
 - [] Filter for products that are not upadeted in 1 day (نیاز به بروز رسانی)
+- [x] Limitation On Price History
 - [x] in app changelog system for updates and products changes (relation with users)
 
 Crawlers---------------------------------------------------------------------------------------
@@ -64,18 +87,5 @@ Crawlers------------------------------------------------------------------------
 - [x] it home --> Cheerio
 - [x] Xiaomi 360 --> Cheerio
 - [x] Positron
-- [] Janeby.com
-- [] Shahr Computer
-- [] kalatik
-- [] GSM
-- [] pspro
-- [] Hamrah Tel
-- [] Tarhan it
-- [] emprator store
-- [] item sara
-- [] fartak
-- [] gooshi plaza
-- [] digi center
-- [] cook mobile
-- [] taamirat 118
-- [] royal part
+- [x] emprator store
+- [x] royal part

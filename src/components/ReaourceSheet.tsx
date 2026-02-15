@@ -30,7 +30,7 @@ export default function ResourceSheet({ resource }: ResourceSheetProps) {
           <SheetTitle className="text-white">منـابعـ</SheetTitle>
         </SheetHeader>
 
-        <Card className="border-none shadow-none grid grid-cols-3 justify-center items-center gap-6">
+        <Card className="border-none shadow-none grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 justify-center items-center gap-6">
           {source.length === 0 && (
             <p className="text-sm text-muted-foreground">منـابعـ وجود ندارد.</p>
           )}

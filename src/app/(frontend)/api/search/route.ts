@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
       collection: 'product-links',
       where,
       depth: 1,
-      limit: 100,
+      limit: 300,
       sort: '-createdAt',
     })
 

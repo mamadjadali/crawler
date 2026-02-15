@@ -3,7 +3,7 @@ import { GlobalConfig } from 'payload'
 export const Resources: GlobalConfig = {
   slug: 'resources',
   label: {
-    en: 'resources',
+    en: 'Resources',
     fa: 'منابعــ',
   },
   fields: [

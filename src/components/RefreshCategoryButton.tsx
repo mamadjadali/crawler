@@ -59,7 +59,7 @@ export default function RefreshCategoryButton({ category, brand }: RefreshCatego
         body: JSON.stringify({
           category,
           brand: brand || undefined,
-          limit: 50,
+          limit: 80,
         }),
       })
 
