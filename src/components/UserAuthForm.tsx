@@ -77,7 +77,7 @@ export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLD
         {/* ایمیل */}
 
         <div className="grid gap-1">
-          <Label dir="rtl" htmlFor="email" className="mb-1">
+          <Label dir="rtl" htmlFor="email" className="mb-1 text-[#212A72]">
             {/* ایمیل */}
             نام کاربری
           </Label>
@@ -105,7 +105,7 @@ export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLD
         {/* رمز عبور */}
 
         <div className="grid gap-1">
-          <Label dir="rtl" htmlFor="password" className="mb-1">
+          <Label dir="rtl" htmlFor="password" className="mb-1 text-[#212A72]">
             رمز عبور
           </Label>
 
@@ -149,7 +149,7 @@ export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLD
 
         <Button
           type="submit"
-          className="bg-neutral-700 w-full inline-flex cursor-pointer mt-2 text-white rounded-lg"
+          className="bg-linear-to-l from-[#009FE3] via-[#006699] to-[#212A72] w-full inline-flex cursor-pointer mt-2 text-white rounded-lg"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}

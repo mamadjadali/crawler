@@ -108,16 +108,16 @@ export default async function ProductsPage({
   const visibleProducts = transformedProducts.filter((p) => p.disable !== true)
 
   return (
-    <div className="min-h-screen bg-white py-8">
+    <div className="min-h-screen bg-[#e6f3ff] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           <EditableUSD settings={settings} />
           <EditableAED settings={settings} />
           <EditableFee settings={settings} />
-          <div className="flex items-center justify-between border border-gray-300 rounded-[10px] p-2 text-base text-gray-400">
-            کل محصولات
-            <span className="font-semibold text-xl text-neutral-700">
+          <div className="flex items-center font-medium justify-between bg-white border-none rounded-[10px] p-2 text-base text-[#212a72]">
+            کل محصولاتـــ
+            <span className="font-semibold text-xl text-[#212a72]">
               {new Intl.NumberFormat('fa-IR').format(visibleProducts.length)}
             </span>
           </div>
@@ -125,9 +125,9 @@ export default async function ProductsPage({
 
         <Suspense
           fallback={
-            <div className="text-center py-12">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-gray-700" />
-              <p className="mt-4 text-gray-700">در حال بارگذاری...</p>
+            <div className="my-40 flex flex-col items-center gap-4 text-sm text-gray-500">
+              <div className="h-14 w-14 animate-spin rounded-full border-4 border-gray-300 border-t-[#212a72]" />
+              در حال بارگذاری...
             </div>
           }
         >

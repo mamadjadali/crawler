@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Changelog } from '@/payload-types'
-import { BellDot } from 'lucide-react'
+import { BiSolidBellRing } from 'react-icons/bi'
 import { ScrollArea } from './ui/scroll-area'
 
 interface ChangelogSheetProps {
@@ -18,27 +18,41 @@ export default function ChangelogSheet({ changelog }: ChangelogSheetProps) {
       <SheetTrigger asChild>
         <Button
           variant="outline"
-          className="border-gray-300 rounded-lg cursor-pointer w-auto shadow-none"
+          className="bg-[#E6F3FF] border-none rounded-lg cursor-pointer w-auto shadow-none"
         >
-          <BellDot className="size-4.5 text-neutral-500" />
+          <BiSolidBellRing className="size-4.5 text-[#212A72]" />
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="left" className="w-95 sm:w-105 bg-white p-6">
+      <SheetContent side="left" className="w-95 sm:w-105 bg-[#E6F3FF] p-6">
         <SheetHeader>
-          <SheetTitle>تغییراتــ</SheetTitle>
+          <SheetTitle className="text-[#212A72]">تغییراتــ</SheetTitle>
         </SheetHeader>
 
-        <ScrollArea dir="rtl" className="border-none shadow-none h-[70vh] sm:h-[80vh]">
+        <ScrollArea dir="rtl" className="border-none shadow-none h-[90vh] sm:h-[80vh]">
           {logs.length === 0 && (
             <p className="text-sm text-muted-foreground">تغییراتــی وجود ندارد.</p>
           )}
 
           {logs.map((item) => (
-            <div key={item.id ?? item.title} className="p-3 mb-2 border border-gray-300 rounded-xl">
-              <h4 className="text-sm text-neutral-700 font-semibold ">{item.title}</h4>
+            <div key={item.id ?? item.title} className="p-3 mb-2 bg-white rounded-xl">
+              {item.date && (
+                <span className="text-sm text-gray-600">
+                  {new Date(item.date).toLocaleDateString('fa-IR', {
+                    year: 'numeric',
+                    month: 'long', // → بهمن
+                    day: 'numeric',
+                    // weekday: 'long', // → دوشنبه (optional)
+                  })}
+                </span>
+              )}
+              <h4 className="text-sm text-[#212A72] font-semibold ">{item.title}</h4>
 
-              {item.description && <p className="text-sm text-gray-500">{item.description}</p>}
+              {item.description && (
+                <p className="text-sm text-justify text-gray-500 whitespace-pre-line">
+                  {item.description}
+                </p>
+              )}
             </div>
           ))}
         </ScrollArea>

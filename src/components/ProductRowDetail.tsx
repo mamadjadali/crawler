@@ -7,7 +7,7 @@ import { Setting } from '@/payload-types'
 import { ProductLink } from '@/payload-types' // use full type
 import { DollarSign, MoveDown } from 'lucide-react'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ProductSheet from './ProductSheet'
 import { Dirham } from './icons'
 import DisableProductButton from './DisableProduct'
@@ -35,41 +35,66 @@ export default function ProductRowDetail({
   usd,
   aed,
   settings,
-  productUrls = [],
-  lowestPrice = null,
-  lastCrawledAt = null,
+  productUrls: initialProductUrls = [],
+  lowestPrice,
+  lastCrawledAt,
   // crawlStatus = 'pending',
   onProductUpdate,
 }: ProductRowProps) {
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [urlsState, setUrlsState] = useState(productUrls)
+  const [urlsState, setUrlsState] = useState(initialProductUrls)
   const [usdValue, setUsdValue] = useState(usd ?? 0)
   const [aedValue, setAedValue] = useState(aed ?? 0)
   const [visible, setVisible] = useState(true)
 
-  if (!visible) return null
+  // Sync local state with props (when parent updates)
+  useEffect(() => {
+    setUrlsState(initialProductUrls)
+    setUsdValue(usd ?? 0)
+    setAedValue(aed ?? 0)
+  }, [initialProductUrls, usd, aed])
 
-  // Use DB aggregate for lowest price (no recalculate)
-  const _displayPrice = lowestPrice
+  // // Use DB aggregate for lowest price (no recalculate)
+  // const _displayPrice = lowestPrice
+  // ─── Compute derived crawl time from current urlsState ───
+  const mostRecentCrawledAt = useMemo(() => {
+    if (!urlsState?.length) return null
+
+    const validDates = urlsState
+      .map((u) => u.lastCrawledAt)
+      .filter((d): d is string => typeof d === 'string' && d.trim() !== '')
+
+    if (!validDates.length) return null
+
+    const timestamps = validDates.map((d) => new Date(d).getTime())
+    const maxTs = Math.max(...timestamps)
+
+    // Protect against invalid dates
+    if (isNaN(maxTs) || maxTs <= 0) return null
+
+    return new Date(maxTs)
+  }, [urlsState])
+
+  const displayLastCrawledAt = mostRecentCrawledAt
 
   // Find site with lowest price (from urls)
   const lowestPriceSite =
-    productUrls.reduce<ProductLink['productUrls'][number] | null>((lowest, current) => {
+    urlsState.reduce<ProductLink['productUrls'][number] | null>((lowest, current) => {
       if (current.currentPrice == null || current.crawlError) return lowest
       if (!lowest || (current.currentPrice ?? Infinity) < (lowest.currentPrice ?? Infinity))
         return current
       return lowest
     }, null)?.site ?? null
 
-  // Use DB aggregate for last crawled (parse for display)
-  const displayLastCrawledAt = lastCrawledAt ? new Date(lastCrawledAt) : null
+  // // Use DB aggregate for last crawled (parse for display)
+  // const displayLastCrawledAt = lastCrawledAt ? new Date(lastCrawledAt) : null
 
   // Unique sites
-  const _sites = [...new Set(productUrls.map((u) => u.site))]
+  const _sites = [...new Set(urlsState.map((u) => u.site))]
 
-  const mobile140Entry = productUrls.find((u) => toSiteKey(u.site) === 'mobile140')
+  const mobile140Entry = urlsState.find((u) => toSiteKey(u.site) === 'mobile140')
 
-  const otherEntries = productUrls.filter((u) => toSiteKey(u.site) !== 'mobile140')
+  const otherEntries = urlsState.filter((u) => toSiteKey(u.site) !== 'mobile140')
 
   const sortedCurrentPrices = [...otherEntries].sort((a, b) => {
     const aUnavailable = a.currentPrice == null || a.crawlError
@@ -82,13 +107,43 @@ export default function ProductRowDetail({
     return a.currentPrice! - b.currentPrice!
   })
 
+  // Handler for USD change (local + propagate)
+  const handleUsdChange = (newUsd: number) => {
+    setUsdValue(newUsd)
+    onProductUpdate?.({
+      id,
+      name,
+      productId,
+      productUrls: urlsState,
+      usd: newUsd,
+      aed: aedValue,
+      // Add other fields as needed
+    } as ProductLink)
+  }
+
+  // Handler for AED change (local + propagate)
+  const handleAedChange = (newAed: number) => {
+    setAedValue(newAed)
+    onProductUpdate?.({
+      id,
+      name,
+      productId,
+      productUrls: urlsState,
+      usd: usdValue,
+      aed: newAed,
+      // Add other fields as needed
+    } as ProductLink)
+  }
+
+  if (!visible) return null
+
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
-        <div className="flex flex-col justify-center overflow-hidden items-center gap-4 p-4 border border-gray-300 rounded-lg cursor-pointer hover:shadow-md transition">
+        <div className="flex flex-col justify-center overflow-hidden items-center gap-4 bg-white p-4 rounded-lg cursor-pointer hover:shadow-md transition">
           {/* Product Info */}
           <div className="flex w-full justify-between items-center border-b border-gray-200 pb-2">
-            <div className="font-medium text-neutral-700">{name}</div>
+            <div className="font-medium text-[#212a72]">{name}</div>
             <div className="font-medium text-green-500">
               <span className="ml-2 text-sm text-neutral-400">پایین‌ترین قیمتــ :</span>
               {getSiteLabel(toSiteKey(lowestPriceSite))}
@@ -113,7 +168,7 @@ export default function ProductRowDetail({
                     const diffMinutes = Math.floor(diffMs / (1000 * 60))
 
                     let className =
-                      'border py-1 text-center px-4 rounded-lg text-xs flex items-center border-gray-400 text-neutral-700'
+                      'py-2 text-center px-4 rounded-lg text-xs flex items-center bg-[#e6f3ff] border-none text-neutral-700'
                     let icon: React.ReactNode = null
 
                     if (diffMinutes <= 10) {
@@ -164,17 +219,17 @@ export default function ProductRowDetail({
           </div>
           <div className="w-full items-center flex justify-between">
             <div className="flex flex-col gap-4 items-start text-neutral-700">
-              {usd != null ? (
+              {usdValue !== 0 && usdValue != null ? (
                 <div className="ml-2 flex items-center">
                   <span className="text-sm text-neutral-500">
-                    قیمت دلاری: <b>{usd.toLocaleString('fa-IR')}</b>
+                    قیمت دلاری: <b>{usdValue.toLocaleString('fa-IR')}</b>
                   </span>
                   <DollarSign className="text-green-700 size-3" />
                 </div>
-              ) : aed != null ? (
+              ) : aedValue !== 0 && aedValue != null ? (
                 <div className="ml-2 flex items-center">
                   <span className="text-sm text-neutral-500">
-                    قیمت درهـمی: <b>{aed.toLocaleString('fa-IR')}</b>
+                    قیمت درهـمی: <b>{aedValue.toLocaleString('fa-IR')}</b>
                   </span>
                   <Dirham className="text-pink-700 size-4" />
                 </div>
@@ -185,13 +240,17 @@ export default function ProductRowDetail({
                   قیمت تمام شده:{' '}
                   <b>
                     {settings && settings.importFee != null
-                      ? usd != null && settings.usdprice != null
-                        ? (usd * settings.usdprice * (1 + settings.importFee / 100)).toLocaleString(
-                            'fa-IR',
-                          )
-                        : aed != null && settings.aedprice != null
-                          ? (
-                              aed *
+                      ? usdValue != null && usdValue > 0 && settings.usdprice != null
+                        ? // USD branch – only if usdValue is positive
+                          (
+                            usdValue *
+                            settings.usdprice *
+                            (1 + settings.importFee / 100)
+                          ).toLocaleString('fa-IR')
+                        : aedValue != null && aedValue > 0 && settings.aedprice != null
+                          ? // AED branch – only if aedValue is positive
+                            (
+                              aedValue *
                               settings.aedprice *
                               (1 + settings.importFee / 100)
                             ).toLocaleString('fa-IR')
@@ -261,8 +320,8 @@ export default function ProductRowDetail({
         productImageUrl={productImageUrl}
         usd={usdValue}
         aed={aedValue}
-        onUsdChange={setUsdValue}
-        onAedChange={setAedValue}
+        onUsdChange={handleUsdChange}
+        onAedChange={handleAedChange}
         productUrls={urlsState}
         onUrlsUpdate={(newUrls) => {
           setUrlsState(newUrls)
@@ -274,8 +333,8 @@ export default function ProductRowDetail({
             productId,
             productUrls: newUrls,
             // add other fields you need to preserve/update
-            usd,
-            aed,
+            usd: usdValue, // Use local state (latest)
+            aed: aedValue,
             // ... etc.
           } as ProductLink)
         }}

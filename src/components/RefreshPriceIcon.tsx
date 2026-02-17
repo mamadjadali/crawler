@@ -50,7 +50,7 @@ export default function RefreshPriceIcon({ productId, onRefreshComplete }: Refre
         disabled={loading}
         variant="ghost"
         size="icon"
-        className="h-8 w-8 cursor-pointer"
+        className="h-8 w-8 cursor-pointer text-[#212a72]"
         title="Refresh price"
         aria-label="Refresh price"
       >

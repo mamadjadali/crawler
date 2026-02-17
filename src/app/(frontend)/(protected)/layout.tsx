@@ -30,25 +30,27 @@ export default async function ProtectedLayout({ children }: { children: React.Re
         visibleCategories: client.visibleCategories as Category[] | undefined,
       }}
     >
-      <header className="flex items-center justify-between max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="">
-          <p className="text-2xl font-bold text-neutral-600 mb-2">لیست محصولاتــ</p>
-          <p className="text-neutral-400">مدیریت و ردیابی قیمت محصولاتـ</p>
-        </div>
-        <div className="flex flex-col gap-2 items-center">
-          <UserProfile
-            email={client.email}
-            name={client.username}
-            fullname={client.fullname}
-            role={client.role}
-          />
-          <div className="flex gap-1 w-full items-center justify-between">
-            <ResourceSheet resource={resource} />
-            <ChangelogSheet changelog={changelog} />
+      <section className="w-full bg-[#e6f3ff]">
+        <header className="flex items-center justify-between max-w-7xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="">
+            <p className="text-2xl font-bold text-[#212A72] mb-2">لیست محصولاتــ</p>
+            <p className="text-neutral-400">مدیریت و ردیابی قیمت محصولاتـ</p>
           </div>
-        </div>
-      </header>
+          <div className="flex flex-col gap-2 items-center">
+            <UserProfile
+              email={client.email}
+              name={client.username}
+              fullname={client.fullname}
+              role={client.role}
+            />
+            <div className="flex gap-1 w-full items-center justify-between">
+              <ResourceSheet resource={resource} />
+              <ChangelogSheet changelog={changelog} />
+            </div>
+          </div>
+        </header>
+      </section>
       {children}
     </AuthProvider>
   )

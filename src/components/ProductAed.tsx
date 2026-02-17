@@ -25,7 +25,7 @@ export default function EditableAedProduct({ id, aed, onAedChange }: EditableAED
       setDisplayValue(value)
       setEditing(false)
       onAedChange?.(value)
-      window.location.reload()
+      // window.location.reload()
     } catch (err) {
       console.error(err)
     } finally {
@@ -34,13 +34,13 @@ export default function EditableAedProduct({ id, aed, onAedChange }: EditableAED
   }
 
   return (
-    <div className="w-full flex items-center justify-between bg-transparent border border-pink-700 rounded-[10px] px-2 py-1">
+    <div className="w-full flex items-center justify-between bg-white border-none rounded-[10px] px-2 py-1">
       <div className="text-sm flex items-center gap-2 font-medium text-gray-400">
         <Dirham className="size-4 text-pink-700" />
         قیمت درهـمی
       </div>
 
-      <div className="text-base flex items-center justify-center gap-2 font-bold text-neutral-700">
+      <div className="text-base flex items-center justify-center gap-2 font-bold text-[#212a72]">
         {editing ? (
           <div className="flex items-center gap-2">
             <Input

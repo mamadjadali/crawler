@@ -2,7 +2,7 @@
 
 import type { ProductLink, Setting } from '@/payload-types'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import BrandsSelect from './BrandsSelect'
 import CategorySelect from './CategorySelect'
 import ProductList from './ProductList'
@@ -18,6 +18,16 @@ interface ProductsPageClientProps {
 export default function ProductsPageClient({ initialProducts, settings }: ProductsPageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [isPending, startTransition] = useTransition()
+
+  // Use local state that syncs with prop when it changes
+  const [products, setProducts] = useState(initialProducts)
+
+  // Sync when server sends new data (important after navigation)
+  useEffect(() => {
+    setProducts(initialProducts)
+    console.log('initialProducts updated →', initialProducts.length) // debug
+  }, [initialProducts])
 
   const searchQuery = searchParams.get('q') || ''
   const selectedCategory = searchParams.get('category') ?? undefined
@@ -39,7 +49,9 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
           next.delete(key)
         }
       })
-      router.push(`/products?${next.toString()}`)
+      startTransition(() => {
+        router.push(`/products?${next.toString()}`)
+      })
     },
     [router, searchParams],
   )
@@ -83,14 +95,21 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
         </div>
       </div>
 
-      {/* Content – always use server-provided (filtered) products */}
-      {initialProducts.length === 0 && hasActiveFilters ? (
+      {/* 1️⃣ Loading has top priority */}
+      {isPending ? (
+        <div className="my-40 flex flex-col items-center gap-4 text-sm text-gray-500">
+          <div className="h-14 w-14 animate-spin rounded-full border-4 border-gray-300 border-t-[#212a72]" />
+          در حال جستجو …
+        </div>
+      ) : products.length === 0 && hasActiveFilters ? (
+        /* 2️⃣ Empty state (only when not loading) */
         <div className="text-center py-16 text-gray-500">
           <p className="text-lg">هیچ محصولی با فیلترهای انتخاب‌شده یافت نشد</p>
           <p className="mt-2 text-sm">فیلترها را تغییر دهید یا همه دسته‌بندی‌ها را انتخاب کنید</p>
         </div>
       ) : (
-        <ProductList products={initialProducts} settings={settings} />
+        /* 3️⃣ Normal content */
+        <ProductList products={products} settings={settings} />
       )}
     </>
   )

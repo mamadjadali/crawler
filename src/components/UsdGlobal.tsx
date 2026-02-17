@@ -33,13 +33,13 @@ export default function EditableUSD({ settings }: EditableUSDProps) {
   }
 
   return (
-    <div className="flex items-center justify-between bg-transparent border border-green-700 rounded-[10px] p-2">
-      <div className="text-base flex items-center gap-2 font-medium text-gray-400">
+    <div className="flex items-center justify-between border-none bg bg-white rounded-[10px] p-2">
+      <div className="text-base flex items-center gap-2 font-medium text-[#212a72]">
         <DollarSign className="size-4 text-green-700" />
         دلار
       </div>
 
-      <div className="text-xl flex items-center justify-center gap-2 font-bold text-neutral-700">
+      <div className="text-xl flex items-center justify-center gap-2 font-bold text-[#212a72]">
         {editing ? (
           <div className="flex items-center gap-2">
             <Input

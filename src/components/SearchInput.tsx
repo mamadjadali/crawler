@@ -36,14 +36,14 @@ export default function SearchInput({
 
   return (
     <div className="relative w-full">
-      <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-700" />
+      <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-4.5 text-[#212a72]" />
 
       <Input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="pr-10 pl-10 bg-transparent shadow-none rounded-lg border border-gray-400 text-neutral-700 placeholder:text-sm placeholder:text-gray-500"
+        className="pr-10 pl-10 shadow-none rounded-lg border-none bg-white text-[#212a72] placeholder:text-sm placeholder:text-[#212a72/50]"
         dir="rtl"
       />
 

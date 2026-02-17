@@ -37,6 +37,14 @@ export const Changelog: GlobalConfig = {
           },
           type: 'textarea',
         },
+        {
+          name: 'date',
+          label: {
+            en: 'Date',
+            fa: 'تاریخ',
+          },
+          type: 'date',
+        },
       ],
     },
   ],

@@ -1,7 +1,8 @@
 import React from 'react'
 import './styles.css'
+import type { Metadata } from 'next'
 
-export const metadata = {
+export const metadata: Metadata = {
   description: '',
   title: 'Ara',
 }
@@ -11,7 +12,10 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
 
   return (
     <html lang="fa" dir="rtl">
-      <body>
+      <head>
+        <link rel="manifest" href="/manifest.json"></link>
+      </head>
+      <body className="">
         {/* <Providers> */}
         {/* <ThemeProvider> */}
         <main>{children}</main>

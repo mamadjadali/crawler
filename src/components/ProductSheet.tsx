@@ -180,7 +180,7 @@ export default function ProductSheet({
       <SheetContent
         id="sheet"
         side="right"
-        className="overflow-y-auto p-4 bg-white w-full sm:max-w-lg"
+        className="overflow-y-auto p-4 bg-[#e6f3ff] w-full sm:max-w-lg"
       >
         <SheetHeader>
           <div className="w-full flex items-center justify-center gap-4">
@@ -196,7 +196,7 @@ export default function ProductSheet({
               </div>
             )}
             <div className="w-full flex flex-col gap-2">
-              <SheetTitle className="mb-2 text-neutral-700 text-xl text-left">{name}</SheetTitle>
+              <SheetTitle className="mb-2 text-[#212a72] text-xl text-left">{name}</SheetTitle>
               <div className="flex items-center w-full gap-2">
                 {refreshedProductUrls.length > 0 && (
                   <a
@@ -208,9 +208,9 @@ export default function ProductSheet({
                     <Button
                       variant="default"
                       size="icon"
-                      className="cursor-pointer border border-gray-400 rounded-lg w-full"
+                      className="cursor-pointer border border-[#212a72] hover:bg-white hover:border-none duration-150 rounded-lg w-full"
                     >
-                      <ExternalLink className="size-4" />
+                      <ExternalLink className="size-4 text-[#212a72]" />
                     </Button>
                   </a>
                 )}
@@ -224,7 +224,7 @@ export default function ProductSheet({
                     <Button
                       variant="default"
                       size="icon"
-                      className="cursor-pointer border border-blue-400 rounded-lg w-full"
+                      className="cursor-pointer text-white border-none bg-[#212a72] hover:bg-white hover:text-[#212a72] duration-150 rounded-lg w-full"
                     >
                       <PencilIcon className="size-4" />
                     </Button>
@@ -241,7 +241,7 @@ export default function ProductSheet({
                   <Button
                     variant="default"
                     size="icon"
-                    className="cursor-pointer border text-red-400 border-red-400 rounded-lg w-full"
+                    className="cursor-pointer border border-transparent bg-white text-red-400 hover:border-red-400 duration-150 rounded-lg w-full"
                   >
                     <RefreshCcw className="size-4" />
                     رفــرش تربـــــ
@@ -267,12 +267,12 @@ export default function ProductSheet({
             {lowestPriceInfo && (
               <div
                 className={cn(
-                  'bg-transparent rounded-lg p-4 border transition-colors',
-                  isRecentlyUpdated ? 'border-green-600 bg-green-500/20' : 'border-gray-400',
+                  'bg-transparent rounded-lg p-4 border-white duration-150 transition-colors',
+                  isRecentlyUpdated ? 'border-green-600 bg-green-500/20' : 'bg-white',
                 )}
               >
                 <div className="flex items-center justify-between gap-6">
-                  <span className="text-sm font-medium text-neutral-700 flex items-center gap-2">
+                  <span className="text-sm font-medium text-[#212a72] flex items-center gap-2">
                     پایین ترین قیمت
                     <ChevronsLeft className="size-4 text-green-400" />
                     {getSiteLabel(lowestPriceInfo.site)}
@@ -295,7 +295,7 @@ export default function ProductSheet({
             <RefreshPriceIcon productId={productId} onRefreshComplete={handleRefreshComplete} />
           </div>
           {/* Current Prices List */}
-          <div className="bg-transparent rounded-lg p-4 border border-gray-400">
+          <div className="rounded-lg p-4 border-none bg-white">
             <div className="flex items-center justify-between mb-6">
               <h4 className="text-sm font-medium text-gray-600">قیمت‌های فعلی</h4>
               <Button
@@ -358,7 +358,7 @@ export default function ProductSheet({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 cursor-pointer text-blue-400"
+                            className="h-8 w-8 cursor-pointer text-[#212a72]"
                           >
                             <ExternalLink className="size-4" />
                           </Button>
@@ -382,7 +382,7 @@ export default function ProductSheet({
 
             return (
               <div key={index} className="space-y-4">
-                <div className="bg-transparent rounded-lg p-4 border border-gray-400">
+                <div className="rounded-lg p-4 border-none bg-white">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className={`rounded-lg px-4 py-1 ${siteClass}`}>
@@ -411,7 +411,7 @@ export default function ProductSheet({
 
                     <a href={urlEntry.url} target="_blank" rel="noopener noreferrer">
                       <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer">
-                        <ExternalLink className="size-4" />
+                        <ExternalLink className="size-4 text-[#212a72]" />
                       </Button>
                     </a>
                   </div>
@@ -437,7 +437,7 @@ export default function ProductSheet({
                   {priceChange && (
                     <div className="mb-4">
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-neutral-700">تغییر قیمت:</span>
+                        <span className="text-[#212a72]">تغییر قیمت:</span>
 
                         {priceChange.isIncrease && (
                           <div className="flex items-center gap-1 text-green-500">
@@ -476,8 +476,8 @@ export default function ProductSheet({
                 </div>
 
                 {urlEntry.priceHistory && urlEntry.priceHistory.length > 0 && (
-                  <div className="bg-transparent rounded-lg p-4 border border-gray-400">
-                    <h4 className="text-sm font-medium text-neutral-700 mb-4">
+                  <div className=" rounded-lg p-4 border-none bg-white">
+                    <h4 className="text-sm font-medium text-[#212a72] mb-4">
                       تاریخچه قیمت ({siteLabel})
                     </h4>
                     <div className="space-y-2 max-h-64 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -491,7 +491,7 @@ export default function ProductSheet({
                         .map((item, itemIndex) => (
                           <div
                             key={itemIndex}
-                            className="flex items-center justify-between py-2 px-3 bg-transparent rounded-lg border border-gray-400"
+                            className="flex items-center justify-between py-2 px-3 rounded-lg border-none bg-[#e6f3ff]"
                           >
                             <span className="text-sm font-medium text-neutral-700">
                               {formatPrice(item.price, true)}

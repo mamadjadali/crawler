@@ -632,6 +632,7 @@ export interface Changelog {
     | {
         title: string;
         description?: string | null;
+        date?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -675,6 +676,7 @@ export interface ChangelogSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        date?: T;
         id?: T;
       };
   updatedAt?: T;

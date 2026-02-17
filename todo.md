@@ -1,13 +1,27 @@
 # Todo List
 
+## mongod.exe --config "C:\Program Files\MongoDB\Server\8.2\bin\mongod.cfg"
+
+Ara v3.0 - v3.9 -------------------------------------------------------------------------------
+
+- [] Adding Disable Products Page (default state to true)
+- [] Add PWA (Full)
+
+Crawlers : - [] Janeby.com - [] Janebi - [] Shahr Computer - [] kalatik - [] GSM - [] pspro - [] Hamrah Tel - [] Tarhan it - [] item sara - [] fartak - [] gooshi plaza - [] digi center - [] cook mobile - [] taamirat 118
+
 Ara v2.0 - v2.9 -------------------------------------------------------------------------------
 
 - [] Add Profit Percentage to AED (Rahimi REQ)
-- [] Modify -> Better Looking Changelog -> Add Persian Date
-- [] Adding Disable Products Page (default state to true)
-- [] Sync State Of Products Detail and Product Sheet
+- [] First cron at base time should run + add categories | Start others 1 min after 200 ok
 - [] Deploy Cron To Production
 - [] Auth Check on Api
+- [] Past Versian Cleanups
+- [x] 140 UI
+- [x] Fix Search
+- [x] Modify -> Better Looking Changelog -> Add Persian Date
+- [x] Sync State Of Products Detail and Product Sheet -> last Cralw
+- [x] Sync State Of Products Detail and Product Sheet -> Prices
+- [x] Sync State Of Products Detail and Product Sheet -> Aed , Usd , Final
 - [x] Add Brandig , Favicon ...
 - [x] Responsive Flex Desing on Top Page Client
 - [x] Fix Category default fetch first over url refresh
@@ -18,10 +32,7 @@ Ara v2.0 - v2.9 ----------------------------------------------------------------
 - [x] Resources MOdification -> md:col-span-4 col-span-2 lg:col-span-6
 - [x] New Logo Motion
 
-Crawlers : - [] Janeby.com - [] Janebi - [] Shahr Computer - [] kalatik - [] GSM - [] pspro - [] Hamrah Tel - [] Tarhan it - [] item sara - [] fartak - [] gooshi plaza - [] digi center - [] cook mobile - [] taamirat 118
-
-- [] Past Versian Cleanups
-- [] Add PWA
+Crawlers : - [] item sara
 
 Hands On Priority -----------------------------------------------------------------------------
 

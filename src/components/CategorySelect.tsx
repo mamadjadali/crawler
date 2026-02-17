@@ -61,7 +61,7 @@ export default function CategorySelect({ value, onChange }: CategorySelectProps)
       <div className="relative w-full">
         <Skeleton className="h-9 w-full rounded-lg bg-gray-400/70" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <Loader2 className="h-5 w-5 animate-spin text-gray-700" />
+          <Loader2 className="h-5 w-5 animate-spin text-[#212a72]" />
         </div>
       </div>
     )
@@ -81,7 +81,7 @@ export default function CategorySelect({ value, onChange }: CategorySelectProps)
       }}
       disabled={loading} // optional: extra safety
     >
-      <SelectTrigger className="w-full rounded-lg border border-gray-400 bg-transparent text-neutral-700">
+      <SelectTrigger className="w-full rounded-lg bg-white border-none text-[#212a72] shadow-none">
         <SelectValue placeholder="همه دسته‌بندی‌ها" />
         {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin opacity-70" />}
       </SelectTrigger>
@@ -98,10 +98,10 @@ export default function CategorySelect({ value, onChange }: CategorySelectProps)
           <SelectItem
             key={cat.id}
             value={cat.id}
-            className="py-2.5 hover:text-blue-400 cursor-pointer"
+            className="py-2.5 text-[#212a72] hover:bg-[#e6f3ff] duration-150 rounded-lg cursor-pointer"
           >
             <div className="flex items-center justify-between w-full">
-              <span>{cat.name}</span>
+              <span className="font-medium">{cat.name}</span>
               <span className="text-gray-400 mr-2 text-xs tabular-nums">
                 {(cat.count ?? 0).toLocaleString('fa-IR')}
               </span>

@@ -55,38 +55,38 @@ export function UserProfile({ email, name, fullname, role }: Props) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="border-gray-400 w-full shadow-none cursor-pointer text-neutral-700 rounded-lg"
+          className="bg-white border-none w-full shadow-none cursor-pointer text-[#212A72] rounded-lg"
         >
           {ROLE_ICON[role]}
           {fullname}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-white border border-gray-400 ">
-        <DropdownMenuGroup>
+      <DropdownMenuContent className="bg-white border-none p-2">
+        <DropdownMenuGroup className="bg-white rounded-lg">
           {name && (
-            <DropdownMenuItem className="font-sans text-neutral-700 mb-1">
+            <DropdownMenuItem className="font-sans text-[#212A72] mb-1">
               <User />
               {name}
             </DropdownMenuItem>
           )}
-        </DropdownMenuGroup>
-        <DropdownMenuGroup>
+          {/* </DropdownMenuGroup> */}
+          {/* <DropdownMenuGroup> */}
           {email && (
-            <DropdownMenuItem className="font-sans text-neutral-700 mb-1">
+            <DropdownMenuItem className="font-sans text-[#212A72] mb-1">
               <Mail />
               {email}
             </DropdownMenuItem>
           )}
-        </DropdownMenuGroup>
-        <DropdownMenuGroup>
+          {/* </DropdownMenuGroup> */}
+          {/* <DropdownMenuGroup> */}
           {role && (
-            <DropdownMenuItem className=" text-neutral-700">
+            <DropdownMenuItem className=" text-[#212A72]">
               <Puzzle />
               {ROLE_LABEL_FA[role] || role}
             </DropdownMenuItem>
           )}
         </DropdownMenuGroup>
-        <DropdownMenuSeparator className="bg-gray-200 mx-1 my-2" />
+        <DropdownMenuSeparator className="bg-white mx-0.5 my-2" />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild dir="rtl" variant="destructive" className="cursor-pointer">
             <LogoutButton />

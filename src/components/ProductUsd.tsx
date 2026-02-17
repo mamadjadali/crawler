@@ -24,7 +24,7 @@ export default function EditableUSDProduct({ id, usd, onUsdChange }: EditableUSD
       setDisplayValue(value)
       setEditing(false)
       onUsdChange?.(value)
-      window.location.reload()
+      // window.location.reload()
     } catch (err) {
       console.error(err)
     } finally {
@@ -33,13 +33,13 @@ export default function EditableUSDProduct({ id, usd, onUsdChange }: EditableUSD
   }
 
   return (
-    <div className="w-full flex items-center justify-between bg-transparent border border-green-700 rounded-[10px] px-2 py-1">
+    <div className="w-full flex items-center justify-between border-none bg-white rounded-[10px] px-2 py-1">
       <div className="text-sm flex items-center gap-2 font-medium text-gray-400">
         <DollarSign className="size-4 text-green-700" />
         قیمت دلاری
       </div>
 
-      <div className="text-base flex items-center justify-center gap-2 font-bold text-neutral-700">
+      <div className="text-base flex items-center justify-center gap-2 font-bold text-[#212a72]">
         {editing ? (
           <div className="flex items-center gap-2">
             <Input
