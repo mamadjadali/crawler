@@ -304,7 +304,8 @@ export interface ProductLink {
       | 'empratour'
       | 'royalpart'
       | 'parhantech'
-      | 'mobopart';
+      | 'mobopart'
+      | 'itemsara';
     /**
      * Latest crawled price from this URL
      */
@@ -619,6 +620,7 @@ export interface Setting {
   usdprice?: number | null;
   aedprice?: number | null;
   importFee?: number | null;
+  profit?: number | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -662,6 +664,7 @@ export interface SettingsSelect<T extends boolean = true> {
   usdprice?: T;
   aedprice?: T;
   importFee?: T;
+  profit?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

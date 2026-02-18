@@ -76,6 +76,9 @@ export function detectSite(url: string): string {
     if (hostname.includes('mobopart.com')) {
       return 'mobopart'
     }
+    if (hostname.includes('itemsara.ir')) {
+      return 'itemsara'
+    }
 
     // Default fallback
     return 'torob'

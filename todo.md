@@ -4,6 +4,7 @@
 
 Ara v3.0 - v3.9 -------------------------------------------------------------------------------
 
+- [] Add S3 Arvan Storage
 - [] Adding Disable Products Page (default state to true)
 - [] Add PWA (Full)
 
@@ -11,11 +12,11 @@ Crawlers : - [] Janeby.com - [] Janebi - [] Shahr Computer - [] kalatik - [] GSM
 
 Ara v2.0 - v2.9 -------------------------------------------------------------------------------
 
-- [] Add Profit Percentage to AED (Rahimi REQ)
 - [] First cron at base time should run + add categories | Start others 1 min after 200 ok
 - [] Deploy Cron To Production
-- [] Auth Check on Api
-- [] Past Versian Cleanups
+- [x] Past Versian Cleanups
+- [x] Auth Check on Api - Category
+- [x] Add Profit Percentage to AED (Rahimi REQ)
 - [x] 140 UI
 - [x] Fix Search
 - [x] Modify -> Better Looking Changelog -> Add Persian Date
@@ -28,11 +29,11 @@ Ara v2.0 - v2.9 ----------------------------------------------------------------
 - [x] Server Side Query , Boost Improvment And Skeleton
 - [x] overflow hidden on Row detail
 - [x] Increase Total Collection return
-- [x] increase Refresh category limit t0 80
+- [x] increase Refresh category limit t0 100
 - [x] Resources MOdification -> md:col-span-4 col-span-2 lg:col-span-6
 - [x] New Logo Motion
 
-Crawlers : - [] item sara
+Crawlers : - [x] item sara
 
 Hands On Priority -----------------------------------------------------------------------------
 

@@ -31,5 +31,13 @@ export const Settings: GlobalConfig = {
         fa: 'هزینه واردات',
       },
     },
+    {
+      name: 'profit',
+      type: 'number',
+      label: {
+        en: 'Profit',
+        fa: 'سود',
+      },
+    },
   ],
 }

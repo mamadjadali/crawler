@@ -19,7 +19,6 @@ export default function OpenAll() {
       window.open(url, '_blank', 'noopener,noreferrer')
     })
 
-    // Give the browser a moment, then close
     setTimeout(() => {
       window.close()
     }, 300)

@@ -76,4 +76,8 @@ export const SITES = {
     label: 'موبو پارتـــ',
     className: 'bg-[#a50044] text-white px-3 py-1 rounded-lg text-xs border-none',
   },
+  itemsara: {
+    label: 'آیتـم سـرا',
+    className: 'bg-[#e86765] text-white px-3 py-1 rounded-lg text-xs border-none',
+  },
 } as const

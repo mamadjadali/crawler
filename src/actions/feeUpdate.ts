@@ -12,21 +12,11 @@ export async function updateSettingsFee(data: { importFee: number }) {
   })
 }
 
-// 'use server'
+export async function updateSettingsProfit(data: { profit: number }) {
+  const payload = await getPayload({ config })
 
-// import { getPayload } from 'payload'
-// import config from '@/payload.config'
-
-// export async function updateSettingsFee(data: { importFee: number }) {
-//   const payload = await getPayload({ config })
-
-//   try {
-//     const updated = await payload.updateGlobal({
-//       slug: 'settings',
-//       data, // expects { usdprice: number }
-//     })
-//     return { success: true, data: updated }
-//   } catch (err: any) {
-//     return { success: false, error: err.message || 'Unknown error' }
-//   }
-// }
+  return payload.updateGlobal({
+    slug: 'settings',
+    data,
+  })
+}

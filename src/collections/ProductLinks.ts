@@ -221,6 +221,7 @@ export const ProductLinks: CollectionConfig = {
             { label: { en: 'Royal part', fa: 'رویال پارت' }, value: 'royalpart' },
             { label: { en: 'Parhan tech', fa: 'پرهان تکـ' }, value: 'parhantech' },
             { label: { en: 'Mobo Part', fa: 'موبو پارت' }, value: 'mobopart' },
+            { label: { en: 'Item Sara', fa: 'آیتم سرا' }, value: 'itemsara' },
           ],
           admin: {
             description: {

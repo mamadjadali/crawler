@@ -13,7 +13,7 @@ export default async function HomePage() {
   const client = await getClient()
 
   if (client && client.collection === 'clients') {
-    redirect('/products') // redirect to login if not authenticated
+    redirect('/products')
   }
   return (
     <div className="relative h-screen flex flex-col items-center justify-center">

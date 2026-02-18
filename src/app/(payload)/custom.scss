@@ -121,4 +121,13 @@ html[lang='fa'] th {
 .nav__link:hover {
   color: #00c0fe;
   text-decoration: none;
+  transform: none;
+}
+
+body a {
+  text-decoration: none;
+}
+
+body a:hover {
+  color: #00c0fe;
 }

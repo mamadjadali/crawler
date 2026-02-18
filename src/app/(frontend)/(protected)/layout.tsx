@@ -17,7 +17,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   const resource = await getResources()
 
   if (!client || client.collection !== 'clients') {
-    redirect('/') // redirect to login if not authenticated
+    redirect('/')
   }
 
   return (
