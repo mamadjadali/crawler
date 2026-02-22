@@ -131,3 +131,79 @@ body a {
 body a:hover {
   color: #00c0fe;
 }
+
+#field-name,
+#field-productId,
+#field-usd,
+#field-aed,
+#field-slug,
+.upload-field-card,
+#upload,
+#upload__dropzoneAndUpload,
+#upload--has-one,
+#upload-field-card--size-medium,
+.dropzone,
+.react-select,
+.rs__control,
+.rs__menu {
+  border-radius: 8px !important;
+}
+
+.relationship__wrap {
+  gap: 0.5rem !important;
+}
+
+#category-add-new,
+.relationship-add-new,
+.file-details,
+.field-type,
+.thumbnail,
+.relationship-add-new__add-button {
+  border-radius: 8px !important;
+}
+
+.collapsible,
+.doc-controls__dots,
+.popup__scroll-container,
+.popup__content,
+.field-type__wrap,
+#field-productUrls,
+#toggle-list-columns,
+#toggle-list-filters,
+.where-builder,
+.pill-selector,
+.search-bar,
+.gutter,
+.auth-fields,
+.collapsible__toggle-wrap {
+  border-radius: 8px !important;
+}
+
+[id*='field-productUrls'] {
+  border-radius: 8px !important;
+}
+
+body tr {
+  border-radius: 8px !important;
+}
+
+input {
+  border-radius: 8px !important;
+}
+
+.hamburger {
+  border-radius: 6px !important;
+}
+
+.query-inspector__results {
+  direction: ltr !important;
+}
+
+.card {
+  border-radius: 8px !important;
+}
+
+.dashboard__card-list li:hover .card {
+  border: 1px solid #00c0fe !important;
+  transition: 100ms ease-in-out;
+}

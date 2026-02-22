@@ -275,6 +275,10 @@ export interface ProductLink {
    */
   disable?: boolean | null;
   /**
+   * َAdd Product to Provide list
+   */
+  basket?: boolean | null;
+  /**
    * Product URLs to crawl (can add multiple URLs from different sites)
    */
   productUrls: {
@@ -527,6 +531,7 @@ export interface ProductLinksSelect<T extends boolean = true> {
   usd?: T;
   aed?: T;
   disable?: T;
+  basket?: T;
   productUrls?:
     | T
     | {

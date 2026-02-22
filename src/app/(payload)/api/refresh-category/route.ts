@@ -35,7 +35,7 @@ export async function POST(req: Request) {
 
     const body = await req.json()
     category = body.category
-    const { brand, limit = 100 } = body
+    const { brand, limit = 150 } = body
 
     if (!category) {
       return NextResponse.json({ error: 'category is required' }, { status: 400 })

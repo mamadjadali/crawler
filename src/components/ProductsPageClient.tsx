@@ -8,6 +8,8 @@ import CategorySelect from './CategorySelect'
 import ProductList from './ProductList'
 import RefreshCategoryButton from './RefreshCategoryButton'
 import SearchInput from './SearchInput'
+import DisabledProductsDialog from './DisabledDiolog'
+import BasketProductsDialog from './BasketDiolog'
 
 interface ProductsPageClientProps {
   initialProducts: ProductLink[]
@@ -89,9 +91,16 @@ export default function ProductsPageClient({ initialProducts, settings }: Produc
             onChange={(brand) => updateParams({ brand: brand || undefined })}
           />
         </div>
-
-        <div className="flex items-center gap-3">
-          <RefreshCategoryButton category={selectedCategory ?? ''} brand={selectedBrand} />
+        <div className="flex gap-4 justify-between items-center">
+          <div className="flex items-center gap-3">
+            <BasketProductsDialog usd={settings.usdprice || null} aed={settings.aedprice || null} />
+          </div>
+          <div className="flex items-center gap-3">
+            <DisabledProductsDialog />
+          </div>
+          <div className="flex items-center gap-3">
+            <RefreshCategoryButton category={selectedCategory ?? ''} brand={selectedBrand} />
+          </div>
         </div>
       </div>
 

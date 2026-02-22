@@ -59,7 +59,7 @@ export default function RefreshCategoryButton({ category, brand }: RefreshCatego
         body: JSON.stringify({
           category,
           brand: brand || undefined,
-          limit: 100,
+          limit: 150,
         }),
       })
 
@@ -108,7 +108,7 @@ export default function RefreshCategoryButton({ category, brand }: RefreshCatego
       <Button
         onClick={handleRefresh}
         disabled={isLoading}
-        className="bg-[#212A72] gap-2 text-white px-4 py-2 rounded-lg"
+        className="bg-[#212A72] gap-2 cursor-pointer text-white px-4 py-2 rounded-lg"
       >
         {isLoading ? (
           <>

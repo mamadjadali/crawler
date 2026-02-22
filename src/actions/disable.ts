@@ -9,7 +9,13 @@ const updateDisableSchema = z.object({
   disable: z.boolean(),
 })
 
+const updateBasketSchema = z.object({
+  productId: z.string().min(1),
+  basket: z.boolean(),
+})
+
 type UpdateDisableInput = z.infer<typeof updateDisableSchema>
+type UpdateBasketInput = z.infer<typeof updateBasketSchema>
 
 export async function updateProductDisable(rawData: UpdateDisableInput) {
   const { productId, disable } = updateDisableSchema.parse(rawData)
@@ -20,5 +26,17 @@ export async function updateProductDisable(rawData: UpdateDisableInput) {
     collection: 'product-links',
     id: productId,
     data: { disable },
+  })
+}
+
+export async function updateProductBasket(rawData: UpdateBasketInput) {
+  const { productId, basket } = updateBasketSchema.parse(rawData)
+
+  const payload = await getPayload({ config })
+
+  return payload.update({
+    collection: 'product-links',
+    id: productId,
+    data: { basket },
   })
 }

@@ -41,6 +41,7 @@ next-env.d.ts
 .env
 
 /media
+todo.md
 
 # Playwright
 node_modules/

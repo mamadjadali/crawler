@@ -58,7 +58,7 @@ export default async function ProductsPage({
         or: [{ disable: { equals: false } }, { disable: { exists: false } }],
       },
       sort: '-createdAt',
-      limit: 400,
+      limit: 600,
       depth: 1,
     })
     products = docs as ProductLink[]

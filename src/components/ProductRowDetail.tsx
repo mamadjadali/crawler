@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from 'react'
 import ProductSheet from './ProductSheet'
 import { Dirham } from './icons'
 import DisableProductButton from './DisableProduct'
+import AddProductBasket from './AddToBasket'
 
 interface ProductRowProps {
   id: string
@@ -140,7 +141,7 @@ export default function ProductRowDetail({
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
-        <div className="flex flex-col justify-center overflow-hidden items-center gap-4 bg-white p-4 rounded-lg cursor-pointer hover:shadow-md transition">
+        <div className="flex flex-col justify-center overflow-hidden items-center gap-4 bg-white p-4 rounded-lg cursor-pointer hover:shadow-md hover:-translate-x-2 duration-150">
           {/* Product Info */}
           <div className="flex w-full justify-between items-center border-b border-gray-200 pb-2">
             <div className="font-medium text-[#212a72]">{name}</div>
@@ -149,13 +150,16 @@ export default function ProductRowDetail({
               {getSiteLabel(toSiteKey(lowestPriceSite))}
             </div>
 
-            <div className="flex gap-4 items-center">
+            <div className="flex gap-4 items-center justify-center">
               {productId && (
-                <DisableProductButton
-                  productId={id}
-                  initialDisabled={false}
-                  onHide={() => setVisible(false)}
-                />
+                <>
+                  <AddProductBasket productId={id} initialDisabled={false} />
+                  <DisableProductButton
+                    productId={id}
+                    initialDisabled={false}
+                    onHide={() => setVisible(false)}
+                  />
+                </>
               )}
               <div className="w-auto">
                 {displayLastCrawledAt &&

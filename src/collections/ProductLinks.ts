@@ -48,6 +48,7 @@ export const ProductLinks: CollectionConfig = {
       type: 'text',
       required: true,
       admin: {
+        position: 'sidebar',
         description: {
           en: 'Product name',
           fa: 'نام محصول',
@@ -62,6 +63,7 @@ export const ProductLinks: CollectionConfig = {
       },
       type: 'text',
       admin: {
+        position: 'sidebar',
         description: {
           en: 'Product ID from the source site (e.g., Mobile140 product ID)',
           fa: 'شناسه محصول از سایت منبع (مثلا شناسه محصول در موبایل۱۴۰)',
@@ -77,6 +79,7 @@ export const ProductLinks: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       admin: {
+        position: 'sidebar',
         description: {
           en: 'Product image',
           fa: 'تصویر محصول',
@@ -93,6 +96,7 @@ export const ProductLinks: CollectionConfig = {
       relationTo: 'categories',
       required: false,
       admin: {
+        position: 'sidebar',
         description: {
           en: 'Select a category for this product',
           fa: 'دسته بندی محصول را انتخاب کنید',
@@ -109,6 +113,7 @@ export const ProductLinks: CollectionConfig = {
       relationTo: 'brands',
       required: false,
       admin: {
+        position: 'sidebar',
         description: {
           en: 'Select a brand for this product',
           fa: 'برند محصول را انتخاب کنید',
@@ -124,6 +129,8 @@ export const ProductLinks: CollectionConfig = {
       type: 'number',
       required: false,
       admin: {
+        width: '50%',
+        position: 'sidebar',
         description: {
           en: 'usd price for this product',
           fa: 'قیمت دلاری محصول برای محاسبه قیمت تمام شده',
@@ -139,6 +146,8 @@ export const ProductLinks: CollectionConfig = {
       type: 'number',
       required: false,
       admin: {
+        width: '50px',
+        position: 'sidebar',
         description: {
           en: 'aed price for this product',
           fa: 'قیمت درهمی محصول برای محاسبه قیمت تمام شده',
@@ -154,9 +163,26 @@ export const ProductLinks: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       admin: {
+        position: 'sidebar',
         description: {
           en: 'Disable the Product From Crawl and Display',
           fa: 'غیر فعال کردن محصول برای کرال و نمایش',
+        },
+      },
+    },
+    {
+      name: 'basket',
+      label: {
+        en: 'Basket',
+        fa: 'سبد',
+      },
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: {
+          en: 'َAdd Product to Provide list',
+          fa: 'اضافه کردن محصول به سبد تامیین',
         },
       },
     },
@@ -243,6 +269,7 @@ export const ProductLinks: CollectionConfig = {
               fa: 'قیمت آخرین دریافت از این لینک',
             },
             readOnly: true,
+            hidden: true,
           },
         },
         {
@@ -258,6 +285,7 @@ export const ProductLinks: CollectionConfig = {
               fa: 'زمان آخرین دریافت موفق از این لینک',
             },
             readOnly: true,
+            hidden: true,
           },
         },
         {
@@ -275,6 +303,7 @@ export const ProductLinks: CollectionConfig = {
           defaultValue: 'pending',
           admin: {
             readOnly: true,
+            hidden: true,
           },
         },
         {
@@ -290,6 +319,7 @@ export const ProductLinks: CollectionConfig = {
               fa: 'پیغام خطا اگر دریافت موفق نبود',
             },
             readOnly: true,
+            hidden: true,
           },
         },
         {
@@ -300,6 +330,7 @@ export const ProductLinks: CollectionConfig = {
           },
           type: 'array',
           admin: {
+            initCollapsed: true,
             description: {
               en: 'Historical price data for this URL',
               fa: 'تاریخچه قیمت برای این لینک',
@@ -331,12 +362,12 @@ export const ProductLinks: CollectionConfig = {
     {
       name: 'lowestPrice',
       type: 'number',
-      admin: { readOnly: true },
+      admin: { readOnly: true, hidden: true },
     },
     {
       name: 'lastCrawledAt',
       type: 'date',
-      admin: { readOnly: true },
+      admin: { readOnly: true, hidden: true },
     },
     {
       name: 'crawlStatus',
@@ -346,7 +377,7 @@ export const ProductLinks: CollectionConfig = {
         { label: 'Success', value: 'success' },
         { label: 'Failed', value: 'failed' },
       ],
-      admin: { readOnly: true },
+      admin: { readOnly: true, hidden: true },
     },
     {
       name: 'refreshButton',
