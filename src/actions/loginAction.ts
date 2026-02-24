@@ -1,73 +1,72 @@
 'use server'
 
 import { login } from '@payloadcms/next/auth'
-
 import config from '@/payload.config'
-
 import { z } from 'zod'
-
-// validate input
+import { redirect } from 'next/navigation'
 
 const loginSchema = z.object({
-  // email: z.string().email('ایمیل معتبر نیست'),
-  username: z.string().min(2, 'نام کاربری باید حداقل دو کاراکتر باشد'),
-
-  password: z.string().min(4, 'رمز عبور باید حداقل چهار کاراکتر باشد'),
+  username: z.string().min(2, 'نام کاربری خیلی کوتاه است'),
+  password: z.string().min(4, 'رمز عبور باید حداقل ۴ کاراکتر باشد'),
 })
 
-export type LoginResult =
-  | { success: true; user: { id: string; username: string; email: string; fullname?: string } }
-  | { success: false; error: string }
+export type LoginState =
+  | {
+      success?: boolean
+      error?: string
+      fieldErrors?: {
+        username?: string
+        password?: string
+      }
+    }
+  | undefined
 
-export default async function loginAction(raw: unknown): Promise<LoginResult> {
+export default async function loginAction(
+  _prevState: LoginState,
+  formData: FormData,
+): Promise<LoginState> {
+  // 1. Validate input (zod)
+  const raw = {
+    username: formData.get('username')?.toString() ?? '',
+    password: formData.get('password')?.toString() ?? '',
+  }
+
+  const parsed = loginSchema.safeParse(raw)
+
+  if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors
+    return {
+      error: 'لطفاً اطلاعات را بررسی کنید',
+      fieldErrors: {
+        username: fieldErrors.username?.[0],
+        password: fieldErrors.password?.[0],
+      },
+    }
+  }
+
+  const { username, password } = parsed.data
+
+  let result
   try {
-    // ✅ validate inputs
-
-    const { username, password } = loginSchema.parse(raw)
-
-    // ✅ call Payload login
-
-    const result = await login({
+    result = await login({
       collection: 'clients',
-
       config,
-
-      // email,
       username,
-
       password,
     })
 
     if (!result?.user) {
-      return { success: false, error: 'اطلاعات ورود نادرست است' }
+      return { error: 'نام کاربری یا رمز عبور اشتباه است' }
     }
 
-    // ✅ return only safe fields
-    console.log(
-      `[LOGIN] User ${result.user.username} (${result.user.id}) logged in at ${new Date().toISOString()}`,
-    )
+    console.log(`[LOGIN] ${result.user.username} logged in at ${new Date().toISOString()}`)
+  } catch (err: any) {
+    console.error('[LOGIN ERROR]', err)
     return {
-      success: true,
-
-      user: {
-        id: result.user.id,
-
-        email: result.user.email,
-
-        username: result.user.username,
-
-        fullname: result.user.fullname,
-      },
+      error: 'خطایی رخ داد. لطفاً دوباره تلاش کنید.',
     }
-  } catch (err) {
-    if (err instanceof z.ZodError) {
-      return { success: false, error: err.issues[0]?.message ?? 'خطای اعتبارسنجی' }
-    }
-
-    if (err instanceof Error) {
-      return { success: false, error: 'ورود ناموفق بود' } // generic, avoids leaking info
-    }
-
-    return { success: false, error: 'خطای ناشناخته' }
   }
+
+  // ── Success ── redirect is outside try/catch ──
+  redirect('/products')
 }

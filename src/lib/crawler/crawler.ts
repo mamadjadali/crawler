@@ -21,6 +21,7 @@ import { RoyalPartCrawler } from './sites/royalpart'
 import { ParhanTechCrawler } from './sites/parhantech'
 import { MoboPartCrawler } from './sites/mobopart'
 import { ItemSaraCrawler } from './sites/itemsara'
+import { KavoshTeamCrawler } from './sites/kavoshteam'
 
 // Re-export detectSite for backward compatibility
 export { detectSite }
@@ -73,6 +74,8 @@ function getCrawler(site: string): SiteCrawler {
       crawlerInstances.set(site, new MoboPartCrawler())
     } else if (site === 'itemsara') {
       crawlerInstances.set(site, new ItemSaraCrawler())
+    } else if (site === 'kavoshteam') {
+      crawlerInstances.set(site, new KavoshTeamCrawler())
     } else {
       throw new Error(`Unsupported site: ${site}`)
     }

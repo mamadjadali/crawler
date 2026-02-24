@@ -19,6 +19,7 @@ export type Site =
   | 'parhantech'
   | 'mobopart'
   | 'itemsara'
+  | 'kavoshteam'
 
 export function detectSiteFromUrl(rawUrl: string): Site {
   const hostname = new URL(rawUrl).hostname.toLowerCase()
@@ -44,6 +45,7 @@ export function detectSiteFromUrl(rawUrl: string): Site {
   if (hostname.includes('parts.parhantech.com')) return 'parhantech'
   if (hostname.includes('mobopart.com')) return 'mobopart'
   if (hostname.includes('itemsara.ir')) return 'itemsara'
+  if (hostname.includes('kavoshteam.com')) return 'kavoshteam'
 
   return 'torob'
 }

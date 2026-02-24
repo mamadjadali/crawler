@@ -88,7 +88,7 @@ export function UserProfile({ email, name, fullname, role }: Props) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator className="bg-white mx-0.5 my-2" />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild dir="rtl" variant="destructive" className="cursor-pointer">
+          <DropdownMenuItem dir="rtl" variant="destructive" className="cursor-pointer">
             <LogoutButton />
           </DropdownMenuItem>
         </DropdownMenuGroup>

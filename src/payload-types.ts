@@ -309,7 +309,8 @@ export interface ProductLink {
       | 'royalpart'
       | 'parhantech'
       | 'mobopart'
-      | 'itemsara';
+      | 'itemsara'
+      | 'kavoshteam';
     /**
      * Latest crawled price from this URL
      */

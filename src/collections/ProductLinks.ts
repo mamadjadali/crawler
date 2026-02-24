@@ -248,6 +248,7 @@ export const ProductLinks: CollectionConfig = {
             { label: { en: 'Parhan tech', fa: 'پرهان تکـ' }, value: 'parhantech' },
             { label: { en: 'Mobo Part', fa: 'موبو پارت' }, value: 'mobopart' },
             { label: { en: 'Item Sara', fa: 'آیتم سرا' }, value: 'itemsara' },
+            { label: { en: 'Kavosh Team', fa: 'کاوش تیم' }, value: 'kavoshteam' },
           ],
           admin: {
             description: {

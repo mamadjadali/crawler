@@ -80,4 +80,8 @@ export const SITES = {
     label: 'آیتـم سـرا',
     className: 'bg-[#e86765] text-white px-3 py-1 rounded-lg text-xs border-none',
   },
+  kavoshteam: {
+    label: 'کاوش تیم',
+    className: 'bg-[#181818] text-[#fdcb00] px-3 py-1 rounded-lg text-xs border-none',
+  },
 } as const

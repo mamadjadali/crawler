@@ -1,159 +1,111 @@
 'use client'
 
-import * as React from 'react'
-
-import { useRouter } from 'next/navigation'
-
-import { z } from 'zod'
-
-import { useForm } from 'react-hook-form'
-
-import { zodResolver } from '@hookform/resolvers/zod'
-
+import loginAction from '@/actions/loginAction'
 import { cn } from '@/lib/utils/utils'
-
+import { EyeIcon, EyeOffIcon } from 'lucide-react'
+import * as React from 'react'
 import { Icons } from './icons'
-
 import { Button } from './ui/button'
-
 import { Input } from './ui/input'
-
 import { Label } from './ui/label'
 
-import loginAction from '@/actions/loginAction'
+const initialState = undefined
 
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
+export function UserAuthForm({ className }: React.HTMLAttributes<HTMLDivElement>) {
+  const [state, formAction] = React.useActionState(loginAction, initialState)
+  const [showPassword, setShowPassword] = React.useState(false)
 
-// ✅ Reuse same schema as server
+  // Manual pending state + transition
+  const [isPending, startTransition] = React.useTransition()
 
-const loginSchema = z.object({
-  // email: z.string().email('ایمیل معتبر نیست'),
-  username: z.string().min(2, 'نام کاربری باید حداقل دو کاراکتر باشد'),
-
-  password: z.string().min(4, 'رمز عبور باید حداقل چهار کاراکتر باشد'),
-})
-
-type LoginFormValues = z.infer<typeof loginSchema>
-
-export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  const router = useRouter()
-
-  const [isVisible, setIsVisible] = React.useState<boolean>(false)
-
-  const toggleVisibility = () => setIsVisible((prevState) => !prevState)
-
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-
-    defaultValues: {
-      // email: '',
-      username: '',
-
-      password: '',
-    },
-  })
-
-  const onSubmit = async (values: LoginFormValues) => {
-    try {
-      const result = await loginAction(values)
-
-      if (!result.success) {
-        alert(result.error || 'ورود ناموفق بود')
-
-        return
-      }
-
-      // alert('خوش آمدید 👋')
-
-      router.push('/products')
-    } catch {
-      alert('خطای غیرمنتظره در ورود')
-    }
+  // We'll wrap the real action in startTransition to get reliable pending
+  const handleAction = (formData: FormData) => {
+    startTransition(() => {
+      formAction(formData)
+    })
   }
 
   return (
-    <div className={cn('grid gap-6', className)} {...props}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {/* ایمیل */}
+    <div className={cn('grid gap-6', className)}>
+      <form action={handleAction} className="space-y-4">
+        {/* General / server error */}
+        {state?.error && !state.fieldErrors && (
+          <div className="rounded-lg bg-red-50 duration-150 p-3 text-sm text-red-700 border border-red-300">
+            {state.error}
+          </div>
+        )}
 
+        {/* Username */}
         <div className="grid gap-1">
-          <Label dir="rtl" htmlFor="email" className="mb-1 text-[#212A72]">
-            {/* ایمیل */}
+          <Label dir="rtl" className="mb-1 text-[#212A72]">
             نام کاربری
           </Label>
-
           <Input
-            id="username"
-            type="text"
             dir="ltr"
-            placeholder=""
-            className="border-gray-400 font-mono rounded-lg"
-            autoCapitalize="none"
-            autoComplete="email"
-            autoCorrect="off"
-            disabled={form.formState.isSubmitting}
-            {...form.register('username')}
+            name="username"
+            required
+            disabled={isPending} // ← disable during pending
+            className={cn(
+              'border-gray-300 shadow-none font-mono rounded-lg',
+              state?.fieldErrors?.username && 'border-red-500 focus:border-red-500',
+            )}
           />
-
-          {form.formState.errors.username && (
-            <p dir="rtl" className="text-red-500 text-xs mt-1">
-              {form.formState.errors.username.message}
-            </p>
+          {state?.fieldErrors?.username && (
+            <p className="mt-1 text-xs text-red-600">{state.fieldErrors.username}</p>
           )}
         </div>
 
-        {/* رمز عبور */}
-
+        {/* Password */}
         <div className="grid gap-1">
-          <Label dir="rtl" htmlFor="password" className="mb-1 text-[#212A72]">
+          <Label dir="rtl" className="mb-1 text-[#212A72]">
             رمز عبور
           </Label>
-
-          <div className="relative">
+          <div dir="ltr" className="relative">
             <Input
-              id="password"
-              type={isVisible ? 'text' : 'password'}
+              dir="ltr"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              required
+              disabled={isPending} // ← disable during pending
               placeholder="*********"
-              className="border-gray-400 font-mono rounded-lg"
+              className={cn(
+                'border-gray-300 shadow-none font-mono rounded-lg',
+                state?.fieldErrors?.password && 'border-red-500 focus:border-red-500',
+              )}
               autoCapitalize="none"
               autoComplete="current-password"
               autoCorrect="off"
-              disabled={form.formState.isSubmitting}
-              {...form.register('password')}
             />
-
-            <Button
-              className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 transition-[color,box-shadow] outline-none hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+            <button
               type="button"
-              onClick={toggleVisibility}
-              aria-label={isVisible ? 'Hide password' : 'Show password'}
-              aria-pressed={isVisible}
-              aria-controls="password"
+              onClick={() => setShowPassword((v) => !v)}
+              disabled={isPending} // optional: disable eye toggle too
+              className="absolute inset-y-0 end-0 px-2"
             >
-              {isVisible ? (
-                <EyeOffIcon size={16} className="text-gray-400" aria-hidden="true" />
+              {showPassword ? (
+                <EyeOffIcon size={18} className="text-[#212A72]" />
               ) : (
-                <EyeIcon size={16} className="text-blue-300" aria-hidden="true" />
+                <EyeIcon size={18} className="text-[#212A72]" />
               )}
-            </Button>
-
-            {form.formState.errors.password && (
-              <p dir="rtl" className="text-red-500 text-xs mt-1">
-                {form.formState.errors.password.message}
-              </p>
-            )}
+            </button>
           </div>
+          {state?.fieldErrors?.password && (
+            <p className="mt-1 text-xs text-red-600">{state.fieldErrors.password}</p>
+          )}
         </div>
 
-        {/* دکمه ورود */}
-
+        {/* Submit button with manual pending */}
         <Button
           type="submit"
-          className="bg-linear-to-l from-[#009FE3] via-[#006699] to-[#212A72] w-full inline-flex cursor-pointer mt-2 text-white rounded-lg"
-          disabled={form.formState.isSubmitting}
+          disabled={isPending}
+          className={cn(
+            'bg-linear-to-l shadow-none from-[#009FE3] via-[#006699] to-[#212A72]',
+            'w-full inline-flex items-center cursor-pointer justify-center mt-2 text-white rounded-lg',
+            isPending && 'opacity-80 cursor-wait',
+          )}
         >
-          {form.formState.isSubmitting && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
-          ورود
+          {isPending && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+          {isPending ? 'در حال ورود...' : 'ورود'}
         </Button>
       </form>
     </div>
